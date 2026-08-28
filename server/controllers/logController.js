@@ -1,0 +1,67 @@
+const { supabase, isSupabaseConfigured, readLocalData, writeLocalData, formatYMD } = require('../config/db');
+
+exports.toggleLog = async (req, res) => {
+  try {
+    const { habit_id, date } = req.body;
+    const targetDate = date || formatYMD(new Date());
+
+    if (!habit_id) {
+      return res.status(400).json({ success: false, message: 'habit_id is required' });
+    }
+
+    if (isSupabaseConfigured && supabase) {
+      const { data: existing, error: fetchErr } = await supabase
+        .from('habit_logs')
+        .select('*')
+        .eq('habit_id', habit_id)
+        .eq('completed_date', targetDate)
+        .maybeSingle();
+
+      if (fetchErr) throw fetchErr;
+
+      let completed = false;
+      if (existing) {
+        const { error: delErr } = await supabase.from('habit_logs').delete().eq('id', existing.id);
+        if (delErr) throw delErr;
+        completed = false;
+      } else {
+        const { error: insErr } = await supabase.from('habit_logs').insert([{
+          habit_id,
+          completed_date: targetDate,
+          count: 1
+        }]);
+        if (insErr) throw insErr;
+        completed = true;
+      }
+
+      return res.json({ success: true, completed, habit_id, date: targetDate });
+    }
+
+    const store = readLocalData();
+    store.logs = store.logs || [];
+    
+    const existingIndex = store.logs.findIndex(
+      l => l.habit_id === habit_id && l.completed_date === targetDate
+    );
+
+    let completed = false;
+    if (existingIndex !== -1) {
+      store.logs.splice(existingIndex, 1);
+      completed = false;
+    } else {
+      store.logs.push({
+        id: 'log-' + Math.random().toString(36).substr(2, 9),
+        habit_id,
+        completed_date: targetDate,
+        count: 1,
+        created_at: new Date().toISOString()
+      });
+      completed = true;
+    }
+
+    writeLocalData(store);
+    res.json({ success: true, completed, habit_id, date: targetDate });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+};

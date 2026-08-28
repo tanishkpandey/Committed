@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Settings - Committed</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="css/main.css?v=1787946236">
+  <link rel="stylesheet" href="css/components.css?v=1787946236">
+  <link rel="stylesheet" href="css/animations.css?v=1787946236">
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+  <div class="app-container">
+    <header class="header-bar">
+      <div>
+        <h1 class="app-title">Settings</h1>
+        <p style="font-size: 0.75rem; color: var(--text-muted);">Personalize categories, theme and manage data</p>
+      </div>
+    </header>
+
+    <!-- 1. Category Management -->
+    <div class="habit-card" style="margin-bottom: 1rem;">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.85rem;">
+        <div style="display: flex; align-items: center; gap: 0.4rem;">
+          <i data-lucide="tag" style="width: 16px; height: 16px; color: var(--accent-emerald);"></i>
+          <h3 style="font-size: 0.95rem; font-weight: 750;">Manage Categories</h3>
+        </div>
+        <button class="btn btn-primary" onclick="openAddCategoryModal()" style="padding: 0.35rem 0.75rem; font-size: 0.75rem;">
+          <i data-lucide="plus" style="width: 14px; height: 14px;"></i>
+          <span>Add Category</span>
+        </button>
+      </div>
+
+      <div id="categoriesListContainer">
+        <!-- Rendered dynamically via settings.js -->
+      </div>
+    </div>
+
+    <!-- 2. Appearance -->
+    <div class="habit-card" style="margin-bottom: 1rem;">
+      <h3 style="font-size: 0.95rem; font-weight: 750; margin-bottom: 1rem;">Appearance</h3>
+      
+      <div class="form-group">
+        <label class="form-label">Theme</label>
+        <select class="form-select" id="themeSelect" onchange="handleThemeChange(this.value)">
+          <option value="dark">Dark Theme</option>
+          <option value="light">Light Theme</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Tile Corner Shape</label>
+        <select class="form-select" id="tileShapeSelect" onchange="handleTileShapeChange(this.value)">
+          <option value="tile-rounded">Soft Rounded (Default)</option>
+          <option value="tile-square">Classic Square</option>
+          <option value="tile-pill">Pill / Capsule</option>
+          <option value="tile-circle">Circular Dots</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- 3. Feedback & Sound -->
+    <div class="habit-card" style="margin-bottom: 1rem;">
+      <h3 style="font-size: 0.95rem; font-weight: 750; margin-bottom: 1rem;">Feedback & Sound</h3>
+      
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.85rem;">
+        <div>
+          <div style="font-weight: 600; font-size: 0.85rem;">Haptic Audio Feedback</div>
+          <div style="font-size: 0.72rem; color: var(--text-muted);">Subtle click sound when toggling tiles</div>
+        </div>
+        <input type="checkbox" id="soundToggle" onchange="handleSoundToggle(event)" style="width: 18px; height: 18px;">
+      </div>
+
+      <div style="display: flex; align-items: center; justify-content: space-between;">
+        <div>
+          <div style="font-weight: 600; font-size: 0.85rem;">Celebratory Confetti</div>
+          <div style="font-size: 0.72rem; color: var(--text-muted);">Confetti burst when completing habits</div>
+        </div>
+        <input type="checkbox" id="confettiToggle" onchange="handleConfettiToggle(event)" style="width: 18px; height: 18px;">
+      </div>
+    </div>
+
+    <!-- 4. Backup & Restore -->
+    <div class="habit-card">
+      <h3 style="font-size: 0.95rem; font-weight: 750; margin-bottom: 0.75rem;">Backup & Export</h3>
+      <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 1rem;">
+        Export your habit history as JSON to safely store or migrate your data.
+      </p>
+      <div style="display: flex; gap: 0.5rem;">
+        <button class="btn btn-secondary" onclick="triggerExport()" style="flex: 1;">
+          <i data-lucide="download" style="width: 15px; height: 15px;"></i>
+          <span>Export JSON</span>
+        </button>
+        <label class="btn btn-secondary" style="flex: 1; margin-bottom: 0; cursor: pointer;">
+          <i data-lucide="upload" style="width: 15px; height: 15px;"></i>
+          <span>Import JSON</span>
+          <input type="file" accept=".json" onchange="triggerImport(event)" style="display: none;">
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add / Edit Category Modal -->
+  <div class="modal-overlay" id="categoryModalOverlay">
+    <div class="modal-box" style="max-width: 440px;">
+      <div class="modal-header">
+        <h3 class="modal-title" id="catModalTitle">Add Category</h3>
+        <button class="close-btn" onclick="closeCategoryModal()">
+          <i data-lucide="x" style="width: 22px; height: 22px;"></i>
+        </button>
+      </div>
+
+      <form onsubmit="saveCategoryForm(event)">
+        <input type="hidden" id="catEditId" value="">
+        <div class="form-group">
+          <label class="form-label">Category Name *</label>
+          <input type="text" class="form-input" id="catNameInput" placeholder="e.g. Wellness, Career, Reading" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Color Swatch</label>
+          <div class="palette-grid" id="catPaletteGrid"></div>
+        </div>
+
+        <div style="display: flex; gap: 0.65rem; margin-top: 1.25rem;">
+          <button type="button" class="btn btn-secondary" style="flex: 1;" onclick="closeCategoryModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary" style="flex: 2;">Save Category</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Bottom Navigation -->
+    <!-- Clean 4-Tab Bottom Navigation -->
+  <nav class="bottom-nav">
+    <a href="/" class="nav-item">
+      <i data-lucide="grid"></i>
+      <span>Habits</span>
+    </a>
+    <a href="/progress.html" class="nav-item">
+      <i data-lucide="award"></i>
+      <span>Progress</span>
+    </a>
+    <a href="/analytics.html" class="nav-item">
+      <i data-lucide="bar-chart-3"></i>
+      <span>Insights</span>
+    </a>
+    <a href="/settings.html" class="nav-item active">
+      <i data-lucide="settings"></i>
+      <span>Settings</span>
+    </a>
+  </nav>
+
+  <script src="js/api.js?v=1787946236"></script>
+  <script src="js/utils.js?v=1787946236"></script>
+  <script src="js/settings.js?v=1787946236"></script>
+</body>
+</html>

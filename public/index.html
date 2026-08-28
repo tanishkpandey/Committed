@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Committed - Visual Habit Tracker</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="css/main.css?v=1787946236">
+  <link rel="stylesheet" href="css/components.css?v=1787946236">
+  <link rel="stylesheet" href="css/animations.css?v=1787946236">
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+  <div class="app-container">
+    <!-- Header Top Bar -->
+    <header class="header-bar">
+      <a href="/" class="logo-group">
+        <img src="img/logo.svg" alt="Committed Logo" style="width: 36px; height: 36px; border-radius: var(--radius-sm);" />
+        <span class="app-title">Committed</span>
+      </a>
+
+      <div class="header-actions">
+        <button class="btn btn-icon" id="themeToggleBtn" onclick="toggleQuickTheme()" title="Toggle Dark/Light">
+          <i data-lucide="moon" id="themeIcon"></i>
+        </button>
+        <button class="btn btn-primary" id="newHabitBtn" onclick="openHabitModal()">
+          <i data-lucide="plus" style="width: 16px; height: 16px;"></i>
+          <span>New Habit</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Clean Progress Widget -->
+    <a href="/progress.html" class="progress-widget" id="progressWidget">
+      <div class="widget-header-row">
+        <span class="widget-level-badge" id="widgetLevelBadge">
+          <i data-lucide="zap" style="width: 11px; height: 11px;"></i>
+          <span id="widgetLevelText">LEVEL 1</span>
+        </span>
+        <span class="widget-xp-counts" id="widgetXpCounts">0 / 100 XP</span>
+      </div>
+
+      <div class="widget-track">
+        <div class="widget-fill" id="widgetFill" style="width: 0%;"></div>
+      </div>
+
+      <div class="widget-footer-row">
+        <span class="widget-streak-tag" id="widgetStreakTag">
+          <i data-lucide="flame" style="width: 13px; height: 13px;"></i>
+          <span id="widgetStreakText">0 Day Streak</span>
+        </span>
+        <span class="widget-action-link">
+          <span>View Progress</span>
+          <i data-lucide="chevron-right" style="width: 13px; height: 13px;"></i>
+        </span>
+      </div>
+    </a>
+
+    <!-- Category Filter Chips -->
+    <div class="filter-scroll">
+      <button class="chip active" data-category="All">All</button>
+      <button class="chip" data-category="Fitness">Fitness</button>
+      <button class="chip" data-category="Mindfulness">Mindfulness</button>
+      <button class="chip" data-category="Health">Health</button>
+      <button class="chip" data-category="Learning">Learning</button>
+      <button class="chip" data-category="Productivity">Productivity</button>
+    </div>
+
+    <!-- Loading Skeleton -->
+    <div id="loadingSkeleton" style="display: none; text-align: center; padding: 2.5rem; color: var(--text-muted);">
+      <p>Loading habit grids...</p>
+    </div>
+
+    <!-- Habit Cards Container -->
+    <main id="habitsContainer">
+      <!-- Rendered dynamically via app.js -->
+    </main>
+  </div>
+
+  <!-- Create / Edit Habit Modal -->
+  <div class="modal-overlay" id="habitModalOverlay">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 class="modal-title" id="modalTitle">Create Habit</h3>
+        <button class="close-btn" onclick="closeHabitModal()">
+          <i data-lucide="x" style="width: 22px; height: 22px;"></i>
+        </button>
+      </div>
+
+      <form onsubmit="saveHabitForm(event)">
+        <div class="form-group">
+          <label class="form-label">Habit Name *</label>
+          <input type="text" class="form-input" id="habitTitleInput" placeholder="e.g. Daily Workout" required oninput="updateLivePreview()">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Goal / Note (Optional)</label>
+          <input type="text" class="form-input" id="habitDescInput" placeholder="e.g. 15 mins daily" oninput="updateLivePreview()">
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+          <div class="form-group">
+            <label class="form-label">Category</label>
+            <select class="form-select" id="habitCategorySelect">
+              <option value="General">General</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Target Frequency</label>
+            <select class="form-select" id="habitFrequencySelect">
+              <option value="7" selected>7x / Week (Daily)</option>
+              <option value="6">6x / Week</option>
+              <option value="5">5x / Week (Weekdays)</option>
+              <option value="4">4x / Week</option>
+              <option value="3">3x / Week (Gym)</option>
+              <option value="2">2x / Week</option>
+              <option value="1">1x / Week</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Grid Timeframe</label>
+          <select class="form-select" id="habitGridDaysSelect">
+            <option value="30">30 Days</option>
+            <option value="60">60 Days</option>
+            <option value="90">90 Days</option>
+            <option value="180">180 Days</option>
+            <option value="365" selected>365 Days (Full Year)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Color Theme</label>
+          <div class="palette-grid" id="paletteGrid"></div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Icon</label>
+          <div class="icon-picker-grid" id="iconPickerGrid"></div>
+        </div>
+
+        <div style="display: flex; gap: 0.65rem; margin-top: 1.25rem;">
+          <button type="button" class="btn btn-secondary" style="flex: 1;" onclick="closeHabitModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary" style="flex: 2;">Save Habit</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Bottom Navigation -->
+    <!-- Clean 4-Tab Bottom Navigation -->
+  <nav class="bottom-nav">
+    <a href="/" class="nav-item active">
+      <i data-lucide="grid"></i>
+      <span>Habits</span>
+    </a>
+    <a href="/progress.html" class="nav-item">
+      <i data-lucide="award"></i>
+      <span>Progress</span>
+    </a>
+    <a href="/analytics.html" class="nav-item">
+      <i data-lucide="bar-chart-3"></i>
+      <span>Insights</span>
+    </a>
+    <a href="/settings.html" class="nav-item">
+      <i data-lucide="settings"></i>
+      <span>Settings</span>
+    </a>
+  </nav>
+
+  <script src="js/api.js?v=1787946236"></script>
+  <script src="js/utils.js?v=1787946236"></script>
+  <script src="js/habitStudio.js?v=1787946236"></script>
+  <script src="js/app.js?v=1787946236"></script>
+  <script>
+    function toggleQuickTheme() {
+      const current = document.documentElement.getAttribute('data-theme') || 'dark';
+      const next = current === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('committed_theme' || localStorage.getItem('habitkit_theme'), next);
+      document.getElementById('themeIcon').setAttribute('data-lucide', next === 'dark' ? 'moon' : 'sun');
+      lucide.createIcons();
+    }
+  </script>
+</body>
+</html>

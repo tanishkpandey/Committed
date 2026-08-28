@@ -1,0 +1,139 @@
+/* Fluid Micro-Interactions & Floating XP */
+
+@keyframes tilePress {
+  0% { transform: scale(0.82); }
+  50% { transform: scale(1.18); }
+  100% { transform: scale(1); }
+}
+
+.tile-pop {
+  animation: tilePress 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+  will-change: transform;
+}
+
+@keyframes checkPop {
+  0% { transform: scale(0.85); }
+  50% { transform: scale(1.12); }
+  100% { transform: scale(1); }
+}
+
+.check-pop {
+  animation: checkPop 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes floatXP {
+  0% {
+    opacity: 0;
+    transform: translateY(4px) scale(0.85);
+  }
+  20% {
+    opacity: 1;
+    transform: translateY(-8px) scale(1.05);
+  }
+  75% {
+    opacity: 1;
+    transform: translateY(-22px) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-32px) scale(0.9);
+  }
+}
+
+.floating-xp-pill {
+  position: fixed;
+  pointer-events: none;
+  background: linear-gradient(135deg, #10b981, #06b6d4);
+  color: #ffffff;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  padding: 0.2rem 0.55rem;
+  border-radius: var(--radius-full);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+  z-index: 9999;
+  animation: floatXP 0.85s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes pageEntry {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: pageEntry 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes popIn {
+  0% { transform: scale(0.7); opacity: 0; }
+  70% { transform: scale(1.12); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.animate-pop-in {
+  animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.segmented-control {
+  display: flex;
+  background-color: var(--bg-input);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 3px;
+  gap: 3px;
+}
+
+.segmented-btn {
+  flex: 1;
+  padding: 0.4rem 0.8rem;
+  border-radius: var(--radius-xs);
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+}
+
+.segmented-btn.active {
+  background-color: var(--bg-card);
+  color: var(--text-primary);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+}
+
+
+/* Rolling Level Number Animation (Slot / Odometer Effect) */
+.level-roll-container {
+  height: 48px;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 0.35rem;
+}
+
+.level-roll-track {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transform: translateY(0);
+  transition: transform 0.85s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.level-roll-track.rolled {
+  transform: translateY(-48px);
+}
+
+.level-roll-num {
+  height: 48px;
+  font-size: 2.2rem;
+  font-weight: 850;
+  letter-spacing: -0.02em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Habit Details - Committed</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="css/main.css?v=1787946236">
+  <link rel="stylesheet" href="css/components.css?v=1787946236">
+  <link rel="stylesheet" href="css/animations.css?v=1787946236">
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+  <div class="app-container">
+    <!-- Top Header Bar with Edit & Delete Actions -->
+    <header class="header-bar">
+      <a href="/" class="btn btn-secondary" style="padding: 0.45rem 0.8rem;">
+        <i data-lucide="arrow-left" style="width: 16px; height: 16px;"></i>
+        <span>Back</span>
+      </a>
+      <div style="display: flex; align-items: center; gap: 0.5rem;">
+        <button class="btn btn-secondary" onclick="openEditModal()" style="padding: 0.45rem 0.8rem;">
+          <i data-lucide="edit-3" style="width: 15px; height: 15px;"></i>
+          <span>Edit</span>
+        </button>
+        <button class="btn btn-secondary" onclick="deleteCurrentHabit()" style="color: var(--accent-rose); padding: 0.45rem 0.8rem;">
+          <i data-lucide="trash-2" style="width: 15px; height: 15px;"></i>
+          <span>Delete</span>
+        </button>
+      </div>
+    </header>
+
+    <main id="detailContainer">
+      <!-- Habit Card Header & Metrics -->
+      <div class="habit-card" style="margin-bottom: 1.15rem;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.15rem;">
+          <div style="display: flex; align-items: center; gap: 0.85rem; min-width: 0; flex: 1;">
+            <div class="habit-icon-badge" id="habitDetailBadge" style="width: 46px; height: 46px; border-radius: var(--radius-sm);">
+              <i data-lucide="zap"></i>
+            </div>
+            <div style="min-width: 0; flex: 1;">
+              <h1 id="habitDetailTitle" style="font-size: 1.25rem; font-weight: 800; letter-spacing: -0.02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Habit Details</h1>
+              <p id="habitDetailDesc" style="color: var(--text-muted); font-size: 0.8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Daily Goal</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3-Column Metrics -->
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; text-align: center; background: var(--bg-input); padding: 0.75rem 0.5rem; border-radius: var(--radius-sm); margin-bottom: 1.15rem;">
+          <div>
+            <div style="font-size: 0.68rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">Current Streak</div>
+            <div id="statCurrentStreak" style="font-size: 1.2rem; font-weight: 800; color: #f59e0b;">0d</div>
+          </div>
+          <div>
+            <div style="font-size: 0.68rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">Best Streak</div>
+            <div id="statLongestStreak" style="font-size: 1.2rem; font-weight: 800; color: #10b981;">0d</div>
+          </div>
+          <div>
+            <div style="font-size: 0.68rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">Total Logs</div>
+            <div id="statTotalCompletions" style="font-size: 1.2rem; font-weight: 800; color: #06b6d4;">0</div>
+          </div>
+        </div>
+
+        <!-- Sleek Segmented View Switcher -->
+        <div class="detail-view-switcher">
+          <button class="detail-view-btn active" id="btnViewYear" onclick="setViewMode('year')">
+            <i data-lucide="grid" style="width: 15px; height: 15px;"></i>
+            <span>Year Grid</span>
+          </button>
+          <button class="detail-view-btn" id="btnViewMonth" onclick="setViewMode('month')">
+            <i data-lucide="calendar" style="width: 15px; height: 15px;"></i>
+            <span>Months Breakdown</span>
+          </button>
+        </div>
+
+        <!-- 1. Full Current Year Grid View -->
+        <div id="yearGridWrapper">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.55rem;">
+            <span style="font-size: 0.78rem; font-weight: 750; color: var(--text-primary);" id="yearGridTitle">2026 Calendar Grid</span>
+            <span style="font-size: 0.72rem; color: var(--text-muted);" id="yearGridStatsLabel">Jan 1 – Dec 31</span>
+          </div>
+          <div class="grid-wrapper">
+            <div class="contribution-grid" id="yearGridContainer">
+              <!-- Rendered via habitDetail.js -->
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. Months Breakdown View -->
+        <div id="monthBreakdownWrapper" style="display: none;">
+          <div class="month-chips-scroll" id="monthChipsBar">
+            <!-- Rendered via habitDetail.js -->
+          </div>
+
+          <div class="months-breakdown-grid" id="monthBreakdownGrid">
+            <!-- Rendered via habitDetail.js -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Top 3 Streak History Section -->
+      <div class="habit-card">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
+          <div style="display: flex; align-items: center; gap: 0.4rem;">
+            <i data-lucide="flame" style="width: 16px; height: 16px; color: #f59e0b;"></i>
+            <h3 style="font-size: 0.92rem; font-weight: 750;">Top 3 Streak History</h3>
+          </div>
+          <span style="font-size: 0.72rem; color: var(--text-muted);">All-time records</span>
+        </div>
+        <div class="streak-history-list" id="streakHistoryList">
+          <!-- Rendered via habitDetail.js -->
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Edit Habit Modal -->
+  <div class="modal-overlay" id="editHabitModalOverlay">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 class="modal-title">Edit Habit</h3>
+        <button class="close-btn" onclick="closeEditModal()">
+          <i data-lucide="x" style="width: 22px; height: 22px;"></i>
+        </button>
+      </div>
+
+      <form onsubmit="saveHabitEdits(event)">
+        <div class="form-group">
+          <label class="form-label">Habit Name *</label>
+          <input type="text" class="form-input" id="editHabitTitle" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Goal / Note (Optional)</label>
+          <input type="text" class="form-input" id="editHabitDesc" placeholder="e.g. 15 mins daily">
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+          <div class="form-group">
+            <label class="form-label">Category</label>
+            <select class="form-select" id="editHabitCategory">
+              <!-- Dynamically populated -->
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Target Frequency</label>
+            <select class="form-select" id="editHabitFrequency">
+              <option value="7">7x / Week (Daily)</option>
+              <option value="6">6x / Week</option>
+              <option value="5">5x / Week</option>
+              <option value="4">4x / Week</option>
+              <option value="3">3x / Week (Gym)</option>
+              <option value="2">2x / Week</option>
+              <option value="1">1x / Week</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Grid Timeframe</label>
+          <select class="form-select" id="editHabitGridDays">
+            <option value="30">30 Days</option>
+            <option value="60">60 Days</option>
+            <option value="90">90 Days</option>
+            <option value="180">180 Days</option>
+            <option value="365">365 Days</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Color Theme</label>
+          <div class="palette-grid" id="editPaletteGrid"></div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Icon</label>
+          <div class="icon-picker-grid" id="editIconPickerGrid"></div>
+        </div>
+
+        <div style="display: flex; gap: 0.65rem; margin-top: 1.25rem;">
+          <button type="button" class="btn btn-secondary" style="flex: 1;" onclick="closeEditModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary" style="flex: 2;">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Clean 4-Tab Bottom Navigation -->
+  <nav class="bottom-nav">
+    <a href="/" class="nav-item active">
+      <i data-lucide="grid"></i>
+      <span>Habits</span>
+    </a>
+    <a href="/progress.html" class="nav-item">
+      <i data-lucide="award"></i>
+      <span>Progress</span>
+    </a>
+    <a href="/analytics.html" class="nav-item">
+      <i data-lucide="bar-chart-3"></i>
+      <span>Insights</span>
+    </a>
+    <a href="/settings.html" class="nav-item">
+      <i data-lucide="settings"></i>
+      <span>Settings</span>
+    </a>
+  </nav>
+
+  <script src="js/api.js?v=1787946236"></script>
+  <script src="js/utils.js?v=1787946236"></script>
+  <script src="js/habitDetail.js?v=1787946236"></script>
+</body>
+</html>

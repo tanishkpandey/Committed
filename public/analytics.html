@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Insights & Analytics - Committed</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="css/main.css?v=1787946236">
+  <link rel="stylesheet" href="css/components.css?v=1787946236">
+  <link rel="stylesheet" href="css/animations.css?v=1787946236">
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+  <div class="app-container">
+    <header class="header-bar">
+      <div>
+        <h1 class="app-title">Insights</h1>
+        <p style="font-size: 0.75rem; color: var(--text-muted);">Behavioral intelligence & consistency patterns</p>
+      </div>
+    </header>
+
+    <!-- 1. ACTION NEEDED: Streak at Risk -->
+    <div id="streakRiskContainer"></div>
+
+    <!-- 2. OVERVIEW: Consistency, Completion Rate, Active Habits, 30-Day Trend -->
+    <div class="ref-overview-header">
+      <div class="ref-section-tag">
+        <i data-lucide="pie-chart" style="width: 14px; height: 14px;"></i>
+        <span>Overview</span>
+      </div>
+      <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">Behavioral Pulse</span>
+    </div>
+
+    <div class="ref-overview-grid">
+      <!-- Card A: Overall Consistency -->
+      <div class="ref-overview-card">
+        <div class="ref-card-icon-badge" style="background: rgba(16, 185, 129, 0.15); color: #10b981;">
+          <i data-lucide="activity" style="width: 17px; height: 17px;"></i>
+        </div>
+        <div class="ref-card-val" id="ovConsistency">0%</div>
+        <div class="ref-card-label">Consistency</div>
+        <div class="ref-card-trend up">
+          <i data-lucide="check" style="width: 12px; height: 12px;"></i>
+          <span>Planned Targets</span>
+        </div>
+      </div>
+
+      <!-- Card B: Completion Rate -->
+      <div class="ref-overview-card">
+        <div class="ref-card-icon-badge" style="background: rgba(6, 182, 212, 0.15); color: #06b6d4;">
+          <i data-lucide="circle-dot" style="width: 17px; height: 17px;"></i>
+        </div>
+        <div class="ref-card-val" id="ovCompletionRate">0%</div>
+        <div class="ref-card-label">Completion Rate</div>
+        <div class="ref-card-trend up">
+          <i data-lucide="arrow-up-right" style="width: 12px; height: 12px;"></i>
+          <span>30-Day Reliability</span>
+        </div>
+      </div>
+
+      <!-- Card C: Active Habits -->
+      <div class="ref-overview-card">
+        <div class="ref-card-icon-badge" style="background: rgba(139, 92, 246, 0.15); color: #8b5cf6;">
+          <i data-lucide="layers" style="width: 17px; height: 17px;"></i>
+        </div>
+        <div class="ref-card-val" id="ovActiveHabits">0</div>
+        <div class="ref-card-label">Active Habits</div>
+        <div style="font-size: 0.68rem; color: var(--text-muted); font-weight: 700;">
+          Currently Tracked
+        </div>
+      </div>
+
+      <!-- Card D: 30-Day Trend -->
+      <div class="ref-overview-card">
+        <div class="ref-card-icon-badge" style="background: rgba(245, 158, 11, 0.15); color: #f59e0b;">
+          <i data-lucide="trending-up" style="width: 17px; height: 17px;"></i>
+        </div>
+        <div class="ref-card-val" id="ovTrendDelta">+0%</div>
+        <div class="ref-card-label">30-Day Change</div>
+        <div class="ref-card-trend up" id="ovTrendBadge">
+          <i data-lucide="trending-up" style="width: 12px; height: 12px;"></i>
+          <span>vs Last Month</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. HABIT ANALYTICS: Best Days & Completion Rate Curve -->
+    <div class="ref-section-tag" style="color: #8b5cf6; margin-bottom: 0.85rem;">
+      <i data-lucide="bar-chart-2" style="width: 14px; height: 14px;"></i>
+      <span>Habit Analytics</span>
+    </div>
+
+    <div class="analytics-two-col">
+      <!-- Best Days -->
+      <div class="chart-card-box">
+        <div class="chart-header-title">Best Days</div>
+        <div class="chart-header-sub">Identifies days when you perform best</div>
+        <div class="best-days-bars-container" id="bestDaysBarsContainer">
+          <!-- Rendered dynamically -->
+        </div>
+      </div>
+
+      <!-- Completion Rate Curve -->
+      <div class="chart-card-box">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+          <div>
+            <div class="chart-header-title">Completion Rate</div>
+            <div class="chart-header-sub">7-day execution curve</div>
+          </div>
+          <div style="background: rgba(139, 92, 246, 0.2); color: #c084fc; font-size: 0.75rem; font-weight: 850; padding: 0.25rem 0.55rem; border-radius: var(--radius-full);" id="curvePeakBadge">
+            --%
+          </div>
+        </div>
+        <div style="position: relative; height: 130px; width: 100%;">
+          <svg id="completionCurveSvg" viewBox="0 0 300 110" style="width: 100%; height: 100%; overflow: visible;"></svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. BEHAVIORAL INSIGHTS: Best Habit, Focus Area, Strongest Habit, Stable Anchor -->
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; margin-top: 1.25rem;">
+      <div class="ref-section-tag" style="color: #10b981;">
+        <i data-lucide="brain" style="width: 14px; height: 14px;"></i>
+        <span>Behavioral Insights</span>
+      </div>
+      <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">Patterns & Strengths</span>
+    </div>
+    <div class="insights-list" id="behavioralInsightsContainer">
+      <!-- Rendered dynamically -->
+    </div>
+
+    <!-- 5. CONSISTENCY PATTERNS: Monthly Consistency, Break Pattern, Bounce-Back Speed, Streak Resilience -->
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; margin-top: 1.25rem;">
+      <div class="ref-section-tag" style="color: #06b6d4;">
+        <i data-lucide="repeat" style="width: 14px; height: 14px;"></i>
+        <span>Consistency Patterns</span>
+      </div>
+      <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">Recovery & Cadence</span>
+    </div>
+    <div class="insights-list" id="consistencyPatternsContainer">
+      <!-- Rendered dynamically -->
+    </div>
+
+    <!-- 6. HISTORY: Monthly Check-ins -->
+    <div class="habit-card" style="margin-top: 1.25rem; margin-bottom: 1.25rem;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.85rem;">
+        <div>
+          <h3 style="font-size: 0.92rem; font-weight: 750;">Monthly Check-Ins</h3>
+          <p style="font-size: 0.72rem; color: var(--text-muted);">Historical execution volume over the last 6 months</p>
+        </div>
+        <span style="font-size: 0.72rem; color: var(--text-muted);">Last 6 Months</span>
+      </div>
+      <div id="monthlyChartContainer" style="display: flex; gap: 0.4rem; align-items: flex-end; padding-top: 1rem; min-height: 140px;"></div>
+    </div>
+
+    <!-- 7. MOTIVATION: Inspirational Quote Banner -->
+    <div class="quote-motivational-banner">
+      <div class="quote-left-group">
+        <div class="quote-icon-badge">
+          <i data-lucide="zap" style="width: 18px; height: 18px;"></i>
+        </div>
+        <div>
+          <div class="quote-bold-text">Discipline today, freedom tomorrow.</div>
+          <div class="quote-sub-text">You're building the life you've always wanted.</div>
+        </div>
+      </div>
+      <svg class="neon-wave-svg" viewBox="0 0 160 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M0 40C30 10 50 45 80 20C110 -5 130 35 160 15" stroke="url(#neonGrad)" stroke-width="3" stroke-linecap="round"/>
+        <defs>
+          <linearGradient id="neonGrad" x1="0" y1="20" x2="160" y2="20" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#EC4899" stop-opacity="0.3"/>
+            <stop offset="0.5" stop-color="#EC4899"/>
+            <stop offset="1" stop-color="#8B5CF6"/>
+          </linearGradient>
+        </defs>
+      </svg>
+    </div>
+  </div>
+
+  <!-- Bottom Navigation -->
+  <nav class="bottom-nav">
+    <a href="/" class="nav-item">
+      <i data-lucide="grid"></i>
+      <span>Habits</span>
+    </a>
+    <a href="/progress.html" class="nav-item">
+      <i data-lucide="award"></i>
+      <span>Progress</span>
+    </a>
+    <a href="/analytics.html" class="nav-item active">
+      <i data-lucide="bar-chart-3"></i>
+      <span>Insights</span>
+    </a>
+    <a href="/settings.html" class="nav-item">
+      <i data-lucide="settings"></i>
+      <span>Settings</span>
+    </a>
+  </nav>
+
+  <script src="js/api.js?v=1787946236"></script>
+  <script src="js/utils.js?v=1787946236"></script>
+  <script src="js/analytics.js?v=1787946236"></script>
+</body>
+</html>
