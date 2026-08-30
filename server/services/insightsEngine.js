@@ -155,9 +155,9 @@ function generateAdvancedInsights(habits = [], logs = []) {
       title: 'Best Habit',
       icon: 'award',
       color: '#10B981',
-      statValue: `${bestHabit.rate30}%`,
-      statSub: '30-Day Rate',
-      message: `Your most consistent habit is ${bestHabit.title} with solid daily follow-through.`
+      statValue: `${bestHabit.title}`,
+      statSub: `${bestHabit.rate30}% 30-Day Rate`,
+      message: `Your most consistent habit with solid daily follow-through.`
     });
   }
 
@@ -167,9 +167,9 @@ function generateAdvancedInsights(habits = [], logs = []) {
       title: 'Focus Area',
       icon: 'target',
       color: '#F59E0B',
-      statValue: `${weakestHabit.rate30}%`,
-      statSub: 'Needs Attention',
-      message: `Your least consistent habit is ${weakestHabit.title}. A short 3-day sprint will build momentum.`
+      statValue: `${weakestHabit.title}`,
+      statSub: `${weakestHabit.rate30}% Needs Attention`,
+      message: `Your least consistent habit. A short 3-day sprint will build momentum.`
     });
   }
 
@@ -181,9 +181,9 @@ function generateAdvancedInsights(habits = [], logs = []) {
       title: 'Strongest Habit / Growth',
       icon: 'trending-up',
       color: '#06B6D4',
-      statValue: `+${mostImproved.delta}%`,
-      statSub: `${mostImproved.prevRate30}% -> ${mostImproved.rate30}%`,
-      message: `${mostImproved.title} had your biggest positive leap over the last 30 days.`
+      statValue: `${mostImproved.title}`,
+      statSub: `+${mostImproved.delta}% 30-Day Growth`,
+      message: `Had your biggest positive leap over the last 30 days (${mostImproved.prevRate30}% -> ${mostImproved.rate30}%).`
     });
   }
 
@@ -196,7 +196,7 @@ function generateAdvancedInsights(habits = [], logs = []) {
     icon: consistencyTrendDelta >= 0 ? 'trending-up' : 'trending-down',
     color: consistencyTrendDelta >= 0 ? '#10B981' : '#F43F5E',
     statValue: `${consistencyTrendDelta >= 0 ? '+' : ''}${consistencyTrendDelta}%`,
-    statSub: 'vs Last Month',
+    statSub: '30-Day Trend',
     message: consistencyTrendDelta >= 0
       ? `Your consistency improved by +${consistencyTrendDelta}% compared with last month.`
       : `Your consistency changed by ${consistencyTrendDelta}% compared with last month.`
@@ -209,9 +209,9 @@ function generateAdvancedInsights(habits = [], logs = []) {
       title: 'Break Pattern',
       icon: 'clock',
       color: '#F59E0B',
-      statValue: `${Math.max(3, bestAllTime.avgStreak - 1)}-${bestAllTime.avgStreak + 2}d`,
-      statSub: 'Typical Run',
-      message: `Your ${bestAllTime.title} streaks most frequently sustain for ${Math.max(3, bestAllTime.avgStreak - 1)}-${bestAllTime.avgStreak + 2} days before taking a rest.`
+      statValue: `${Math.max(3, bestAllTime.avgStreak - 1)}-${bestAllTime.avgStreak + 2} Days`,
+      statSub: `${bestAllTime.title} Streak Run`,
+      message: `Your ${bestAllTime.title} streaks most frequently sustain for this duration before taking a rest.`
     });
 
     consistencyPatterns.push({
@@ -220,7 +220,7 @@ function generateAdvancedInsights(habits = [], logs = []) {
       icon: 'rotate-ccw',
       color: '#06B6D4',
       statValue: `${bestAllTime.avgGap} Days`,
-      statSub: 'Average Gap',
+      statSub: 'Recovery Gap',
       message: `After missing a scheduled day, you reliably bounce back within ${bestAllTime.avgGap} days.`
     });
 
@@ -230,9 +230,9 @@ function generateAdvancedInsights(habits = [], logs = []) {
         title: 'Streak Resilience',
         icon: 'zap',
         color: '#EC4899',
-        statValue: `${bestAllTime.longestStreak}d`,
-        statSub: 'Peak Recovery',
-        message: `High resilience: after missing ${bestAllTime.title}, you repeatedly rebuilt all the way to ${bestAllTime.longestStreak} days.`
+        statValue: `${bestAllTime.longestStreak} Days`,
+        statSub: `${bestAllTime.title} Best Run`,
+        message: `High resilience: after missing a day, you repeatedly rebuilt all the way to ${bestAllTime.longestStreak} days.`
       });
     }
   }

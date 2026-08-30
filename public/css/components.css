@@ -1393,15 +1393,18 @@
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 0.85rem;
   width: 100%;
+  text-align: left;
 }
 
 .insight-card-item {
   background-color: var(--bg-card);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
-  padding: 1rem 1.05rem 0.95rem;
+  padding: 1.05rem 1.15rem 1rem;
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
   transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
   position: relative;
@@ -1416,8 +1419,11 @@
 .insight-card-top {
   display: flex;
   align-items: center;
+  justify-content: flex-start;
   gap: 0.5rem;
-  margin-bottom: 0.85rem;
+  margin-bottom: 0.75rem;
+  width: 100%;
+  text-align: left;
 }
 
 .insight-card-top .insight-icon-box {
@@ -1437,26 +1443,35 @@
   letter-spacing: 0.05em;
   color: var(--text-muted);
   line-height: 1;
+  text-align: left;
 }
 
 .insight-hero-stat-group {
   margin-bottom: 0.65rem;
+  width: 100%;
+  text-align: left;
 }
 
 .insight-hero-stat-val {
-  font-size: 1.85rem;
+  font-size: 1.65rem;
   font-weight: 850;
-  letter-spacing: -0.03em;
-  line-height: 1;
-  margin-bottom: 0.35rem;
+  letter-spacing: -0.025em;
+  line-height: 1.15;
+  margin-bottom: 0.25rem;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
 }
 
 .insight-hero-stat-sub {
-  font-size: 0.7rem;
+  font-size: 0.72rem;
   font-weight: 750;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: var(--text-muted);
+  text-align: left;
 }
 
 .insight-message-text {
@@ -1467,6 +1482,8 @@
   border-top: 1px solid var(--border-subtle);
   padding-top: 0.65rem;
   margin-top: auto;
+  width: 100%;
+  text-align: left;
 }
 
 /* Mobile Swipeable Card Carousel (<= 640px) */
@@ -1478,9 +1495,10 @@
     scroll-snap-type: x mandatory !important;
     scroll-behavior: smooth !important;
     gap: 0.75rem !important;
-    padding: 0.2rem 0.25rem 0.65rem !important;
+    padding: 0.2rem 0.15rem 0.65rem !important;
     scrollbar-width: none !important;
     -webkit-overflow-scrolling: touch !important;
+    text-align: left !important;
   }
 
   .insights-list.insights-carousel::-webkit-scrollbar {
@@ -1491,9 +1509,11 @@
     flex: 0 0 85% !important;
     min-width: 85% !important;
     max-width: 85% !important;
-    scroll-snap-align: center !important;
+    scroll-snap-align: start !important;
     margin-bottom: 0 !important;
-    padding: 1rem 1rem 0.95rem !important;
+    padding: 1rem 1.05rem 0.95rem !important;
+    text-align: left !important;
+    align-items: flex-start !important;
   }
 
   .insights-list.insights-carousel .insight-card-item:active {
@@ -1503,10 +1523,11 @@
 
 .carousel-dots {
   display: none;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   gap: 0.35rem;
   margin-top: 0.55rem;
+  padding-left: 0.25rem;
 }
 
 @media (max-width: 640px) {
