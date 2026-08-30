@@ -454,3 +454,171 @@ const Utils = {
     };
   }
 };
+
+// Global Real-Time Network & Offline Health Monitor
+const NetworkMonitor = {
+  isOffline: false,
+  isSlow: false,
+  _bannerEl: null,
+  _hideTimer: null,
+  _dismissed: false,
+
+  init() {
+    this._createBannerDOM();
+    this._bindEvents();
+    this.checkStatus();
+  },
+
+  _createBannerDOM() {
+    if (this._bannerEl || document.getElementById('appNetworkBanner')) {
+      this._bannerEl = document.getElementById('appNetworkBanner');
+      return;
+    }
+    const el = document.createElement('div');
+    el.id = 'appNetworkBanner';
+    el.className = 'network-status-banner';
+    el.innerHTML = `
+      <div class="network-banner-content">
+        <div class="network-icon-wrap" id="networkIconWrap">
+          <i data-lucide="wifi-off"></i>
+        </div>
+        <div class="network-text-group">
+          <div class="network-banner-title" id="networkTitle">You are Offline</div>
+          <div class="network-banner-sub" id="networkSub">Please connect to a network to sync your habits.</div>
+        </div>
+        <button class="network-close-btn" id="networkCloseBtn" title="Dismiss" type="button">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+    `;
+    document.body.appendChild(el);
+    this._bannerEl = el;
+
+    const closeBtn = document.getElementById('networkCloseBtn');
+    if (closeBtn) {
+      closeBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this._dismissed = true;
+        this.hide();
+      });
+    }
+  },
+
+  _bindEvents() {
+    window.addEventListener('offline', () => {
+      this._dismissed = false;
+      this.showOffline();
+    });
+
+    window.addEventListener('online', () => {
+      this._dismissed = false;
+      this.showOnlineRecovered();
+    });
+
+    if ('connection' in navigator) {
+      const conn = navigator.connection;
+      conn.addEventListener('change', () => {
+        this.checkConnectionQuality();
+      });
+    }
+  },
+
+  checkStatus() {
+    if (!navigator.onLine) {
+      this.showOffline();
+    } else {
+      this.checkConnectionQuality();
+    }
+  },
+
+  checkConnectionQuality() {
+    if (!navigator.onLine) {
+      this.showOffline();
+      return;
+    }
+
+    if ('connection' in navigator) {
+      const conn = navigator.connection;
+      // If 2g, slow-2g or high latency or very low bandwidth
+      if (conn.effectiveType === 'slow-2g' || conn.effectiveType === '2g' || conn.rtt > 1200 || (conn.downlink > 0 && conn.downlink < 0.4)) {
+        this.showSlowNetwork();
+      }
+    }
+  },
+
+  showOffline() {
+    this.isOffline = true;
+    this._updateBanner({
+      type: 'offline',
+      icon: 'wifi-off',
+      title: 'You are Offline',
+      sub: 'Network disconnected. Please connect to internet to sync your habits.',
+      persistent: true
+    });
+  },
+
+  showSlowNetwork(customMsg) {
+    if (this.isOffline || this._dismissed) return;
+    this.isSlow = true;
+    this._updateBanner({
+      type: 'slow',
+      icon: 'zap-off',
+      title: 'Slow Network Detected',
+      sub: customMsg || 'Your connection is slow. Please move to an area with better network reception for smooth syncing.',
+      persistent: false,
+      autoHideMs: 8000
+    });
+  },
+
+  showOnlineRecovered() {
+    this.isOffline = false;
+    this.isSlow = false;
+    this._dismissed = false;
+    this._updateBanner({
+      type: 'online',
+      icon: 'wifi',
+      title: 'Back Online',
+      sub: 'Connected to network. Syncing data...',
+      persistent: false,
+      autoHideMs: 3000
+    });
+  },
+
+  _updateBanner({ type, icon, title, sub, persistent, autoHideMs }) {
+    if (!this._bannerEl) this._createBannerDOM();
+    if (this._hideTimer) {
+      clearTimeout(this._hideTimer);
+      this._hideTimer = null;
+    }
+
+    this._bannerEl.className = `network-status-banner visible type-${type}`;
+    const iconWrap = document.getElementById('networkIconWrap');
+    const titleEl = document.getElementById('networkTitle');
+    const subEl = document.getElementById('networkSub');
+
+    if (iconWrap) iconWrap.innerHTML = `<i data-lucide="${icon}"></i>`;
+    if (titleEl) titleEl.textContent = title;
+    if (subEl) subEl.textContent = sub;
+
+    if (window.lucide) lucide.createIcons();
+
+    if (!persistent && autoHideMs) {
+      this._hideTimer = setTimeout(() => {
+        this.hide();
+      }, autoHideMs);
+    }
+  },
+
+  hide() {
+    if (this._bannerEl) {
+      this._bannerEl.classList.remove('visible');
+    }
+  }
+};
+
+// Auto-initialize NetworkMonitor on DOM ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => NetworkMonitor.init());
+} else {
+  NetworkMonitor.init();
+}

@@ -3091,3 +3091,151 @@
     font-size: 0.6rem !important;
   }
 }
+
+/* ==============================================================================
+   Network Status & Offline / Slow Network Floating Banner
+   ============================================================================== */
+.network-status-banner {
+  position: fixed;
+  top: 1.25rem;
+  left: 50%;
+  transform: translateX(-50%) translateY(-150%);
+  z-index: 9999999;
+  max-width: 92vw;
+  width: 440px;
+  background: rgba(15, 23, 42, 0.95);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--radius-md, 14px);
+  padding: 0.75rem 1rem;
+  box-shadow: 0 16px 36px -4px rgba(0, 0, 0, 0.8), 0 0 1px 1px rgba(255, 255, 255, 0.1);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.25s ease;
+}
+
+.network-status-banner.visible {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.network-banner-content {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.network-icon-wrap {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.network-icon-wrap i {
+  width: 18px;
+  height: 18px;
+}
+
+.network-text-group {
+  flex: 1;
+  min-width: 0;
+  text-align: left;
+}
+
+.network-banner-title {
+  font-size: 0.85rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+  margin-bottom: 0.15rem;
+  color: var(--text-primary);
+}
+
+.network-banner-sub {
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+  line-height: 1.35;
+}
+
+.network-close-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 0.35rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.network-close-btn i {
+  width: 16px;
+  height: 16px;
+}
+
+.network-close-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-primary);
+}
+
+/* Status Type Variants */
+.network-status-banner.type-offline {
+  border-color: rgba(244, 63, 94, 0.5);
+  box-shadow: 0 16px 36px -4px rgba(244, 63, 94, 0.3), 0 0 20px rgba(244, 63, 94, 0.15);
+}
+
+.network-status-banner.type-offline .network-icon-wrap {
+  background: rgba(244, 63, 94, 0.18);
+  color: #f43f5e;
+  box-shadow: 0 0 12px rgba(244, 63, 94, 0.3);
+}
+
+.network-status-banner.type-offline .network-banner-title {
+  color: #f43f5e;
+}
+
+.network-status-banner.type-slow {
+  border-color: rgba(245, 158, 11, 0.5);
+  box-shadow: 0 16px 36px -4px rgba(245, 158, 11, 0.3), 0 0 20px rgba(245, 158, 11, 0.15);
+}
+
+.network-status-banner.type-slow .network-icon-wrap {
+  background: rgba(245, 158, 11, 0.18);
+  color: #f59e0b;
+  box-shadow: 0 0 12px rgba(245, 158, 11, 0.3);
+}
+
+.network-status-banner.type-slow .network-banner-title {
+  color: #f59e0b;
+}
+
+.network-status-banner.type-online {
+  border-color: rgba(16, 185, 129, 0.5);
+  box-shadow: 0 16px 36px -4px rgba(16, 185, 129, 0.3), 0 0 20px rgba(16, 185, 129, 0.15);
+}
+
+.network-status-banner.type-online .network-icon-wrap {
+  background: rgba(16, 185, 129, 0.18);
+  color: #10b981;
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.3);
+}
+
+.network-status-banner.type-online .network-banner-title {
+  color: #10b981;
+}
+
+@media (max-width: 480px) {
+  .network-status-banner {
+    top: 0.85rem;
+    padding: 0.65rem 0.85rem;
+  }
+}

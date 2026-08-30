@@ -16,17 +16,26 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok', app: 'Committed', timestamp: new Date().toISOString() });
 });
 
-// Disable browser caching for instant development updates
+// Performance & Security Headers
 app.use((req, res, next) => {
-  res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
-  res.set('Pragma', 'no-cache');
-  res.set('Expires', '0');
+  res.set('X-Content-Type-Options', 'nosniff');
+  res.set('Connection', 'keep-alive');
+  if (req.path.startsWith('/api')) {
+    res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+  }
   next();
 });
 
 app.use(express.static(path.join(__dirname, '..', 'public'), {
-  etag: false,
-  maxAge: 0
+  etag: true,
+  maxAge: '1h',
+  setHeaders: (res, path) => {
+    if (path.endsWith('.html')) {
+      res.set('Cache-Control', 'no-cache, must-revalidate');
+    } else {
+      res.set('Cache-Control', 'public, max-age=3600');
+    }
+  }
 }));
 
 app.use('/api', apiRoutes);

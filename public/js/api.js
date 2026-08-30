@@ -1,102 +1,176 @@
-// Committed REST API Client
+// Committed Intelligent REST API Client with SWR Caching & Network Intelligence
 const API = {
   baseUrl: '/api',
+  _memoryCache: new Map(),
+
+  async _request(url, options = {}, cacheKey = null) {
+    let slowTimer = null;
+    
+    // Trigger slow-network warning if request takes longer than 2.8s
+    if (window.NetworkMonitor) {
+      slowTimer = setTimeout(() => {
+        NetworkMonitor.showSlowNetwork('Connection is slow. Please move to an area with stronger network reception for instant syncing.');
+      }, 2800);
+    }
+
+    try {
+      const res = await fetch(url, options);
+      if (slowTimer) clearTimeout(slowTimer);
+
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`);
+      }
+
+      const data = await res.json();
+
+      // Cache successful GET responses in memory & sessionStorage
+      if (cacheKey && data && data.success) {
+        this._memoryCache.set(cacheKey, data);
+        try {
+          sessionStorage.setItem(`committed_cache_${cacheKey}`, JSON.stringify(data));
+        } catch (e) {}
+      }
+
+      return data;
+    } catch (err) {
+      if (slowTimer) clearTimeout(slowTimer);
+
+      const isNetworkError = !navigator.onLine || 
+        err.message.includes('Failed to fetch') || 
+        err.message.includes('NetworkError') ||
+        err.name === 'TypeError';
+
+      if (isNetworkError && window.NetworkMonitor) {
+        NetworkMonitor.showOffline();
+      }
+
+      // If offline/network failed, serve cached data gracefully
+      if (cacheKey) {
+        if (this._memoryCache.has(cacheKey)) {
+          console.warn(`[API] Serving in-memory cached ${cacheKey} data.`);
+          return this._memoryCache.get(cacheKey);
+        }
+        try {
+          const cached = sessionStorage.getItem(`committed_cache_${cacheKey}`);
+          if (cached) {
+            console.warn(`[API] Serving sessionStorage cached ${cacheKey} data.`);
+            const parsed = JSON.parse(cached);
+            this._memoryCache.set(cacheKey, parsed);
+            return parsed;
+          }
+        } catch (e) {}
+      }
+
+      throw err;
+    }
+  },
+
+  _invalidateCache(keys = []) {
+    if (keys.length === 0) {
+      this._memoryCache.clear();
+      try {
+        Object.keys(sessionStorage).forEach(k => {
+          if (k.startsWith('committed_cache_')) sessionStorage.removeItem(k);
+        });
+      } catch (e) {}
+    } else {
+      keys.forEach(k => {
+        this._memoryCache.delete(k);
+        try {
+          sessionStorage.removeItem(`committed_cache_${k}`);
+        } catch (e) {}
+      });
+    }
+  },
 
   async getHabits(category = 'All') {
     const url = category && category !== 'All' 
       ? `${this.baseUrl}/habits?category=${encodeURIComponent(category)}`
       : `${this.baseUrl}/habits`;
-    const res = await fetch(url);
-    return res.json();
+    return this._request(url, {}, `habits_${category}`);
   },
 
   async getHabitById(id) {
-    const res = await fetch(`${this.baseUrl}/habits/${id}`);
-    return res.json();
+    return this._request(`${this.baseUrl}/habits/${id}`, {}, `habit_${id}`);
   },
 
   async createHabit(habitData) {
-    const res = await fetch(`${this.baseUrl}/habits`, {
+    this._invalidateCache();
+    return this._request(`${this.baseUrl}/habits`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(habitData)
     });
-    return res.json();
   },
 
   async updateHabit(id, updates) {
-    const res = await fetch(`${this.baseUrl}/habits/${id}`, {
+    this._invalidateCache();
+    return this._request(`${this.baseUrl}/habits/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(updates)
     });
-    return res.json();
   },
 
   async deleteHabit(id) {
-    const res = await fetch(`${this.baseUrl}/habits/${id}`, {
+    this._invalidateCache();
+    return this._request(`${this.baseUrl}/habits/${id}`, {
       method: 'DELETE'
     });
-    return res.json();
   },
 
   async getCategories() {
-    const res = await fetch(`${this.baseUrl}/categories`);
-    return res.json();
+    return this._request(`${this.baseUrl}/categories`, {}, 'categories');
   },
 
   async createCategory(categoryData) {
-    const res = await fetch(`${this.baseUrl}/categories`, {
+    this._invalidateCache(['categories']);
+    return this._request(`${this.baseUrl}/categories`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(categoryData)
     });
-    return res.json();
   },
 
   async updateCategory(id, updates) {
-    const res = await fetch(`${this.baseUrl}/categories/${id}`, {
+    this._invalidateCache(['categories']);
+    return this._request(`${this.baseUrl}/categories/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(updates)
     });
-    return res.json();
   },
 
   async deleteCategory(id) {
-    const res = await fetch(`${this.baseUrl}/categories/${id}`, {
+    this._invalidateCache(['categories']);
+    return this._request(`${this.baseUrl}/categories/${id}`, {
       method: 'DELETE'
     });
-    return res.json();
   },
 
   async toggleLog(habitId, date) {
-    const res = await fetch(`${this.baseUrl}/logs/toggle`, {
+    this._invalidateCache();
+    return this._request(`${this.baseUrl}/logs/toggle`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ habit_id: habitId, date })
     });
-    return res.json();
   },
 
   async getProgression() {
-    const res = await fetch(`${this.baseUrl}/progression`);
-    return res.json();
+    return this._request(`${this.baseUrl}/progression`, {}, 'progression');
   },
 
   async getXPHistory() {
-    const res = await fetch(`${this.baseUrl}/progression/history`);
-    return res.json();
+    return this._request(`${this.baseUrl}/progression/history`, {}, 'xp_history');
   },
 
   async getAchievements() {
-    const res = await fetch(`${this.baseUrl}/progression/achievements`);
-    return res.json();
+    return this._request(`${this.baseUrl}/progression/achievements`, {}, 'achievements');
   },
 
   async getAnalytics() {
-    const res = await fetch(`${this.baseUrl}/analytics`);
-    return res.json();
+    return this._request(`${this.baseUrl}/analytics`, {}, 'analytics');
   },
 
   async exportBackup() {
@@ -104,11 +178,11 @@ const API = {
   },
 
   async importBackup(backupData) {
-    const res = await fetch(`${this.baseUrl}/backup/import`, {
+    this._invalidateCache();
+    return this._request(`${this.baseUrl}/backup/import`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(backupData)
     });
-    return res.json();
   }
 };
