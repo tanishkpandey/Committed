@@ -87,16 +87,8 @@ const BADGE_CATALOG = {
 };
 
 function generateBadgeSVG(badgeId, unlocked = true) {
-  const conf = BADGE_CATALOG[badgeId] || {
-    displayNum: '★',
-    unitText: 'BADGE',
-    ribbon: 'none',
-    category: 'streak',
-    top: 'url(#streakTop)',
-    bottom: 'url(#streakBottom)',
-    ribbonColor: '#927FF2',
-    ribbonShadow: '#6352B9'
-  };
+  const conf = BADGE_CATALOG[badgeId] || BADGE_CATALOG.streak_7;
+  const uid = 'b_' + badgeId.replace(/[^a-zA-Z0-9_]/g, '_') + (unlocked ? '_u' : '_l');
 
   const numStr = String(conf.displayNum);
   let numClass = 'badge-svg-number';
@@ -109,22 +101,89 @@ function generateBadgeSVG(badgeId, unlocked = true) {
   const yNum = conf.ribbon === 'none' ? 36 : (conf.category === 'volume' ? 44 : 40);
   const yUnit = conf.ribbon === 'none' ? 72 : 75;
 
-  let ribbonEl = '';
-  if (conf.ribbon === 'ribbon') {
-    ribbonEl = '<use href="#badge-ribbon"></use>';
-  } else if (conf.ribbon === 'starRibbon') {
-    ribbonEl = '<use href="#badge-starRibbon"></use>';
+  let topC1, topC2, botC1, botC2, ribColor, ribShadow;
+  if (!unlocked) {
+    topC1 = '#2c3038'; topC2 = '#3d4450';
+    botC1 = '#4b5563'; botC2 = '#1f242d';
+    ribColor = '#4b5563'; ribShadow = '#1f242d';
+  } else if (conf.category === 'streak') {
+    topC1 = '#40318F'; topC2 = '#6752D6';
+    botC1 = '#806BE7'; botC2 = '#342779';
+    ribColor = conf.ribbonColor || '#927FF2';
+    ribShadow = conf.ribbonShadow || '#6352B9';
+  } else if (conf.category === 'perfect_days') {
+    topC1 = '#C78312'; topC2 = '#F3B52E';
+    botC1 = '#FFD66B'; botC2 = '#D99217';
+    ribColor = conf.ribbonColor || '#FFD36A';
+    ribShadow = conf.ribbonShadow || '#B87912';
+  } else if (conf.category === 'consistency') {
+    topC1 = '#176A61'; topC2 = '#2D9A89';
+    botC1 = '#55C7B0'; botC2 = '#1C7065';
+    ribColor = conf.ribbonColor || '#6DD9C1';
+    ribShadow = conf.ribbonShadow || '#438F82';
+  } else {
+    topC1 = '#164B78'; topC2 = '#247DB5';
+    botC1 = '#5DB8E8'; botC2 = '#1C5D89';
+    ribColor = conf.ribbonColor || '#65B9E8';
+    ribShadow = conf.ribbonShadow || '#397EA9';
   }
 
-  const topGrad = unlocked ? conf.top : 'url(#lockedTop)';
-  const bottomGrad = unlocked ? conf.bottom : 'url(#lockedBottom)';
-  const ribbonCol = unlocked ? conf.ribbonColor : '#4b5563';
-  const ribbonShad = unlocked ? conf.ribbonShadow : '#1f242d';
+  const hexD = "M 38,0 L 92,0 Q 98,0 101,6 L 124,49 Q 127,55 124,61 L 101,104 Q 98,110 92,110 L 38,110 Q 32,110 29,104 L 6,61 Q 3,55 6,49 L 29,6 Q 32,0 38,0 Z";
+
+  let ribbonMarkup = '';
+  if (conf.ribbon === 'ribbon' || conf.ribbon === 'starRibbon') {
+    const starMarkup = conf.ribbon === 'starRibbon' ? `
+      <path d="M18,37 L20,42 L25,42 L21,45 L23,50 L18,47 L13,50 L15,45 L11,42 L16,42 Z" fill="#FFFFFF"/>
+      <path d="M112,37 L114,42 L119,42 L115,45 L117,50 L112,47 L107,50 L109,45 L105,42 L110,42 Z" fill="#FFFFFF"/>
+    ` : '';
+
+    ribbonMarkup = `
+      <path d="M15 44 L-30 44 L-15 59 L-30 74 L15 74 Z" fill="${ribShadow}"/>
+      <path d="M-15 59 L15 74 L15 59 Z" fill="#000000" fill-opacity="0.25"/>
+      <path d="M115 44 L160 44 L145 59 L160 74 L115 74 Z" fill="${ribShadow}"/>
+      <path d="M145 59 L115 74 L115 59 Z" fill="#000000" fill-opacity="0.25"/>
+      <path d="M-15 29 Q65 14 145 29 L145 59 Q65 44 -15 59 Z" fill="${ribColor}" filter="url(#ribbonShad_${uid})"/>
+      ${starMarkup}
+    `;
+  }
 
   return `
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="-35 -5 200 125" class="milestone-badge-svg ${unlocked ? 'unlocked' : 'locked'}" style="--badge-top: ${topGrad}; --badge-bottom: ${bottomGrad}; --ribbon: ${ribbonCol}; --ribbon-shadow: ${ribbonShad};">
-      <use href="#badge-baseBadge"></use>
-      ${ribbonEl}
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="-35 -5 200 125" class="milestone-badge-svg ${unlocked ? 'unlocked' : 'locked'}">
+      <defs>
+        <linearGradient id="top_${uid}" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="${topC1}"/>
+          <stop offset="100%" stop-color="${topC2}"/>
+        </linearGradient>
+        <linearGradient id="bot_${uid}" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="${botC1}"/>
+          <stop offset="100%" stop-color="${botC2}"/>
+        </linearGradient>
+        <clipPath id="clip_${uid}">
+          <path d="${hexD}"/>
+        </clipPath>
+        <filter id="badgeShad_${uid}" x="-30%" y="-30%" width="160%" height="170%">
+          <feDropShadow dx="0" dy="5" stdDeviation="4" flood-color="#000000" flood-opacity="0.35"/>
+        </filter>
+        <filter id="ribbonShad_${uid}" x="-30%" y="-30%" width="160%" height="170%">
+          <feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#000000" flood-opacity="0.28"/>
+        </filter>
+      </defs>
+
+      <!-- Base Hexagon -->
+      <g filter="url(#badgeShad_${uid})">
+        <path d="${hexD}" fill="url(#top_${uid})"/>
+        <g clip-path="url(#clip_${uid})">
+          <path d="M0 58 Q65 43 130 58 L130 115 L0 115 Z" fill="url(#bot_${uid})"/>
+        </g>
+      </g>
+
+      <!-- Top Highlight Arc -->
+      <path d="M30 7 Q65 -1 100 7" fill="none" stroke="#FFFFFF" stroke-opacity="0.25" stroke-width="2.2"/>
+
+      <!-- Ribbon -->
+      ${ribbonMarkup}
+
+      <!-- Badge Text -->
       <text x="65" y="${yNum}" class="${numClass}">${conf.displayNum}</text>
       <text x="65" y="${yUnit}" class="badge-svg-unit">${conf.unitText}</text>
     </svg>
