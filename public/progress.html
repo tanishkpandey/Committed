@@ -148,7 +148,7 @@
               <i data-lucide="award" style="width: 22px; height: 22px;"></i>
             </div>
             <div style="text-align: left;">
-              <div class="hero-level-title" id="heroLevelNum" style="font-size: 1.45rem;">LEVEL 1</div>
+              <div class="hero-level-title" id="heroLevelNum" style="font-size: 1.45rem;"><span class="skeleton-shimmer" style="width: 90px; height: 1.45rem; display: inline-block;"></span></div>
               <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">Mastery Rank</div>
             </div>
           </div>
@@ -163,8 +163,8 @@
         </div>
 
         <div class="hero-xp-labels">
-          <span id="heroXpCurrentText">0 / 100 XP</span>
-          <span id="heroXpRemainingText">100 XP until Level 2</span>
+          <span id="heroXpCurrentText"><span class="skeleton-shimmer" style="width: 75px; height: 12px; display: inline-block;"></span></span>
+          <span id="heroXpRemainingText"><span class="skeleton-shimmer" style="width: 100px; height: 12px; display: inline-block;"></span></span>
         </div>
       </div>
     </section>
@@ -185,7 +185,7 @@
           <div class="ref-card-icon-badge" style="background: rgba(16, 185, 129, 0.15); color: #10b981;">
             <i data-lucide="sparkles" style="width: 17px; height: 17px;"></i>
           </div>
-          <div class="ref-card-val" id="statLifetimeXP">0</div>
+          <div class="ref-card-val" id="statLifetimeXP"><span class="skeleton-shimmer" style="width: 45px; height: 1.5rem; display: inline-block;"></span></div>
           <div class="ref-card-label">Total XP</div>
           <div class="ref-card-trend up">
             <i data-lucide="zap" style="width: 12px; height: 12px;"></i>
@@ -198,7 +198,7 @@
           <div class="ref-card-icon-badge" style="background: rgba(6, 182, 212, 0.15); color: #06b6d4;">
             <i data-lucide="check-circle-2" style="width: 17px; height: 17px;"></i>
           </div>
-          <div class="ref-card-val" id="statTotalCompletions">0</div>
+          <div class="ref-card-val" id="statTotalCompletions"><span class="skeleton-shimmer" style="width: 45px; height: 1.5rem; display: inline-block;"></span></div>
           <div class="ref-card-label">Completions</div>
           <div class="ref-card-trend up">
             <i data-lucide="check" style="width: 12px; height: 12px;"></i>
@@ -211,7 +211,7 @@
           <div class="ref-card-icon-badge" style="background: rgba(245, 158, 11, 0.15); color: #f59e0b;">
             <i data-lucide="star" style="width: 17px; height: 17px;"></i>
           </div>
-          <div class="ref-card-val" id="statPerfectDays">0</div>
+          <div class="ref-card-val" id="statPerfectDays"><span class="skeleton-shimmer" style="width: 30px; height: 1.5rem; display: inline-block;"></span></div>
           <div class="ref-card-label">Perfect Days</div>
           <div style="font-size: 0.68rem; color: var(--text-muted); font-weight: 700;">
             100% Habit Days
@@ -223,7 +223,7 @@
           <div class="ref-card-icon-badge" style="background: rgba(236, 72, 153, 0.15); color: #ec4899;">
             <i data-lucide="flame" style="width: 17px; height: 17px;"></i>
           </div>
-          <div class="ref-card-val" id="statBestStreak">0d</div>
+          <div class="ref-card-val" id="statBestStreak"><span class="skeleton-shimmer" style="width: 40px; height: 1.5rem; display: inline-block;"></span></div>
           <div class="ref-card-label">Best Streak</div>
           <div style="font-size: 0.68rem; color: var(--text-muted); font-weight: 700;">
             Personal Record
@@ -250,7 +250,18 @@
 
       <!-- Achieved Badges Showcase Grid -->
       <div class="achieved-badges-wrapper" id="achievedBadgesContainer">
-        <!-- Loaded dynamically via progress.js -->
+        <div class="skeleton-milestone-grid">
+          <div class="skeleton-milestone-card">
+            <div class="skeleton-shimmer skeleton-circle" style="width: 60px; height: 60px;"></div>
+            <div class="skeleton-shimmer" style="width: 80px; height: 14px;"></div>
+            <div class="skeleton-shimmer" style="width: 50px; height: 10px;"></div>
+          </div>
+          <div class="skeleton-milestone-card">
+            <div class="skeleton-shimmer skeleton-circle" style="width: 60px; height: 60px;"></div>
+            <div class="skeleton-shimmer" style="width: 80px; height: 14px;"></div>
+            <div class="skeleton-shimmer" style="width: 50px; height: 10px;"></div>
+          </div>
+        </div>
       </div>
     </section>
   </div>

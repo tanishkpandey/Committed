@@ -38,7 +38,7 @@
           <div class="ref-card-icon-badge" style="background: rgba(16, 185, 129, 0.15); color: #10b981;">
             <i data-lucide="activity" style="width: 17px; height: 17px;"></i>
           </div>
-          <div class="ref-card-val" id="ovConsistency">0%</div>
+          <div class="ref-card-val" id="ovConsistency"><span class="skeleton-shimmer" style="width: 45px; height: 1.5rem; display: inline-block;"></span></div>
           <div class="ref-card-label">Consistency</div>
           <div class="ref-card-trend up">
             <i data-lucide="check" style="width: 12px; height: 12px;"></i>
@@ -51,7 +51,7 @@
           <div class="ref-card-icon-badge" style="background: rgba(6, 182, 212, 0.15); color: #06b6d4;">
             <i data-lucide="circle-dot" style="width: 17px; height: 17px;"></i>
           </div>
-          <div class="ref-card-val" id="ovCompletionRate">0%</div>
+          <div class="ref-card-val" id="ovCompletionRate"><span class="skeleton-shimmer" style="width: 45px; height: 1.5rem; display: inline-block;"></span></div>
           <div class="ref-card-label">Completion Rate</div>
           <div class="ref-card-trend up">
             <i data-lucide="arrow-up-right" style="width: 12px; height: 12px;"></i>
@@ -64,7 +64,7 @@
           <div class="ref-card-icon-badge" style="background: rgba(139, 92, 246, 0.15); color: #8b5cf6;">
             <i data-lucide="layers" style="width: 17px; height: 17px;"></i>
           </div>
-          <div class="ref-card-val" id="ovActiveHabits">0</div>
+          <div class="ref-card-val" id="ovActiveHabits"><span class="skeleton-shimmer" style="width: 30px; height: 1.5rem; display: inline-block;"></span></div>
           <div class="ref-card-label">Active Habits</div>
           <div style="font-size: 0.68rem; color: var(--text-muted); font-weight: 700;">
             Currently Tracked
@@ -76,7 +76,7 @@
           <div class="ref-card-icon-badge" style="background: rgba(245, 158, 11, 0.15); color: #f59e0b;">
             <i data-lucide="trending-up" style="width: 17px; height: 17px;"></i>
           </div>
-          <div class="ref-card-val" id="ovTrendDelta">+0%</div>
+          <div class="ref-card-val" id="ovTrendDelta"><span class="skeleton-shimmer" style="width: 40px; height: 1.5rem; display: inline-block;"></span></div>
           <div class="ref-card-label">30-Day Change</div>
           <div class="ref-card-trend up" id="ovTrendBadge">
             <i data-lucide="trending-up" style="width: 12px; height: 12px;"></i>
@@ -105,7 +105,7 @@
               <div class="chart-header-sub">30-day compounding growth</div>
             </div>
             <div style="background: rgba(16, 185, 129, 0.15); color: #10b981; font-size: 0.75rem; font-weight: 850; padding: 0.25rem 0.55rem; border-radius: var(--radius-full);" id="velocityTotalBadge">
-              +0 Logs
+              ...
             </div>
           </div>
           <div style="position: relative; height: 130px; width: 100%;">
@@ -121,7 +121,7 @@
               <div class="chart-header-sub">7-day execution curve</div>
             </div>
             <div style="background: rgba(139, 92, 246, 0.2); color: #c084fc; font-size: 0.75rem; font-weight: 850; padding: 0.25rem 0.55rem; border-radius: var(--radius-full);" id="curvePeakBadge">
-              --%
+              ...
             </div>
           </div>
           <div style="position: relative; height: 130px; width: 100%;">
@@ -143,12 +143,22 @@
 
       <div class="habit-card" style="margin-bottom: 0;">
         <div class="neon-donut-container" id="habitDistributionContainer">
-          <!-- Rendered dynamically via analytics.js -->
+          <div class="neon-donut-layout">
+            <div class="neon-donut-visual">
+              <div class="skeleton-shimmer skeleton-circle" style="width: 140px; height: 140px;"></div>
+            </div>
+            <div class="neon-donut-breakdown">
+              <div class="neon-donut-grid">
+                <div class="neon-breakdown-card"><div class="skeleton-shimmer" style="width: 100%; height: 50px;"></div></div>
+                <div class="neon-breakdown-card"><div class="skeleton-shimmer" style="width: 100%; height: 50px;"></div></div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
 
-    <!-- 3. BEHAVIORAL INSIGHTS SECTION (Swipeable Cards on Mobile) -->
+    <!-- 4. BEHAVIORAL INSIGHTS SECTION (Swipeable Cards on Mobile) -->
     <section class="analytics-section">
       <div class="ref-overview-header">
         <div class="ref-section-tag" style="color: #10b981;">
@@ -160,13 +170,14 @@
       
       <div class="insights-carousel-wrapper">
         <div class="insights-list insights-carousel" id="behavioralInsightsContainer">
-          <!-- Rendered dynamically via analytics.js -->
+          <div class="insight-card-item"><div class="skeleton-shimmer" style="width: 100%; height: 90px;"></div></div>
+          <div class="insight-card-item"><div class="skeleton-shimmer" style="width: 100%; height: 90px;"></div></div>
         </div>
         <div class="carousel-dots" id="behavioralDots"></div>
       </div>
     </section>
 
-    <!-- 4. CONSISTENCY PATTERNS SECTION (Swipeable Cards on Mobile) -->
+    <!-- 5. CONSISTENCY PATTERNS SECTION (Swipeable Cards on Mobile) -->
     <section class="analytics-section">
       <div class="ref-overview-header">
         <div class="ref-section-tag" style="color: #06b6d4;">
@@ -178,13 +189,14 @@
 
       <div class="insights-carousel-wrapper">
         <div class="insights-list insights-carousel" id="consistencyPatternsContainer">
-          <!-- Rendered dynamically via analytics.js -->
+          <div class="insight-card-item"><div class="skeleton-shimmer" style="width: 100%; height: 90px;"></div></div>
+          <div class="insight-card-item"><div class="skeleton-shimmer" style="width: 100%; height: 90px;"></div></div>
         </div>
         <div class="carousel-dots" id="consistencyDots"></div>
       </div>
     </section>
 
-    <!-- 5. HISTORY SECTION: Monthly Check-ins -->
+    <!-- 6. HISTORY SECTION: Monthly Check-ins -->
     <section class="analytics-section">
       <div class="habit-card" style="margin-bottom: 0;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.85rem;">
@@ -194,7 +206,14 @@
           </div>
           <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">Last 6 Months</span>
         </div>
-        <div id="monthlyChartContainer" style="display: flex; gap: 0.4rem; align-items: flex-end; padding-top: 1rem; min-height: 140px;"></div>
+        <div id="monthlyChartContainer" style="display: flex; gap: 0.4rem; align-items: flex-end; padding-top: 1rem; min-height: 140px;">
+          <div class="skeleton-shimmer" style="flex: 1; height: 60px; border-radius: 6px;"></div>
+          <div class="skeleton-shimmer" style="flex: 1; height: 80px; border-radius: 6px;"></div>
+          <div class="skeleton-shimmer" style="flex: 1; height: 100px; border-radius: 6px;"></div>
+          <div class="skeleton-shimmer" style="flex: 1; height: 120px; border-radius: 6px;"></div>
+          <div class="skeleton-shimmer" style="flex: 1; height: 90px; border-radius: 6px;"></div>
+          <div class="skeleton-shimmer" style="flex: 1; height: 110px; border-radius: 6px;"></div>
+        </div>
       </div>
     </section>
 
