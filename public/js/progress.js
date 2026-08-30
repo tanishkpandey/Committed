@@ -120,7 +120,19 @@ function initBadgeHoverTooltips() {
     document.body.appendChild(tooltipEl);
   }
 
+  let badgeTooltipTimer = null;
+
+  const hideTooltip = () => {
+    if (badgeTooltipTimer) {
+      clearTimeout(badgeTooltipTimer);
+      badgeTooltipTimer = null;
+    }
+    tooltipEl.classList.remove('visible');
+  };
+
   const showTooltip = (badgeEl) => {
+    hideTooltip();
+
     const title = badgeEl.dataset.badgeTitle;
     const desc = badgeEl.dataset.badgeDesc;
     const xp = badgeEl.dataset.badgeXp;
@@ -151,10 +163,12 @@ function initBadgeHoverTooltips() {
     }
 
     tooltipEl.classList.add('visible');
-  };
 
-  const hideTooltip = () => {
-    tooltipEl.classList.remove('visible');
+    // Auto-hide after 1 second (1000ms)
+    badgeTooltipTimer = setTimeout(() => {
+      tooltipEl.classList.remove('visible');
+      badgeTooltipTimer = null;
+    }, 1000);
   };
 
   document.querySelectorAll('.achieved-badge-item').forEach(el => {
