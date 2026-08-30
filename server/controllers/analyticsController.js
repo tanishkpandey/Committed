@@ -19,32 +19,43 @@ exports.getGlobalAnalytics = async (req, res) => {
     const insightsData = generateAdvancedInsights(habits, logs);
     const activeHabits = habits.filter(h => !h.is_archived);
 
-    // 1. Best Days (Day of Week Breakdown Mon-Sun)
     const dayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-    const dayCounts = [0, 0, 0, 0, 0, 0, 0];
+    const today = new Date();
 
-    logs.forEach(l => {
-      if (!l.completed_date) return;
-      const [y, m, d] = l.completed_date.split('-').map(Number);
-      const jsDay = new Date(y, m - 1, d).getDay(); // 0 is Sun
-      const dayIndex = jsDay === 0 ? 6 : jsDay - 1;
-      dayCounts[dayIndex]++;
-    });
+    // Helper: format Date to YYYY-MM-DD
+    const toYMD = (d) => {
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${y}-${m}-${day}`;
+    };
 
-    const maxDayCount = Math.max(...dayCounts, 1);
-    const bestDays = dayNames.map((name, i) => {
-      const count = dayCounts[i];
-      const rate = Math.round((count / maxDayCount) * 100);
-      return { day: name, count, rate: Math.max(15, rate) };
-    });
+    // 1. 30-Day Cumulative Check-In Velocity
+    const cumulativeVelocity30 = [];
+    let runningTotal = 0;
+    for (let i = 29; i >= 0; i--) {
+      const d = new Date(today);
+      d.setDate(today.getDate() - i);
+      const dStr = toYMD(d);
+      const dayLogs = logs.filter(l => l.completed_date === dStr).length;
+      runningTotal += dayLogs;
+      const monthShort = d.toLocaleDateString('en-US', { month: 'short' });
+      const dayNum = d.getDate();
+
+      cumulativeVelocity30.push({
+        date: dStr,
+        label: `${monthShort} ${dayNum}`,
+        dailyCount: dayLogs,
+        cumulativeCount: runningTotal
+      });
+    }
 
     // 2. Weekly Completion Rate Curve (Last 7 Days)
     const weekCurve = [];
-    const today = new Date();
     for (let i = 6; i >= 0; i--) {
       const d = new Date(today);
       d.setDate(today.getDate() - i);
-      const dStr = formatYMD(d);
+      const dStr = toYMD(d);
       const dayName = dayNames[d.getDay() === 0 ? 6 : d.getDay() - 1];
       const dayLogs = logs.filter(l => l.completed_date === dStr).length;
       const possible = Math.max(activeHabits.length, 1);
@@ -57,7 +68,35 @@ exports.getGlobalAnalytics = async (req, res) => {
       });
     }
 
-    // 3. Monthly Check-ins History (Last 6 Months)
+    const PALETTE = ['#10B981', '#8B5CF6', '#EC4899', '#06B6D4', '#F59E0B', '#3B82F6', '#6366F1', '#F43F5E'];
+    const getHabitColor = (h, index) => {
+      if (h.color && h.color.startsWith('#')) return h.color;
+      if (h.color && COLOR_MAP[h.color]) return COLOR_MAP[h.color];
+      return PALETTE[index % PALETTE.length];
+    };
+
+    // 3. Habit Distribution & Balance (Last 30 Days Breakdown)
+    const cutoff30 = new Date(today);
+    cutoff30.setDate(today.getDate() - 30);
+    const cutoff30Str = toYMD(cutoff30);
+
+    const logsLast30 = logs.filter(l => l.completed_date >= cutoff30Str);
+    const total30Logs = Math.max(logsLast30.length, 1);
+
+    const habitDistribution = activeHabits.map((h, idx) => {
+      const count = logsLast30.filter(l => l.habit_id === h.id).length;
+      const pct = Math.round((count / total30Logs) * 100);
+      const colorHex = getHabitColor(h, idx);
+      return {
+        id: h.id,
+        title: h.title,
+        color: colorHex,
+        count,
+        percentage: pct
+      };
+    }).sort((a, b) => b.count - a.count);
+
+    // 4. Monthly Check-ins History (Last 6 Months)
     const monthlyCounts = [];
     for (let i = 5; i >= 0; i--) {
       const targetDate = new Date(today.getFullYear(), today.getMonth() - i, 1);
@@ -76,9 +115,9 @@ exports.getGlobalAnalytics = async (req, res) => {
       success: true,
       analytics: {
         overview: insightsData.overview,
-        streakRisks: insightsData.streakRisks,
-        bestDays,
+        cumulativeVelocity30,
         weekCurve,
+        habitDistribution,
         behavioralInsights: insightsData.behavioralInsights,
         consistencyPatterns: insightsData.consistencyPatterns,
         monthlyCounts

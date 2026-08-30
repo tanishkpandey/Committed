@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Insights & Analytics - Committed</title>
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
-  <link rel="stylesheet" href="css/main.css?v=1787950000">
-  <link rel="stylesheet" href="css/components.css?v=1787950000">
-  <link rel="stylesheet" href="css/animations.css?v=1787950000">
+  <link rel="stylesheet" href="css/main.css?v=1787953333">
+  <link rel="stylesheet" href="css/components.css?v=1787953333">
+  <link rel="stylesheet" href="css/animations.css?v=1787953333">
   <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
@@ -84,23 +84,30 @@
       </div>
     </section>
 
-    <!-- 2. HABIT ANALYTICS SECTION: Best Days & Completion Rate Curve -->
+    <!-- 2. HABIT ANALYTICS SECTION: 30-Day Velocity & 7-Day Completion Rate Curve -->
     <section class="analytics-section">
       <div class="ref-overview-header">
         <div class="ref-section-tag" style="color: #8b5cf6;">
           <i data-lucide="bar-chart-2" style="width: 14px; height: 14px;"></i>
           <span>Habit Analytics</span>
         </div>
-        <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">Execution Breakdown</span>
+        <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">Velocity & Momentum</span>
       </div>
 
       <div class="analytics-two-col">
-        <!-- Best Days -->
+        <!-- 30-Day Cumulative Velocity -->
         <div class="chart-card-box">
-          <div class="chart-header-title">Best Days</div>
-          <div class="chart-header-sub">Identifies days when you perform best</div>
-          <div class="best-days-bars-container" id="bestDaysBarsContainer">
-            <!-- Rendered dynamically -->
+          <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+            <div>
+              <div class="chart-header-title">Check-In Velocity</div>
+              <div class="chart-header-sub">30-day compounding growth</div>
+            </div>
+            <div style="background: rgba(16, 185, 129, 0.15); color: #10b981; font-size: 0.75rem; font-weight: 850; padding: 0.25rem 0.55rem; border-radius: var(--radius-full);" id="velocityTotalBadge">
+              +0 Logs
+            </div>
+          </div>
+          <div style="position: relative; height: 130px; width: 100%;">
+            <svg id="velocityCurveSvg" viewBox="0 0 300 110" style="width: 100%; height: 100%; overflow: visible;"></svg>
           </div>
         </div>
 
@@ -118,6 +125,23 @@
           <div style="position: relative; height: 130px; width: 100%;">
             <svg id="completionCurveSvg" viewBox="0 0 300 110" style="width: 100%; height: 100%; overflow: visible;"></svg>
           </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. HABIT DISTRIBUTION SECTION (Neon Donut & Breakdown) -->
+    <section class="analytics-section">
+      <div class="ref-overview-header">
+        <div class="ref-section-tag" style="color: #ec4899;">
+          <i data-lucide="pie-chart" style="width: 14px; height: 14px;"></i>
+          <span>Habit Distribution</span>
+        </div>
+        <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">30-Day Execution Share</span>
+      </div>
+
+      <div class="habit-card" style="margin-bottom: 0;">
+        <div class="neon-donut-container" id="habitDistributionContainer">
+          <!-- Rendered dynamically via analytics.js -->
         </div>
       </div>
     </section>
@@ -219,8 +243,8 @@
     </a>
   </nav>
 
-  <script src="js/api.js?v=1787948999"></script>
-  <script src="js/utils.js?v=1787948999"></script>
-  <script src="js/analytics.js?v=1787948999"></script>
+  <script src="js/api.js?v=1787951555"></script>
+  <script src="js/utils.js?v=1787951555"></script>
+  <script src="js/analytics.js?v=1787951555"></script>
 </body>
 </html>
