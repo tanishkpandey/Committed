@@ -143,20 +143,7 @@ function generateAdvancedInsights(habits = [], logs = []) {
     ? Math.round(habitMetrics.reduce((acc, h) => acc + h.rate30, 0) / habitMetrics.length)
     : 0;
 
-  // 1. Action Needed: Streak at Risk
-  const streakRisks = [];
-  habitMetrics.forEach(h => {
-    if (h.currentStreak >= 1 && !h.isLoggedToday) {
-      streakRisks.push({
-        id: h.id,
-        title: h.title,
-        streak: h.currentStreak,
-        message: `Your ${h.title} streak (${h.currentStreak}d) is at risk. Complete it today to stay on track!`
-      });
-    }
-  });
-
-  // 2. Behavioral Insights: Best Habit, Focus Area, Strongest Habit / Growth, Stable Anchor
+  // 1. Behavioral Insights: Best Habit, Focus Area, Strongest Habit / Growth
   const behavioralInsights = [];
   const sortedByRate = [...habitMetrics].sort((a, b) => b.rate30 - a.rate30);
   const bestHabit = sortedByRate[0];
@@ -197,19 +184,6 @@ function generateAdvancedInsights(habits = [], logs = []) {
       statValue: `+${mostImproved.delta}%`,
       statSub: `${mostImproved.prevRate30}% -> ${mostImproved.rate30}%`,
       message: `${mostImproved.title} had your biggest positive leap over the last 30 days.`
-    });
-  }
-
-  const stableHabit = habitMetrics.find(h => h.rate30 >= 30) || bestHabit;
-  if (stableHabit) {
-    behavioralInsights.push({
-      id: 'stable_anchor',
-      title: 'Stable Anchor',
-      icon: 'shield',
-      color: '#8B5CF6',
-      statValue: `${stableHabit.rate30}%`,
-      statSub: 'Reliability',
-      message: `${stableHabit.title} acts as your steady behavioral anchor with consistent execution.`
     });
   }
 
@@ -270,7 +244,7 @@ function generateAdvancedInsights(habits = [], logs = []) {
       activeHabits: activeHabits.length,
       monthlyTrendDelta: consistencyTrendDelta
     },
-    streakRisks,
+    streakRisks: [],
     behavioralInsights,
     consistencyPatterns
   };

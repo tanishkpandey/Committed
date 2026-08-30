@@ -18,10 +18,7 @@ async function loadAnalytics() {
     const data = res.analytics;
     const ov = data.overview || {};
 
-    // 1. Action Needed: Streak at Risk
-    renderStreakRiskBanner(data.streakRisks);
-
-    // 2. Overview 4-Cards
+    // 1. Overview 4-Cards
     document.getElementById('ovConsistency').textContent = `${ov.consistencyScore || 0}%`;
     document.getElementById('ovCompletionRate').textContent = `${ov.completionRate || 0}%`;
     document.getElementById('ovActiveHabits').textContent = ov.activeHabits || 0;
@@ -33,49 +30,23 @@ async function loadAnalytics() {
       trendEl.style.color = delta >= 0 ? '#10b981' : '#f43f5e';
     }
 
-    // 3. Habit Analytics: Best Days & Completion Rate
+    // 2. Habit Analytics: Best Days & Completion Rate Curve
     renderBestDaysBars(data.bestDays);
     renderCompletionCurve(data.weekCurve);
 
-    // 4. Behavioral Insights: Best Habit, Focus Area, Strongest Habit, Stable Anchor
-    renderInsightCards('behavioralInsightsContainer', data.behavioralInsights);
+    // 3. Behavioral Insights: Swipeable Cards on Mobile
+    renderInsightCards('behavioralInsightsContainer', 'behavioralDots', data.behavioralInsights);
 
-    // 5. Consistency Patterns: Monthly Consistency, Break Pattern, Bounce-Back Speed, Streak Resilience
-    renderInsightCards('consistencyPatternsContainer', data.consistencyPatterns);
+    // 4. Consistency Patterns: Swipeable Cards on Mobile
+    renderInsightCards('consistencyPatternsContainer', 'consistencyDots', data.consistencyPatterns);
 
-    // 6. History: Monthly Check-ins Chart
+    // 5. History: Monthly Check-ins Chart
     renderMonthlyChart(data.monthlyCounts);
 
     lucide.createIcons();
   } catch (err) {
     console.error('Error loading analytics:', err);
   }
-}
-
-function renderStreakRiskBanner(risks) {
-  const container = document.getElementById('streakRiskContainer');
-  if (!container) return;
-
-  if (!risks || risks.length === 0) {
-    container.innerHTML = '';
-    return;
-  }
-
-  container.innerHTML = risks.map(r => `
-    <div class="insight-risk-banner animate-fade-in" style="margin-bottom: 1.15rem;">
-      <div class="insight-risk-icon">
-        <i data-lucide="alert-triangle" style="width: 18px; height: 18px;"></i>
-      </div>
-      <div style="flex: 1;">
-        <div style="font-size: 0.78rem; font-weight: 800; color: #f43f5e; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 0.15rem;">ACTION NEEDED</div>
-        <div style="font-size: 0.8rem; font-weight: 600; color: var(--text-primary);">${r.message}</div>
-      </div>
-      <div class="insight-stat-badge" style="border-color: rgba(244, 63, 94, 0.4);">
-        <div class="insight-stat-val" style="color: #f43f5e;">${r.streak}d</div>
-        <div class="insight-stat-sub">Streak</div>
-      </div>
-    </div>
-  `).join('');
 }
 
 function renderBestDaysBars(bestDays) {
@@ -133,17 +104,19 @@ function renderCompletionCurve(weekCurve) {
   `;
 }
 
-function renderInsightCards(containerId, list) {
+function renderInsightCards(containerId, dotsId, list) {
   const container = document.getElementById(containerId);
+  const dotsContainer = document.getElementById(dotsId);
   if (!container) return;
 
   if (!list || list.length === 0) {
     container.innerHTML = '<div style="color: var(--text-muted); font-size: 0.78rem; padding: 0.75rem;">Logging consistently will unlock more behavioral intelligence.</div>';
+    if (dotsContainer) dotsContainer.innerHTML = '';
     return;
   }
 
-  container.innerHTML = list.map(item => `
-    <div class="insight-card-item animate-fade-in" style="margin-bottom: 0.65rem;">
+  container.innerHTML = list.map((item, idx) => `
+    <div class="insight-card-item animate-fade-in" data-index="${idx}">
       <div class="insight-card-left">
         <div class="insight-icon-box" style="background-color: ${item.color}22; color: ${item.color};">
           <i data-lucide="${item.icon || 'zap'}" style="width: 18px; height: 18px;"></i>
@@ -161,6 +134,72 @@ function renderInsightCards(containerId, list) {
       ` : ''}
     </div>
   `).join('');
+
+  if (dotsContainer && list.length > 1) {
+    dotsContainer.innerHTML = list.map((_, idx) => `
+      <button class="carousel-dot ${idx === 0 ? 'active' : ''}" data-index="${idx}" aria-label="Go to slide ${idx + 1}"></button>
+    `).join('');
+
+    setupSwipeCarousel(container, dotsContainer);
+  } else if (dotsContainer) {
+    dotsContainer.innerHTML = '';
+  }
+}
+
+function setupSwipeCarousel(container, dotsContainer) {
+  const dots = dotsContainer.querySelectorAll('.carousel-dot');
+
+  // Dot click navigation
+  dots.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const idx = Number(btn.dataset.index);
+      const card = container.children[idx];
+      if (card) {
+        card.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+      }
+    });
+  });
+
+  // Real-time scroll indicator synchronization
+  let scrollTimeout = null;
+  const updateDots = () => {
+    const scrollLeft = container.scrollLeft;
+    const firstCard = container.children[0];
+    if (!firstCard) return;
+    const cardWidth = firstCard.offsetWidth + 12;
+    const activeIdx = Math.min(dots.length - 1, Math.max(0, Math.round(scrollLeft / cardWidth)));
+
+    dots.forEach((dot, idx) => {
+      dot.classList.toggle('active', idx === activeIdx);
+    });
+  };
+
+  container.addEventListener('scroll', () => {
+    if (scrollTimeout) cancelAnimationFrame(scrollTimeout);
+    scrollTimeout = requestAnimationFrame(updateDots);
+  }, { passive: true });
+
+  // Spring momentum swipe dragging
+  let isDown = false;
+  let startX = 0;
+  let scrollLeft = 0;
+
+  container.addEventListener('touchstart', (e) => {
+    isDown = true;
+    startX = e.touches[0].pageX - container.offsetLeft;
+    scrollLeft = container.scrollLeft;
+  }, { passive: true });
+
+  container.addEventListener('touchmove', (e) => {
+    if (!isDown) return;
+    const x = e.touches[0].pageX - container.offsetLeft;
+    const walk = (x - startX);
+    container.scrollLeft = scrollLeft - walk;
+  }, { passive: true });
+
+  container.addEventListener('touchend', () => {
+    isDown = false;
+  }, { passive: true });
 }
 
 function renderMonthlyChart(monthlyCounts) {
