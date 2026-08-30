@@ -1,118 +1,122 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
+
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Progress & Mastery - Committed</title>
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
-  <link rel="stylesheet" href="css/main.css?v=1787948222">
-  <link rel="stylesheet" href="css/components.css?v=1787948222">
-  <link rel="stylesheet" href="css/animations.css?v=1787948222">
+  <link rel="stylesheet" href="css/main.css?v=1787947111">
+  <link rel="stylesheet" href="css/components.css?v=1787947111">
+  <link rel="stylesheet" href="css/animations.css?v=1787947111">
   <script src="https://unpkg.com/lucide@latest"></script>
 </head>
+
 <body>
 
   <!-- Shared Achievement Badge SVG Definitions -->
   <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
     <defs>
       <!-- Hexagon Base Path -->
-      <path id="badge-hex" d="M 38,0 L 92,0 Q 98,0 101,6 L 124,49 Q 127,55 124,61 L 101,104 Q 98,110 92,110 L 38,110 Q 32,110 29,104 L 6,61 Q 3,55 6,49 L 29,6 Q 32,0 38,0 Z"/>
+      <path id="badge-hex"
+        d="M 38,0 L 92,0 Q 98,0 101,6 L 124,49 Q 127,55 124,61 L 101,104 Q 98,110 92,110 L 38,110 Q 32,110 29,104 L 6,61 Q 3,55 6,49 L 29,6 Q 32,0 38,0 Z" />
 
       <clipPath id="badge-hexClip">
-        <use href="#badge-hex"/>
+        <use href="#badge-hex" />
       </clipPath>
 
       <!-- Star Icon -->
       <g id="badge-star">
-        <path d="M0,-7 L2,-2 L7,-2 L3,1 L5,6 L0,3 L-5,6 L-3,1 L-7,-2 L-2,-2 Z" fill="#FFFFFF"/>
+        <path d="M0,-7 L2,-2 L7,-2 L3,1 L5,6 L0,3 L-5,6 L-3,1 L-7,-2 L-2,-2 Z" fill="#FFFFFF" />
       </g>
 
       <!-- Shadow Filters -->
       <filter id="badgeShadow" x="-30%" y="-30%" width="160%" height="170%">
-        <feDropShadow dx="0" dy="5" stdDeviation="4" flood-color="#000000" flood-opacity="0.35"/>
+        <feDropShadow dx="0" dy="5" stdDeviation="4" flood-color="#000000" flood-opacity="0.35" />
       </filter>
 
       <filter id="ribbonShadow" x="-30%" y="-30%" width="160%" height="170%">
-        <feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#000000" flood-opacity="0.30"/>
+        <feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#000000" flood-opacity="0.30" />
       </filter>
 
       <!-- Category Gradients: STREAKS (Purple / Indigo) -->
       <linearGradient id="streakTop" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="#40318F"/>
-        <stop offset="100%" stop-color="#6752D6"/>
+        <stop offset="0%" stop-color="#40318F" />
+        <stop offset="100%" stop-color="#6752D6" />
       </linearGradient>
       <linearGradient id="streakBottom" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="#806BE7"/>
-        <stop offset="100%" stop-color="#342779"/>
+        <stop offset="0%" stop-color="#806BE7" />
+        <stop offset="100%" stop-color="#342779" />
       </linearGradient>
 
       <!-- Category Gradients: PERFECT DAYS (Gold / Amber) -->
       <linearGradient id="perfectTop" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="#C78312"/>
-        <stop offset="100%" stop-color="#F3B52E"/>
+        <stop offset="0%" stop-color="#C78312" />
+        <stop offset="100%" stop-color="#F3B52E" />
       </linearGradient>
       <linearGradient id="perfectBottom" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="#FFD66B"/>
-        <stop offset="100%" stop-color="#D99217"/>
+        <stop offset="0%" stop-color="#FFD66B" />
+        <stop offset="100%" stop-color="#D99217" />
       </linearGradient>
 
       <!-- Category Gradients: CONSISTENCY (Teal / Emerald) -->
       <linearGradient id="consistencyTop" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="#176A61"/>
-        <stop offset="100%" stop-color="#2D9A89"/>
+        <stop offset="0%" stop-color="#176A61" />
+        <stop offset="100%" stop-color="#2D9A89" />
       </linearGradient>
       <linearGradient id="consistencyBottom" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="#55C7B0"/>
-        <stop offset="100%" stop-color="#1C7065"/>
+        <stop offset="0%" stop-color="#55C7B0" />
+        <stop offset="100%" stop-color="#1C7065" />
       </linearGradient>
 
       <!-- Category Gradients: VOLUME (Ocean Blue / Cyan) -->
       <linearGradient id="volumeTop" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="#164B78"/>
-        <stop offset="100%" stop-color="#247DB5"/>
+        <stop offset="0%" stop-color="#164B78" />
+        <stop offset="100%" stop-color="#247DB5" />
       </linearGradient>
       <linearGradient id="volumeBottom" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="#5DB8E8"/>
-        <stop offset="100%" stop-color="#1C5D89"/>
+        <stop offset="0%" stop-color="#5DB8E8" />
+        <stop offset="100%" stop-color="#1C5D89" />
       </linearGradient>
 
       <!-- Locked / Grayscale Gradients -->
       <linearGradient id="lockedTop" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="#2c3038"/>
-        <stop offset="100%" stop-color="#3d4450"/>
+        <stop offset="0%" stop-color="#2c3038" />
+        <stop offset="100%" stop-color="#3d4450" />
       </linearGradient>
       <linearGradient id="lockedBottom" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="#4b5563"/>
-        <stop offset="100%" stop-color="#1f242d"/>
+        <stop offset="0%" stop-color="#4b5563" />
+        <stop offset="100%" stop-color="#1f242d" />
       </linearGradient>
 
       <!-- Base Badge Template -->
       <g id="badge-baseBadge">
         <g filter="url(#badgeShadow)">
-          <use href="#badge-hex" fill="var(--badge-top)"/>
+          <use href="#badge-hex" fill="var(--badge-top)" />
           <g clip-path="url(#badge-hexClip)">
-            <path d="M0 58 Q65 43 130 58 L130 115 L0 115 Z" fill="var(--badge-bottom)"/>
+            <path d="M0 58 Q65 43 130 58 L130 115 L0 115 Z" fill="var(--badge-bottom)" />
           </g>
         </g>
-        <path d="M30 7 Q65 -1 100 7" fill="none" stroke="#FFFFFF" stroke-opacity="0.22" stroke-width="2"/>
+        <path d="M30 7 Q65 -1 100 7" fill="none" stroke="#FFFFFF" stroke-opacity="0.22" stroke-width="2" />
       </g>
 
       <!-- Ribbon Template -->
       <g id="badge-ribbon">
-        <path d="M15 44 L-30 44 L-15 59 L-30 74 L15 74 Z" fill="var(--ribbon-shadow)"/>
-        <path d="M-15 59 L15 74 L15 59 Z" fill="#000000" fill-opacity="0.25"/>
-        <path d="M115 44 L160 44 L145 59 L160 74 L115 74 Z" fill="var(--ribbon-shadow)"/>
-        <path d="M145 59 L115 74 L115 59 Z" fill="#000000" fill-opacity="0.25"/>
+        <path d="M15 44 L-30 44 L-15 59 L-30 74 L15 74 Z" fill="var(--ribbon-shadow)" />
+        <path d="M-15 59 L15 74 L15 59 Z" fill="#000000" fill-opacity="0.25" />
+        <path d="M115 44 L160 44 L145 59 L160 74 L115 74 Z" fill="var(--ribbon-shadow)" />
+        <path d="M145 59 L115 74 L115 59 Z" fill="#000000" fill-opacity="0.25" />
         <g filter="url(#ribbonShadow)">
-          <path d="M-15 29 Q65 14 145 29 L145 59 Q65 44 -15 59 Z" fill="var(--ribbon)"/>
+          <path d="M-15 29 Q65 14 145 29 L145 59 Q65 44 -15 59 Z" fill="var(--ribbon)" />
         </g>
       </g>
 
       <!-- Star Ribbon Template -->
       <g id="badge-starRibbon">
-        <use href="#badge-ribbon"/>
-        <use href="#badge-star" x="18" y="44"/>
-        <use href="#badge-star" x="112" y="44"/>
+        <use href="#badge-ribbon" />
+        <use href="#badge-star" x="18" y="44" />
+        <use href="#badge-star" x="112" y="44" />
       </g>
     </defs>
   </svg>
@@ -146,15 +150,16 @@
               <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">Mastery Rank</div>
             </div>
           </div>
-          <div style="background: rgba(16, 185, 129, 0.15); color: #10b981; padding: 0.3rem 0.65rem; border-radius: var(--radius-full); font-size: 0.74rem; font-weight: 800; border: 1px solid rgba(16, 185, 129, 0.3);">
+          <div
+            style="background: rgba(16, 185, 129, 0.15); color: #10b981; padding: 0.3rem 0.65rem; border-radius: var(--radius-full); font-size: 0.74rem; font-weight: 800; border: 1px solid rgba(16, 185, 129, 0.3);">
             Active Tier
           </div>
         </div>
-        
+
         <div class="hero-xp-track" style="margin: 0.65rem 0 0.45rem;">
           <div class="hero-xp-fill" id="heroXpFill" style="width: 0%;"></div>
         </div>
-        
+
         <div class="hero-xp-labels">
           <span id="heroXpCurrentText">0 / 100 XP</span>
           <span id="heroXpRemainingText">100 XP until Level 2</span>
@@ -233,16 +238,16 @@
           <span>Long-Term Milestones</span>
         </div>
         <div style="display: flex; align-items: center; gap: 0.55rem;">
-          <span class="milestones-count-pill" id="achievementsCountText">0 Badges Earned</span>
-          <button class="milestones-info-btn" onclick="openAllBadgesModal()" title="View all badges and progress" aria-label="View all badges">
+          <button class="milestones-info-btn" onclick="openAllBadgesModal()" title="View all badges and progress"
+            aria-label="View all badges">
             <i data-lucide="info" style="width: 14px; height: 14px;"></i>
             <span>All Badges</span>
           </button>
         </div>
       </div>
 
-      <!-- Achieved Badges Showcase Shelf -->
-      <div class="achieved-badges-shelf" id="achievedBadgesContainer">
+      <!-- Achieved Badges Showcase Grid -->
+      <div class="achieved-badges-wrapper" id="achievedBadgesContainer">
         <!-- Loaded dynamically via progress.js -->
       </div>
     </section>
@@ -253,12 +258,14 @@
     <div class="modal-box all-badges-modal">
       <div class="modal-header">
         <div style="display: flex; align-items: center; gap: 0.65rem;">
-          <div style="background: rgba(245, 158, 11, 0.15); color: #f59e0b; width: 34px; height: 34px; border-radius: var(--radius-xs); display: flex; align-items: center; justify-content: center;">
+          <div
+            style="background: rgba(245, 158, 11, 0.15); color: #f59e0b; width: 34px; height: 34px; border-radius: var(--radius-xs); display: flex; align-items: center; justify-content: center;">
             <i data-lucide="trophy" style="width: 18px; height: 18px;"></i>
           </div>
           <div>
             <h3 class="modal-title" style="margin-bottom: 0.1rem; font-size: 1.05rem;">All Badges & Milestones</h3>
-            <span style="font-size: 0.72rem; color: var(--text-muted);" id="modalBadgesSummaryText">24 Milestones Available</span>
+            <span style="font-size: 0.72rem; color: var(--text-muted);" id="modalBadgesSummaryText">24 Milestones
+              Available</span>
           </div>
         </div>
         <button class="close-btn" onclick="closeAllBadgesModal()" aria-label="Close modal">
@@ -318,8 +325,9 @@
     </a>
   </nav>
 
-  <script src="js/api.js?v=1787948222"></script>
-  <script src="js/utils.js?v=1787948222"></script>
-  <script src="js/progress.js?v=1787948222"></script>
+  <script src="js/api.js?v=1787947888"></script>
+  <script src="js/utils.js?v=1787947888"></script>
+  <script src="js/progress.js?v=1787947888"></script>
 </body>
+
 </html>
