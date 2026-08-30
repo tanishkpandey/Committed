@@ -89,6 +89,22 @@
 
         <!-- 2. Months Breakdown View -->
         <div id="monthBreakdownWrapper" style="display: none;">
+          <!-- Mobile-Optimized Month Navigation Bar with Prev/Next Arrows -->
+          <div class="month-navigator-bar" id="monthNavigatorBar">
+            <button class="month-nav-arrow-btn" id="btnPrevMonth" onclick="prevMonth()" title="Previous Month" aria-label="Previous Month">
+              <i data-lucide="chevron-left" style="width: 18px; height: 18px;"></i>
+            </button>
+            <div class="month-nav-center">
+              <div class="month-nav-title" id="monthNavigatorTitle">August 2026</div>
+              <div class="month-nav-meta">
+                <span class="month-nav-pill" id="monthNavigatorSummary">0 / 31 days (0%)</span>
+              </div>
+            </div>
+            <button class="month-nav-arrow-btn" id="btnNextMonth" onclick="nextMonth()" title="Next Month" aria-label="Next Month">
+              <i data-lucide="chevron-right" style="width: 18px; height: 18px;"></i>
+            </button>
+          </div>
+
           <div class="month-chips-scroll" id="monthChipsBar">
             <!-- Rendered via habitDetail.js -->
           </div>

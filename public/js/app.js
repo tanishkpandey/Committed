@@ -218,7 +218,7 @@ async function handleTileClick(habitId, dateStr, tileElem, event) {
     }
   }
 
-  // 2. Sync Today's check button & streak icon (flame <-> hourglass)
+  // 2. Sync Today's check button
   if (dateStr === todayStr) {
     const checkBtn = document.getElementById(`check-${habitId}`);
     if (checkBtn) {
@@ -234,8 +234,6 @@ async function handleTileClick(habitId, dateStr, tileElem, event) {
         checkBtn.style.backgroundColor = '';
       }
     }
-
-
   }
 
   // 3. Trigger floating +10 XP animation near interaction on completion
@@ -244,7 +242,7 @@ async function handleTileClick(habitId, dateStr, tileElem, event) {
     Utils.playSound('complete');
   }
 
-  // 4. Update memory & streaks
+  // 4. Update memory & stats immediately
   if (willBeCompleted) {
     logsSet.add(dateStr);
   } else {
@@ -252,14 +250,19 @@ async function handleTileClick(habitId, dateStr, tileElem, event) {
   }
   habit.logs = Array.from(logsSet);
 
-  const newStreaks = calculateLocalStreaks(logsSet);
-  habit.currentStreak = newStreaks.currentStreak;
-  habit.longestStreak = newStreaks.longestStreak;
-  habit.totalCompletions = habit.logs.length;
+  const stats = Utils.calculateHabitStats(logsSet, habit.frequency_days || 7);
+  habit.currentStreak = stats.currentStreak;
+  habit.longestStreak = stats.longestStreak;
+  habit.streakUnit = stats.streakUnit;
+  habit.totalCompletions = stats.totalCompletions;
+  habit.completionRate = stats.completionRate;
+  habit.thisWeekCompleted = stats.thisWeekCompleted;
+  habit.isTargetMetThisWeek = stats.isTargetMetThisWeek;
 
+  // Update card stats in DOM
   const streakElem = document.getElementById(`streak-${habitId}`);
   if (streakElem) {
-    streakElem.querySelector('.streak-val').textContent = `${habit.currentStreak}d`;
+    streakElem.querySelector('.streak-val').textContent = `${habit.currentStreak}${habit.streakUnit || 'd'}`;
     if (habit.currentStreak > 0) {
       streakElem.classList.add('active-fire');
     } else {
@@ -267,16 +270,44 @@ async function handleTileClick(habitId, dateStr, tileElem, event) {
     }
   }
 
+  const bestElem = document.getElementById(`best-${habitId}`);
+  if (bestElem) bestElem.textContent = `${habit.longestStreak}${habit.streakUnit || 'd'}`;
+
+  const rateElem = document.getElementById(`rate-${habitId}`);
+  if (rateElem) rateElem.textContent = `${habit.completionRate}%`;
+
   const totalElem = document.getElementById(`total-${habitId}`);
   if (totalElem) totalElem.textContent = habit.totalCompletions;
+
+  // Update weekly quota badge if exists
+  const cardElem = document.getElementById(`card-${habitId}`);
+  if (cardElem && habit.frequency_days < 7) {
+    const quotaBadge = cardElem.querySelector('.frequency-quota-badge');
+    if (quotaBadge) {
+      quotaBadge.className = `frequency-quota-badge ${habit.isTargetMetThisWeek ? 'met' : ''}`;
+      quotaBadge.innerHTML = `
+        ${habit.isTargetMetThisWeek ? '<i data-lucide="check" style="width: 11px; height: 11px;"></i>' : ''}
+        <span>${habit.thisWeekCompleted}/${habit.frequency_days} this week</span>
+      `;
+      lucide.createIcons();
+    }
+  }
 
   // 5. Send API request & reactively refresh Progression Widget
   try {
     const res = await API.toggleLog(habitId, dateStr);
     if (res.success) {
+      if (res.habit) {
+        Object.assign(habit, res.habit);
+        // Sync DOM with server values
+        if (streakElem) streakElem.querySelector('.streak-val').textContent = `${habit.currentStreak}${habit.streakUnit || 'd'}`;
+        if (bestElem) bestElem.textContent = `${habit.longestStreak}${habit.streakUnit || 'd'}`;
+        if (rateElem) rateElem.textContent = `${habit.completionRate}%`;
+        if (totalElem) totalElem.textContent = habit.totalCompletions;
+      }
+
       const progRes = await API.getProgression();
       if (progRes.success) {
-        // Detect level up
         if (userProgressionData && progRes.level > userProgressionData.level) {
           Utils.showLevelUpModal(progRes.level, userProgressionData ? userProgressionData.level : progRes.level - 1);
         }

@@ -326,3 +326,7 @@ exports.deleteHabit = async (req, res) => {
     res.status(500).json({ success: false, error: err.message });
   }
 };
+
+exports.formatHabitPayload = formatHabitPayload;
+exports.calculateHabitStreaks = calculateHabitStreaks;
+exports.getWeeklyQuotaProgress = getWeeklyQuotaProgress;

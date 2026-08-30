@@ -1,4 +1,5 @@
 const { supabase, isSupabaseConfigured, readLocalData, writeLocalData, formatYMD } = require('../config/db');
+const { formatHabitPayload } = require('./habitController');
 
 exports.toggleLog = async (req, res) => {
   try {
@@ -34,11 +35,21 @@ exports.toggleLog = async (req, res) => {
         completed = true;
       }
 
-      return res.json({ success: true, completed, habit_id, date: targetDate });
+      // Fetch updated habit with its logs
+      const { data: habit, error: habitErr } = await supabase
+        .from('habits')
+        .select('*, habit_logs(*)')
+        .eq('id', habit_id)
+        .single();
+
+      const formattedHabit = habit ? formatHabitPayload(habit, habit.habit_logs || []) : null;
+
+      return res.json({ success: true, completed, habit_id, date: targetDate, habit: formattedHabit });
     }
 
     const store = readLocalData();
     store.logs = store.logs || [];
+    store.habits = store.habits || [];
     
     const existingIndex = store.logs.findIndex(
       l => l.habit_id === habit_id && l.completed_date === targetDate
@@ -60,7 +71,12 @@ exports.toggleLog = async (req, res) => {
     }
 
     writeLocalData(store);
-    res.json({ success: true, completed, habit_id, date: targetDate });
+
+    const habit = store.habits.find(h => h.id === habit_id);
+    const habitLogs = store.logs.filter(l => l.habit_id === habit_id);
+    const formattedHabit = habit ? formatHabitPayload(habit, habitLogs) : null;
+
+    res.json({ success: true, completed, habit_id, date: targetDate, habit: formattedHabit });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }

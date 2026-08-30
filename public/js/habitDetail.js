@@ -2,7 +2,9 @@
 
 let currentHabit = null;
 let currentViewMode = 'year';
-let selectedMonthFilter = 'all';
+let selectedMonthIdx = new Date().getMonth(); // 0 - 11, defaults to current month
+let detailYear = new Date().getFullYear();
+let isAllMonthsView = false;
 let editSelectedColor = '#10B981';
 let editSelectedIcon = 'zap';
 
@@ -19,9 +21,15 @@ const DETAIL_ICONS = [
   'target', 'award', 'shield', 'trophy', 'check-circle', 'star'
 ];
 
+const MONTH_NAMES = [
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December'
+];
+
 document.addEventListener('DOMContentLoaded', () => {
   initTheme();
   loadHabitDetail();
+  setupDetailKeyboardAndSwipe();
 });
 
 function initTheme() {
@@ -60,8 +68,8 @@ function renderHabitDetail(habit) {
   iconBadge.style.backgroundColor = habit.color;
   iconBadge.innerHTML = `<i data-lucide="${habit.icon || 'zap'}" style="width: 22px; height: 22px;"></i>`;
 
-  document.getElementById('statCurrentStreak').textContent = `${habit.currentStreak || 0}d`;
-  document.getElementById('statLongestStreak').textContent = `${habit.longestStreak || 0}d`;
+  document.getElementById('statCurrentStreak').textContent = `${habit.currentStreak || 0}${habit.streakUnit || 'd'}`;
+  document.getElementById('statLongestStreak').textContent = `${habit.longestStreak || 0}${habit.streakUnit || 'd'}`;
   document.getElementById('statTotalCompletions').textContent = habit.totalCompletions || 0;
 
   renderActivityDots();
@@ -92,8 +100,10 @@ function renderActivityDots() {
     monthContainer.style.display = 'none';
     renderYearGrid();
   } else {
+    yearContainer.style.display = 'block'; // Keep wrapper display handled
     yearContainer.style.display = 'none';
     monthContainer.style.display = 'block';
+    renderMonthNavigator();
     renderMonthChips();
     renderMonthBreakdown();
   }
@@ -157,62 +167,155 @@ function renderYearGrid() {
   }).join('');
 }
 
-const MONTH_NAMES = [
-  'January', 'February', 'March', 'April', 'May', 'June',
-  'July', 'August', 'September', 'October', 'November', 'December'
-];
+// ------------------------------------------------------------------------------
+// Month Breakdown Navigation (Prev / Next Arrows & Touch Gestures)
+// ------------------------------------------------------------------------------
+function prevMonth(e) {
+  if (e) e.stopPropagation();
+  Utils.playSound('click');
+  
+  if (isAllMonthsView) {
+    detailYear--;
+  } else {
+    if (selectedMonthIdx > 0) {
+      selectedMonthIdx--;
+    } else {
+      selectedMonthIdx = 11;
+      detailYear--;
+    }
+  }
 
-function renderMonthChips() {
-  const container = document.getElementById('monthChipsBar');
-  if (!container) return;
+  renderMonthNavigator();
+  renderMonthChips();
+  renderMonthBreakdown('prev');
+  lucide.createIcons();
+  Utils.initGlobalTooltips();
+}
 
-  const currentMonthIdx = new Date().getMonth();
+function nextMonth(e) {
+  if (e) e.stopPropagation();
+  Utils.playSound('click');
 
-  const chipsHtml = [
-    `<button class="month-chip ${selectedMonthFilter === 'all' ? 'active' : ''}" onclick="filterMonth('all')">All Months</button>`,
-    ...MONTH_NAMES.map((name, idx) => `
-      <button class="month-chip ${selectedMonthFilter === String(idx) ? 'active' : ''}" onclick="filterMonth('${idx}')">
-        ${name.slice(0, 3)} ${idx === currentMonthIdx ? '•' : ''}
-      </button>
-    `)
-  ];
+  if (isAllMonthsView) {
+    detailYear++;
+  } else {
+    if (selectedMonthIdx < 11) {
+      selectedMonthIdx++;
+    } else {
+      selectedMonthIdx = 0;
+      detailYear++;
+    }
+  }
 
-  container.innerHTML = chipsHtml.join('');
+  renderMonthNavigator();
+  renderMonthChips();
+  renderMonthBreakdown('next');
+  lucide.createIcons();
+  Utils.initGlobalTooltips();
 }
 
 function filterMonth(monthIdxStr) {
-  selectedMonthFilter = monthIdxStr;
+  Utils.playSound('click');
+  if (monthIdxStr === 'all') {
+    isAllMonthsView = true;
+  } else {
+    isAllMonthsView = false;
+    selectedMonthIdx = parseInt(monthIdxStr, 10);
+  }
+  renderMonthNavigator();
   renderMonthChips();
   renderMonthBreakdown();
   lucide.createIcons();
   Utils.initGlobalTooltips();
 }
 
-function renderMonthBreakdown() {
-  const currentYear = new Date().getFullYear();
+function renderMonthNavigator() {
+  const titleEl = document.getElementById('monthNavigatorTitle');
+  const summaryEl = document.getElementById('monthNavigatorSummary');
+  if (!titleEl || !summaryEl || !currentHabit) return;
+
+  const logsSet = new Set(currentHabit.logs || []);
+
+  if (isAllMonthsView) {
+    titleEl.textContent = `All Months (${detailYear})`;
+    const totalLogsInYear = (currentHabit.logs || []).filter(d => d.startsWith(`${detailYear}-`)).length;
+    summaryEl.textContent = `${totalLogsInYear} logs in ${detailYear}`;
+  } else {
+    const mName = MONTH_NAMES[selectedMonthIdx];
+    titleEl.textContent = `${mName} ${detailYear}`;
+
+    const monthPrefix = `${detailYear}-${String(selectedMonthIdx + 1).padStart(2, '0')}`;
+    const totalDaysInMonth = new Date(detailYear, selectedMonthIdx + 1, 0).getDate();
+    let completedInMonth = 0;
+    for (let dayNum = 1; dayNum <= totalDaysInMonth; dayNum++) {
+      const dateStr = `${monthPrefix}-${String(dayNum).padStart(2, '0')}`;
+      if (logsSet.has(dateStr)) completedInMonth++;
+    }
+    const percent = Math.round((completedInMonth / totalDaysInMonth) * 100);
+    summaryEl.textContent = `${completedInMonth} / ${totalDaysInMonth} days (${percent}%)`;
+  }
+}
+
+function renderMonthChips() {
+  const container = document.getElementById('monthChipsBar');
+  if (!container) return;
+
+  const currentRealMonthIdx = new Date().getMonth();
+  const currentRealYear = new Date().getFullYear();
+
+  const chipsHtml = [
+    `<button class="month-chip ${isAllMonthsView ? 'active' : ''}" onclick="filterMonth('all')">All Months</button>`,
+    ...MONTH_NAMES.map((name, idx) => `
+      <button 
+        class="month-chip ${!isAllMonthsView && selectedMonthIdx === idx ? 'active' : ''}" 
+        id="monthChip-${idx}"
+        onclick="filterMonth('${idx}')"
+      >
+        ${name.slice(0, 3)} ${detailYear === currentRealYear && idx === currentRealMonthIdx ? '•' : ''}
+      </button>
+    `)
+  ];
+
+  container.innerHTML = chipsHtml.join('');
+
+  // Smooth auto-scroll active chip into view on mobile
+  if (!isAllMonthsView) {
+    setTimeout(() => {
+      const activeChip = document.getElementById(`monthChip-${selectedMonthIdx}`);
+      if (activeChip && container) {
+        const scrollLeft = activeChip.offsetLeft - (container.offsetWidth / 2) + (activeChip.offsetWidth / 2);
+        container.scrollTo({ left: Math.max(0, scrollLeft), behavior: 'smooth' });
+      }
+    }, 50);
+  }
+}
+
+function renderMonthBreakdown(animDirection = null) {
   const container = document.getElementById('monthBreakdownGrid');
+  if (!container || !currentHabit) return;
+
   const logsSet = new Set(currentHabit.logs || []);
   const todayStr = Utils.getTodayStr();
 
-  const monthIndices = selectedMonthFilter === 'all' 
+  const monthIndices = isAllMonthsView 
     ? Array.from({ length: 12 }, (_, i) => i) 
-    : [parseInt(selectedMonthFilter, 10)];
+    : [selectedMonthIdx];
 
   const cardsHtml = monthIndices.map(mIdx => {
     const mName = MONTH_NAMES[mIdx];
-    const firstDay = new Date(currentYear, mIdx, 1);
-    const totalDaysInMonth = new Date(currentYear, mIdx + 1, 0).getDate();
-    const monthPrefix = `${currentYear}-${String(mIdx + 1).padStart(2, '0')}`;
+    const firstDay = new Date(detailYear, mIdx, 1);
+    const totalDaysInMonth = new Date(detailYear, mIdx + 1, 0).getDate();
+    const monthPrefix = `${detailYear}-${String(mIdx + 1).padStart(2, '0')}`;
     
     let completedInMonth = 0;
     const miniTiles = [];
 
     const weekdays = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
-    const weekdayHeaders = weekdays.map(w => `<div style="text-align: center; font-size: 0.6rem; color: var(--text-muted); font-weight: 700;">${w}</div>`).join('');
+    const weekdayHeaders = weekdays.map(w => `<div class="month-weekday-label">${w}</div>`).join('');
 
     const leadingBlanks = firstDay.getDay();
     for (let b = 0; b < leadingBlanks; b++) {
-      miniTiles.push('<div class="mini-cal-tile" style="opacity: 0.15; pointer-events: none;"></div>');
+      miniTiles.push('<div class="mini-cal-tile blank" style="opacity: 0.12; pointer-events: none;"></div>');
     }
 
     for (let dayNum = 1; dayNum <= totalDaysInMonth; dayNum++) {
@@ -221,7 +324,7 @@ function renderMonthBreakdown() {
       if (isCompleted) completedInMonth++;
 
       const isToday = dateStr === todayStr;
-      const bgStyle = isCompleted ? `background-color: ${currentHabit.color};` : '';
+      const bgStyle = isCompleted ? `background-color: ${currentHabit.color}; --tile-glow-color: ${currentHabit.color};` : '';
 
       miniTiles.push(`
         <div 
@@ -236,12 +339,25 @@ function renderMonthBreakdown() {
     }
 
     const percent = Math.round((completedInMonth / totalDaysInMonth) * 100);
+    const animClass = animDirection === 'prev' ? 'animate-slide-right' : animDirection === 'next' ? 'animate-slide-left' : 'animate-fade-in';
 
     return `
-      <div class="month-card">
+      <div class="month-card ${animClass}" id="monthCard-${mIdx}">
         <div class="month-card-header">
-          <span style="font-weight: 800;">${mName} ${currentYear}</span>
-          <span class="month-count-pill">${completedInMonth}/${totalDaysInMonth} (${percent}%)</span>
+          <div class="month-card-header-left">
+            ${!isAllMonthsView ? `
+              <button class="month-card-nav-arrow" onclick="prevMonth(event)" title="Previous Month" aria-label="Previous Month">
+                <i data-lucide="chevron-left" style="width: 16px; height: 16px;"></i>
+              </button>
+            ` : ''}
+            <span class="month-card-title">${mName} ${detailYear}</span>
+            ${!isAllMonthsView ? `
+              <button class="month-card-nav-arrow" onclick="nextMonth(event)" title="Next Month" aria-label="Next Month">
+                <i data-lucide="chevron-right" style="width: 16px; height: 16px;"></i>
+              </button>
+            ` : ''}
+          </div>
+          <span class="month-count-pill" id="monthCountPill-${mIdx}">${completedInMonth}/${totalDaysInMonth} (${percent}%)</span>
         </div>
         <div class="month-mini-calendar">
           ${weekdayHeaders}
@@ -252,6 +368,40 @@ function renderMonthBreakdown() {
   });
 
   container.innerHTML = cardsHtml.join('');
+}
+
+function setupDetailKeyboardAndSwipe() {
+  let touchStartX = 0;
+  let touchEndX = 0;
+
+  const wrapper = document.getElementById('monthBreakdownWrapper');
+  if (wrapper) {
+    wrapper.addEventListener('touchstart', e => {
+      touchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
+
+    wrapper.addEventListener('touchend', e => {
+      touchEndX = e.changedTouches[0].screenX;
+      const diffX = touchEndX - touchStartX;
+      if (currentViewMode === 'month' && !isAllMonthsView) {
+        if (diffX < -50) {
+          nextMonth();
+        } else if (diffX > 50) {
+          prevMonth();
+        }
+      }
+    }, { passive: true });
+  }
+
+  document.addEventListener('keydown', e => {
+    if (currentViewMode === 'month' && !isAllMonthsView) {
+      if (e.key === 'ArrowLeft') {
+        prevMonth();
+      } else if (e.key === 'ArrowRight') {
+        nextMonth();
+      }
+    }
+  });
 }
 
 function renderTop3Streaks(habit) {
@@ -293,6 +443,9 @@ function renderTop3Streaks(habit) {
   `).join('');
 }
 
+// ------------------------------------------------------------------------------
+// Tile Click & Reactive Persistence Engine
+// ------------------------------------------------------------------------------
 async function toggleDetailDate(dateStr, tileElem, event) {
   if (event) event.stopPropagation();
   Utils.playSound('click');
@@ -302,26 +455,29 @@ async function toggleDetailDate(dateStr, tileElem, event) {
   const logsSet = new Set(currentHabit.logs || []);
   const willBeCompleted = !logsSet.has(dateStr);
 
-  if (tileElem) {
-    tileElem.classList.remove('tile-pop');
-    void tileElem.offsetWidth;
-    tileElem.classList.add('tile-pop');
+  // 1. In-place DOM update for all matching tiles across views
+  const matchingTiles = document.querySelectorAll(`[data-date="${dateStr}"]`);
+  matchingTiles.forEach(tile => {
+    tile.classList.remove('tile-pop');
+    void tile.offsetWidth;
+    tile.classList.add('tile-pop');
 
     if (willBeCompleted) {
-      tileElem.classList.add('completed');
-      tileElem.style.backgroundColor = currentHabit.color;
-      tileElem.style.setProperty('--tile-glow-color', currentHabit.color);
+      tile.classList.add('completed');
+      tile.style.backgroundColor = currentHabit.color;
+      tile.style.setProperty('--tile-glow-color', currentHabit.color);
     } else {
-      tileElem.classList.remove('completed');
-      tileElem.style.backgroundColor = '';
+      tile.classList.remove('completed');
+      tile.style.backgroundColor = '';
     }
-  }
+  });
 
   if (willBeCompleted && event) {
     Utils.showFloatingXP(event.clientX, event.clientY, '+10 XP');
     Utils.playSound('complete');
   }
 
+  // 2. Update memory & stats immediately
   if (willBeCompleted) {
     logsSet.add(dateStr);
   } else {
@@ -329,17 +485,58 @@ async function toggleDetailDate(dateStr, tileElem, event) {
   }
   currentHabit.logs = Array.from(logsSet);
 
-  currentHabit.totalCompletions = currentHabit.logs.length;
-  document.getElementById('statTotalCompletions').textContent = currentHabit.totalCompletions;
+  const stats = Utils.calculateHabitStats(logsSet, currentHabit.frequency_days || 7);
+  currentHabit.currentStreak = stats.currentStreak;
+  currentHabit.longestStreak = stats.longestStreak;
+  currentHabit.streakUnit = stats.streakUnit;
+  currentHabit.totalCompletions = stats.totalCompletions;
+  currentHabit.completionRate = stats.completionRate;
+
+  // 3. Update 3-Column Metrics DOM
+  const curStreakEl = document.getElementById('statCurrentStreak');
+  if (curStreakEl) curStreakEl.textContent = `${currentHabit.currentStreak}${currentHabit.streakUnit || 'd'}`;
+
+  const longestStreakEl = document.getElementById('statLongestStreak');
+  if (longestStreakEl) longestStreakEl.textContent = `${currentHabit.longestStreak}${currentHabit.streakUnit || 'd'}`;
+
+  const totalEl = document.getElementById('statTotalCompletions');
+  if (totalEl) totalEl.textContent = currentHabit.totalCompletions;
+
+  // 4. Update month breakdown summary & header
+  renderMonthNavigator();
+
+  // If on month breakdown, update the month card pill
+  const [yStr, mStr] = dateStr.split('-');
+  const clickedMonthIdx = parseInt(mStr, 10) - 1;
+  const monthPill = document.getElementById(`monthCountPill-${clickedMonthIdx}`);
+  if (monthPill && parseInt(yStr, 10) === detailYear) {
+    const totalDaysInMonth = new Date(detailYear, clickedMonthIdx + 1, 0).getDate();
+    const monthPrefix = `${detailYear}-${mStr}`;
+    let count = 0;
+    for (let d = 1; d <= totalDaysInMonth; d++) {
+      if (logsSet.has(`${monthPrefix}-${String(d).padStart(2, '0')}`)) count++;
+    }
+    const pct = Math.round((count / totalDaysInMonth) * 100);
+    monthPill.textContent = `${count}/${totalDaysInMonth} (${pct}%)`;
+  }
 
   renderTop3Streaks(currentHabit);
   lucide.createIcons();
   Utils.initGlobalTooltips();
 
+  // 5. Send API request to persist log
   try {
-    await API.toggleLog(currentHabit.id, dateStr);
+    const res = await API.toggleLog(currentHabit.id, dateStr);
+    if (res.success && res.habit) {
+      Object.assign(currentHabit, res.habit);
+      if (curStreakEl) curStreakEl.textContent = `${currentHabit.currentStreak}${currentHabit.streakUnit || 'd'}`;
+      if (longestStreakEl) longestStreakEl.textContent = `${currentHabit.longestStreak}${currentHabit.streakUnit || 'd'}`;
+      if (totalEl) totalEl.textContent = currentHabit.totalCompletions;
+      renderMonthNavigator();
+      renderTop3Streaks(currentHabit);
+    }
   } catch (err) {
-    console.error(err);
+    console.error('Error persisting habit date log:', err);
   }
 }
 
