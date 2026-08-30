@@ -98,8 +98,10 @@ function generateBadgeSVG(badgeId, unlocked = true) {
     numClass = 'badge-svg-number badge-svg-number-small';
   }
 
-  const yNum = conf.ribbon === 'none' ? 36 : (conf.category === 'volume' ? 44 : 40);
-  const yUnit = conf.ribbon === 'none' ? 72 : 75;
+  const hasRibbon = conf.ribbon === 'ribbon' || conf.ribbon === 'starRibbon';
+  const viewBox = hasRibbon ? '-32 -4 194 118' : '-5 -4 140 118';
+  const yNum = hasRibbon ? (conf.category === 'volume' ? 44 : 41) : 41;
+  const yUnit = hasRibbon ? 75 : 74;
 
   let topC1, topC2, botC1, botC2, ribColor, ribShadow;
   if (!unlocked) {
@@ -131,10 +133,10 @@ function generateBadgeSVG(badgeId, unlocked = true) {
   const hexD = "M 38,0 L 92,0 Q 98,0 101,6 L 124,49 Q 127,55 124,61 L 101,104 Q 98,110 92,110 L 38,110 Q 32,110 29,104 L 6,61 Q 3,55 6,49 L 29,6 Q 32,0 38,0 Z";
 
   let ribbonMarkup = '';
-  if (conf.ribbon === 'ribbon' || conf.ribbon === 'starRibbon') {
+  if (hasRibbon) {
     const starMarkup = conf.ribbon === 'starRibbon' ? `
-      <path d="M18,37 L20,42 L25,42 L21,45 L23,50 L18,47 L13,50 L15,45 L11,42 L16,42 Z" fill="#FFFFFF"/>
-      <path d="M112,37 L114,42 L119,42 L115,45 L117,50 L112,47 L107,50 L109,45 L105,42 L110,42 Z" fill="#FFFFFF"/>
+      <path d="M18,38 L20,43 L25,43 L21,46 L23,51 L18,48 L13,51 L15,46 L11,43 L16,43 Z" fill="#FFFFFF"/>
+      <path d="M112,38 L114,43 L119,43 L115,46 L117,51 L112,48 L107,51 L109,46 L105,43 L110,43 Z" fill="#FFFFFF"/>
     ` : '';
 
     ribbonMarkup = `
@@ -148,7 +150,7 @@ function generateBadgeSVG(badgeId, unlocked = true) {
   }
 
   return `
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="-35 -5 200 125" class="milestone-badge-svg ${unlocked ? 'unlocked' : 'locked'}">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="${viewBox}" class="milestone-badge-svg ${unlocked ? 'unlocked' : 'locked'}">
       <defs>
         <linearGradient id="top_${uid}" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stop-color="${topC1}"/>
@@ -199,20 +201,20 @@ function renderAchievedBadges() {
   const achieved = all.filter(a => a.unlocked);
 
   if (countLabel) {
-    countLabel.textContent = `${achieved.length} / ${all.length} Badges Earned`;
+    countLabel.textContent = `${achieved.length} / ${all.length} Unlocked`;
   }
 
   if (achieved.length === 0) {
     container.innerHTML = `
       <div class="achieved-empty-state animate-fade-in">
         <div class="achieved-empty-icon">
-          <i data-lucide="sparkles" style="width: 26px; height: 26px;"></i>
+          <i data-lucide="sparkles" style="width: 24px; height: 24px;"></i>
         </div>
         <div class="achieved-empty-title">No Milestones Unlocked Yet</div>
-        <div class="achieved-empty-desc">Complete habit streaks and perfect days to unlock your first milestone badge!</div>
-        <button class="btn btn-secondary" onclick="openAllBadgesModal()" style="margin-top: 0.85rem; font-size: 0.78rem; padding: 0.4rem 0.85rem;">
-          <i data-lucide="trophy" style="width: 14px; height: 14px;"></i>
-          <span>View Available Badges</span>
+        <div class="achieved-empty-desc">Complete habit streaks and perfect days to unlock your milestone badges!</div>
+        <button class="btn btn-secondary" onclick="openAllBadgesModal()" style="margin-top: 0.75rem; font-size: 0.74rem; padding: 0.35rem 0.8rem;">
+          <i data-lucide="trophy" style="width: 13px; height: 13px;"></i>
+          <span>View All Badges</span>
         </button>
       </div>
     `;
@@ -221,25 +223,23 @@ function renderAchievedBadges() {
   }
 
   container.innerHTML = `
-    <div class="achieved-badges-grid animate-fade-in">
+    <div class="achieved-badges-row animate-fade-in">
       ${achieved.map(b => {
         const catMeta = CATEGORY_META[b.category] || CATEGORY_META.streak;
         const svgMarkup = generateBadgeSVG(b.id, true);
 
         return `
           <div 
-            class="achieved-badge-card"
+            class="achieved-badge-chip"
             data-badge-title="${escapeHtml(b.name)}"
             data-badge-desc="${escapeHtml(b.description)}"
             data-badge-xp="+${b.xpBonus} XP"
             data-badge-cat="${catMeta.name}"
           >
-            <div class="achieved-badge-graphic">
+            <div class="achieved-badge-svg-wrap">
               ${svgMarkup}
             </div>
-            <div class="achieved-badge-card-name" title="${escapeHtml(b.name)}">
-              ${escapeHtml(b.name)}
-            </div>
+            <span class="achieved-badge-chip-label" title="${escapeHtml(b.name)}">${escapeHtml(b.name)}</span>
           </div>
         `;
       }).join('')}
@@ -310,7 +310,7 @@ function initBadgeHoverTooltips() {
     }, 1000);
   };
 
-  document.querySelectorAll('.achieved-badge-card').forEach(el => {
+  document.querySelectorAll('.achieved-badge-chip, .modal-badge-card').forEach(el => {
     el.removeEventListener('mouseenter', el._hoverIn);
     el.removeEventListener('mouseleave', el._hoverOut);
 

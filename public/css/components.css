@@ -2170,79 +2170,72 @@
 }
 
 /* ==============================================================================
-   Achieved Badges Showcase (Compact, Non-Overshadowing Jewel Badges)
+   Minimalist & Lightweight Achieved Badges Showcase (Uncluttered Shelf)
    ============================================================================== */
-.achieved-badges-wrapper {
-  background: var(--bg-card);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-lg, 16px);
-  padding: 1.15rem 1.1rem;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
-  min-height: 80px;
-  display: flex;
-  align-items: center;
-}
-
-.achieved-badges-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(95px, 1fr));
-  gap: 0.75rem;
+.achieved-badges-shelf {
+  padding: 0.15rem 0 0.5rem;
   width: 100%;
 }
 
-@media (min-width: 520px) {
-  .achieved-badges-grid {
-    grid-template-columns: repeat(auto-fill, minmax(105px, 1fr));
-    gap: 0.95rem;
-  }
+.achieved-badges-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.15rem;
+  flex-wrap: wrap;
+  width: 100%;
 }
 
-.achieved-badge-card {
-  background: var(--bg-surface, var(--bg-card));
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-md, 12px);
-  padding: 0.85rem 0.5rem 0.65rem;
+.achieved-badge-chip {
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 0.35rem;
+  width: 72px;
   text-align: center;
   cursor: pointer;
-  transition: all 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+  transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
   position: relative;
   user-select: none;
   touch-action: manipulation;
 }
 
-.achieved-badge-card:hover {
-  transform: translateY(-4px) scale(1.05);
-  border-color: var(--border-active);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
-  z-index: 5;
+.achieved-badge-chip:hover {
+  transform: translateY(-4px) scale(1.08);
+  z-index: 10;
 }
 
-.achieved-badge-card:active {
-  transform: scale(0.96);
+.achieved-badge-chip:active {
+  transform: scale(0.95);
 }
 
-.achieved-badge-graphic {
-  width: 72px;
-  height: 50px;
+.achieved-badge-svg-wrap {
+  width: 62px;
+  height: 52px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 0.45rem;
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.35));
+  transition: filter 0.22s ease;
 }
 
-.achieved-badge-card-name {
-  font-size: 0.72rem;
+.achieved-badge-chip:hover .achieved-badge-svg-wrap {
+  filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.5));
+}
+
+.achieved-badge-chip-label {
+  font-size: 0.7rem;
   font-weight: 750;
-  color: var(--text-primary);
+  color: var(--text-secondary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 85px;
+  max-width: 72px;
   line-height: 1.2;
+  transition: color 0.15s ease;
+}
+
+.achieved-badge-chip:hover .achieved-badge-chip-label {
+  color: var(--text-primary);
 }
 
 /* Vector SVG Badge Typography & Filters */
