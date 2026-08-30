@@ -1,8 +1,7 @@
-// Committed Multi-Year Progression & Mastery Controller (Harmonized with Insights)
+// Committed Multi-Year Progression & Mastery Controller
 
 let progressionData = null;
-let currentCategoryFilter = 'all';
-let showAchievedOnly = false;
+let currentModalCategory = 'all';
 
 document.addEventListener('DOMContentLoaded', () => {
   initTheme();
@@ -22,8 +21,7 @@ async function loadProgressData() {
     progressionData = res;
     renderHeroCard(res);
     renderLifetimeStats(res.lifetimeStats);
-    renderAchievements();
-    renderXPFeed(res.recentTransactions);
+    renderAchievedBadges();
 
     lucide.createIcons();
   } catch (err) {
@@ -46,88 +44,209 @@ function renderLifetimeStats(stats) {
   document.getElementById('statBestStreak').textContent = `${stats.longestStreak || 0}d`;
 }
 
-function setCategoryFilter(category, btn) {
-  currentCategoryFilter = category;
-  document.querySelectorAll('.achieve-tab-btn').forEach(b => b.classList.remove('active'));
-  if (btn) btn.classList.add('active');
-  renderAchievements();
-  lucide.createIcons();
-}
-
-function toggleAchievedFilter() {
-  showAchievedOnly = !showAchievedOnly;
-  const btn = document.getElementById('btnToggleAchieved');
-  if (btn) {
-    btn.innerHTML = showAchievedOnly
-      ? `<i data-lucide="eye-off" style="width: 13px; height: 13px;"></i> <span>Show All</span>`
-      : `<i data-lucide="eye" style="width: 13px; height: 13px;"></i> <span>Show Achieved</span>`;
-  }
-  renderAchievements();
-  lucide.createIcons();
-}
-
-const CATEGORY_COLORS = {
-  streak: '#f59e0b',
-  perfect_days: '#8b5cf6',
-  consistency: '#10b981',
-  volume: '#06b6d4'
+const CATEGORY_META = {
+  streak: { color: '#f59e0b', name: 'Streak Milestone', bg: 'rgba(245, 158, 11, 0.15)' },
+  perfect_days: { color: '#8b5cf6', name: 'Perfect Day Mastery', bg: 'rgba(139, 92, 246, 0.15)' },
+  consistency: { color: '#10b981', name: 'Consistency Pillar', bg: 'rgba(16, 185, 129, 0.15)' },
+  volume: { color: '#06b6d4', name: 'Volume Legend', bg: 'rgba(6, 182, 212, 0.15)' }
 };
 
-function renderAchievements() {
+function renderAchievedBadges() {
   if (!progressionData || !progressionData.achievements) return;
-  const container = document.getElementById('achievementsContainer');
+  const container = document.getElementById('achievedBadgesContainer');
   const countLabel = document.getElementById('achievementsCountText');
 
   const all = progressionData.achievements;
-  const unlockedCount = all.filter(a => a.unlocked).length;
+  const achieved = all.filter(a => a.unlocked);
 
   if (countLabel) {
-    countLabel.textContent = `${unlockedCount} / ${all.length} Unlocked`;
+    countLabel.textContent = `${achieved.length} / ${all.length} Badges Earned`;
   }
 
-  let filtered = all;
-  if (currentCategoryFilter !== 'all') {
-    filtered = filtered.filter(a => a.category === currentCategoryFilter);
-  }
-  if (showAchievedOnly) {
-    filtered = filtered.filter(a => a.unlocked);
-  }
-
-  if (filtered.length === 0) {
+  if (achieved.length === 0) {
     container.innerHTML = `
-      <div style="grid-column: 1 / -1; background: var(--bg-card); border: 1px dashed var(--border-subtle); border-radius: var(--radius-md); padding: 2rem 1rem; text-align: center; color: var(--text-muted); font-size: 0.82rem;">
-        No milestones in this filter view.
+      <div class="achieved-empty-state animate-fade-in">
+        <div class="achieved-empty-icon">
+          <i data-lucide="sparkles" style="width: 26px; height: 26px;"></i>
+        </div>
+        <div class="achieved-empty-title">No Milestones Unlocked Yet</div>
+        <div class="achieved-empty-desc">Complete habit streaks and perfect days to unlock your first milestone badge!</div>
+        <button class="btn btn-secondary" onclick="openAllBadgesModal()" style="margin-top: 0.85rem; font-size: 0.78rem; padding: 0.4rem 0.85rem;">
+          <i data-lucide="trophy" style="width: 14px; height: 14px;"></i>
+          <span>View Available Badges</span>
+        </button>
       </div>
     `;
+    lucide.createIcons();
     return;
   }
 
-  container.innerHTML = filtered.map(a => {
-    const color = CATEGORY_COLORS[a.category] || '#10b981';
+  container.innerHTML = `
+    <div class="achieved-badges-grid animate-fade-in">
+      ${achieved.map(b => {
+        const meta = CATEGORY_META[b.category] || CATEGORY_META.streak;
+        return `
+          <div 
+            class="achieved-badge-item"
+            style="--badge-accent: ${meta.color}; --badge-bg: ${meta.bg};"
+            data-badge-title="${escapeHtml(b.name)}"
+            data-badge-desc="${escapeHtml(b.description)}"
+            data-badge-xp="+${b.xpBonus} XP"
+            data-badge-cat="${meta.name}"
+          >
+            <div class="achieved-badge-icon">
+              <i data-lucide="${b.icon || 'trophy'}" style="width: 18px; height: 18px;"></i>
+            </div>
+            <div class="achieved-badge-check">
+              <i data-lucide="check" style="width: 9px; height: 9px; stroke-width: 3.5;"></i>
+            </div>
+            <span class="achieved-badge-label">${escapeHtml(b.name)}</span>
+          </div>
+        `;
+      }).join('')}
+    </div>
+  `;
+
+  lucide.createIcons();
+  initBadgeHoverTooltips();
+}
+
+function initBadgeHoverTooltips() {
+  let tooltipEl = document.getElementById('badgeDetailTooltip');
+  if (!tooltipEl) {
+    tooltipEl = document.createElement('div');
+    tooltipEl.id = 'badgeDetailTooltip';
+    tooltipEl.className = 'badge-hover-tooltip';
+    document.body.appendChild(tooltipEl);
+  }
+
+  const showTooltip = (badgeEl) => {
+    const title = badgeEl.dataset.badgeTitle;
+    const desc = badgeEl.dataset.badgeDesc;
+    const xp = badgeEl.dataset.badgeXp;
+    const cat = badgeEl.dataset.badgeCat;
+
+    tooltipEl.innerHTML = `
+      <div class="badge-tt-header">
+        <span class="badge-tt-tag">✓ Milestone Completed</span>
+        <span class="badge-tt-xp">${xp}</span>
+      </div>
+      <div class="badge-tt-title">${title}</div>
+      <div class="badge-tt-desc">${desc}</div>
+      <div class="badge-tt-cat">${cat}</div>
+    `;
+
+    const rect = badgeEl.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const topY = rect.top - 10;
+
+    tooltipEl.style.left = `${centerX}px`;
+
+    if (topY < 90) {
+      tooltipEl.style.top = `${rect.bottom + 10}px`;
+      tooltipEl.classList.add('flipped');
+    } else {
+      tooltipEl.style.top = `${topY}px`;
+      tooltipEl.classList.remove('flipped');
+    }
+
+    tooltipEl.classList.add('visible');
+  };
+
+  const hideTooltip = () => {
+    tooltipEl.classList.remove('visible');
+  };
+
+  document.querySelectorAll('.achieved-badge-item').forEach(el => {
+    el.removeEventListener('mouseenter', el._hoverIn);
+    el.removeEventListener('mouseleave', el._hoverOut);
+
+    el._hoverIn = () => showTooltip(el);
+    el._hoverOut = () => hideTooltip();
+
+    el.addEventListener('mouseenter', el._hoverIn);
+    el.addEventListener('mouseleave', el._hoverOut);
+  });
+}
+
+// ------------------------------------------------------------------------------
+// Modal Logic: All Badges & Progress
+// ------------------------------------------------------------------------------
+function openAllBadgesModal() {
+  if (!progressionData) return;
+  const overlay = document.getElementById('allBadgesModalOverlay');
+  if (!overlay) return;
+
+  const all = progressionData.achievements || [];
+  const unlockedCount = all.filter(a => a.unlocked).length;
+  const summaryText = document.getElementById('modalBadgesSummaryText');
+  if (summaryText) {
+    summaryText.textContent = `${unlockedCount} of ${all.length} Badges Unlocked`;
+  }
+
+  currentModalCategory = 'all';
+  document.querySelectorAll('.all-badges-modal .achieve-tab-btn').forEach((btn, idx) => {
+    btn.classList.toggle('active', idx === 0);
+  });
+
+  renderModalBadgesGrid();
+  overlay.classList.add('open');
+  lucide.createIcons();
+}
+
+function closeAllBadgesModal() {
+  const overlay = document.getElementById('allBadgesModalOverlay');
+  if (overlay) overlay.classList.remove('open');
+}
+
+function setModalCategoryFilter(category, btn) {
+  currentModalCategory = category;
+  document.querySelectorAll('.all-badges-modal .achieve-tab-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  renderModalBadgesGrid();
+  lucide.createIcons();
+}
+
+function renderModalBadgesGrid() {
+  if (!progressionData || !progressionData.achievements) return;
+  const container = document.getElementById('modalBadgesGrid');
+  if (!container) return;
+
+  let list = progressionData.achievements;
+  if (currentModalCategory !== 'all') {
+    list = list.filter(a => a.category === currentModalCategory);
+  }
+
+  container.innerHTML = list.map(a => {
+    const meta = CATEGORY_META[a.category] || CATEGORY_META.streak;
+    const color = meta.color;
     const percent = Math.min(100, Math.round((a.current / a.target) * 100));
 
     return `
-      <div class="achieve-card-item ${a.unlocked ? 'unlocked' : ''} animate-fade-in">
-        <div>
-          <div class="achieve-card-top">
-            <div class="achieve-card-icon" style="background: ${color}20; color: ${color};">
-              <i data-lucide="${a.icon || 'trophy'}" style="width: 15px; height: 15px;"></i>
-            </div>
-            <div class="achieve-card-reward ${a.unlocked ? 'unlocked' : 'locked'}">
-              ${a.unlocked ? '✓ Done' : `+${a.xpBonus} XP`}
-            </div>
+      <div class="modal-badge-card ${a.unlocked ? 'unlocked' : 'locked'}">
+        <div class="modal-badge-card-top">
+          <div class="modal-badge-icon" style="background: ${color}20; color: ${color};">
+            <i data-lucide="${a.icon || 'trophy'}" style="width: 17px; height: 17px;"></i>
           </div>
-          <div class="achieve-card-title" title="${a.name}">${a.name}</div>
-          <div class="achieve-card-desc" title="${a.description}">${a.description}</div>
+          <div class="modal-badge-status-pill ${a.unlocked ? 'unlocked' : 'locked'}">
+            ${a.unlocked ? '<i data-lucide="check" style="width: 11px; height: 11px;"></i> Unlocked' : `+${a.xpBonus} XP`}
+          </div>
         </div>
 
-        <div>
-          <div class="achieve-card-prog-meta">
-            <span style="color: ${a.unlocked ? '#10b981' : 'var(--text-muted)'}; font-weight: 750;">${a.unlocked ? 'Complete' : 'Progress'}</span>
-            <span style="color: ${a.unlocked ? '#10b981' : 'var(--text-primary)'}; font-weight: 800;">${a.current.toLocaleString()}${a.unit || ''}/${a.target.toLocaleString()}${a.unit || ''}</span>
+        <div class="modal-badge-title">${escapeHtml(a.name)}</div>
+        <div class="modal-badge-desc">${escapeHtml(a.description)}</div>
+
+        <div class="modal-badge-progress-box">
+          <div class="modal-badge-progress-labels">
+            <span style="color: ${a.unlocked ? '#10b981' : 'var(--text-muted)'}; font-weight: 750;">
+              ${a.unlocked ? 'Milestone Complete' : 'Progress'}
+            </span>
+            <span style="color: ${a.unlocked ? '#10b981' : 'var(--text-primary)'}; font-weight: 850;">
+              ${a.current.toLocaleString()}${a.unit || ''} / ${a.target.toLocaleString()}${a.unit || ''} (${percent}%)
+            </span>
           </div>
-          <div class="achieve-card-prog-track">
-            <div class="achieve-card-prog-fill" style="width: ${percent}%; background: ${a.unlocked ? '#10b981' : color};"></div>
+          <div class="modal-badge-progress-track">
+            <div class="modal-badge-progress-fill" style="width: ${percent}%; background: ${a.unlocked ? '#10b981' : color};"></div>
           </div>
         </div>
       </div>
@@ -135,32 +254,13 @@ function renderAchievements() {
   }).join('');
 }
 
-function renderXPFeed(transactions) {
-  const container = document.getElementById('xpFeedList');
-  if (!container) return;
-
-  const last10 = (transactions || []).slice(0, 10);
-
-  if (last10.length === 0) {
-    container.innerHTML = '<div style="color: var(--text-muted); font-size: 0.8rem; padding: 1rem 0;">No XP transactions yet.</div>';
-    return;
-  }
-
-  container.innerHTML = last10.map(t => `
-    <div class="insight-card-item animate-fade-in" style="margin-bottom: 0.55rem; padding: 0.75rem 0.95rem;">
-      <div class="insight-card-left">
-        <div class="insight-icon-box" style="background-color: rgba(16, 185, 129, 0.15); color: #10b981; width: 34px; height: 34px;">
-          <i data-lucide="plus-circle" style="width: 16px; height: 16px;"></i>
-        </div>
-        <div>
-          <div class="insight-title-line" style="font-size: 0.82rem;">${t.description}</div>
-          <div class="insight-message-text" style="font-size: 0.7rem;">${t.event_date || 'Recent'}</div>
-        </div>
-      </div>
-      <div class="insight-stat-badge" style="min-width: 60px; padding: 0.35rem 0.6rem; border-color: rgba(16, 185, 129, 0.3);">
-        <div class="insight-stat-val" style="color: #10b981; font-size: 0.9rem;">+${t.amount}</div>
-        <div class="insight-stat-sub">XP</div>
-      </div>
-    </div>
-  `).join('');
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str).replace(/[&<>"']/g, m => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#039;'
+  })[m]);
 }

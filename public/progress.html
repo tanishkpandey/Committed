@@ -20,157 +20,177 @@
       </div>
     </header>
 
-    <!-- 1. PLAYER RANK & LEVEL CARD -->
-    <div class="ref-overview-header" style="margin-bottom: 0.65rem;">
-      <div class="ref-section-tag" style="color: #10b981;">
-        <i data-lucide="award" style="width: 14px; height: 14px;"></i>
-        <span>Player Rank</span>
+    <!-- 1. PLAYER RANK & LEVEL SECTION -->
+    <section class="progress-section">
+      <div class="ref-overview-header">
+        <div class="ref-section-tag" style="color: #10b981;">
+          <i data-lucide="award" style="width: 14px; height: 14px;"></i>
+          <span>Player Rank</span>
+        </div>
+        <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">Active Level</span>
       </div>
-      <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">Active Level</span>
-    </div>
 
-    <div class="hero-level-card" style="margin-bottom: 1.25rem;">
-      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.85rem;">
-        <div style="display: flex; align-items: center; gap: 0.75rem;">
-          <div class="hero-badge-circle" style="margin: 0; width: 44px; height: 44px;">
-            <i data-lucide="award" style="width: 22px; height: 22px;"></i>
+      <div class="hero-level-card">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.85rem;">
+          <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <div class="hero-badge-circle" style="margin: 0; width: 44px; height: 44px;">
+              <i data-lucide="award" style="width: 22px; height: 22px;"></i>
+            </div>
+            <div style="text-align: left;">
+              <div class="hero-level-title" id="heroLevelNum" style="font-size: 1.45rem;">LEVEL 1</div>
+              <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">Mastery Rank</div>
+            </div>
           </div>
-          <div style="text-align: left;">
-            <div class="hero-level-title" id="heroLevelNum" style="font-size: 1.45rem;">LEVEL 1</div>
-            <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">Mastery Rank</div>
+          <div style="background: rgba(16, 185, 129, 0.15); color: #10b981; padding: 0.3rem 0.65rem; border-radius: var(--radius-full); font-size: 0.74rem; font-weight: 800; border: 1px solid rgba(16, 185, 129, 0.3);">
+            Active Tier
           </div>
         </div>
-        <div style="background: rgba(16, 185, 129, 0.15); color: #10b981; padding: 0.3rem 0.65rem; border-radius: var(--radius-full); font-size: 0.74rem; font-weight: 800; border: 1px solid rgba(16, 185, 129, 0.3);">
-          Active Tier
+        
+        <div class="hero-xp-track" style="margin: 0.65rem 0 0.45rem;">
+          <div class="hero-xp-fill" id="heroXpFill" style="width: 0%;"></div>
+        </div>
+        
+        <div class="hero-xp-labels">
+          <span id="heroXpCurrentText">0 / 100 XP</span>
+          <span id="heroXpRemainingText">100 XP until Level 2</span>
         </div>
       </div>
-      
-      <div class="hero-xp-track" style="margin: 0.65rem 0 0.45rem;">
-        <div class="hero-xp-fill" id="heroXpFill" style="width: 0%;"></div>
-      </div>
-      
-      <div class="hero-xp-labels">
-        <span id="heroXpCurrentText">0 / 100 XP</span>
-        <span id="heroXpRemainingText">100 XP until Level 2</span>
-      </div>
-    </div>
+    </section>
 
-    <!-- 2. LIFETIME OVERVIEW: 4 Cards (Matching Insights Overview Grid) -->
-    <div class="ref-overview-header">
-      <div class="ref-section-tag" style="color: #06b6d4;">
-        <i data-lucide="layers" style="width: 14px; height: 14px;"></i>
-        <span>Lifetime Accumulation</span>
-      </div>
-      <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">All-Time Records</span>
-    </div>
-
-    <div class="ref-overview-grid">
-      <!-- Card 1: Total XP -->
-      <div class="ref-overview-card">
-        <div class="ref-card-icon-badge" style="background: rgba(16, 185, 129, 0.15); color: #10b981;">
-          <i data-lucide="sparkles" style="width: 17px; height: 17px;"></i>
+    <!-- 2. LIFETIME ACCUMULATION SECTION -->
+    <section class="progress-section">
+      <div class="ref-overview-header">
+        <div class="ref-section-tag" style="color: #06b6d4;">
+          <i data-lucide="layers" style="width: 14px; height: 14px;"></i>
+          <span>Lifetime Accumulation</span>
         </div>
-        <div class="ref-card-val" id="statLifetimeXP">0</div>
-        <div class="ref-card-label">Total XP</div>
-        <div class="ref-card-trend up">
-          <i data-lucide="zap" style="width: 12px; height: 12px;"></i>
-          <span>Lifetime Points</span>
-        </div>
+        <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">All-Time Records</span>
       </div>
 
-      <!-- Card 2: Total Completions -->
-      <div class="ref-overview-card">
-        <div class="ref-card-icon-badge" style="background: rgba(6, 182, 212, 0.15); color: #06b6d4;">
-          <i data-lucide="check-circle-2" style="width: 17px; height: 17px;"></i>
+      <div class="ref-overview-grid">
+        <!-- Card 1: Total XP -->
+        <div class="ref-overview-card">
+          <div class="ref-card-icon-badge" style="background: rgba(16, 185, 129, 0.15); color: #10b981;">
+            <i data-lucide="sparkles" style="width: 17px; height: 17px;"></i>
+          </div>
+          <div class="ref-card-val" id="statLifetimeXP">0</div>
+          <div class="ref-card-label">Total XP</div>
+          <div class="ref-card-trend up">
+            <i data-lucide="zap" style="width: 12px; height: 12px;"></i>
+            <span>Lifetime Points</span>
+          </div>
         </div>
-        <div class="ref-card-val" id="statTotalCompletions">0</div>
-        <div class="ref-card-label">Completions</div>
-        <div class="ref-card-trend up">
-          <i data-lucide="check" style="width: 12px; height: 12px;"></i>
-          <span>Total Checks</span>
+
+        <!-- Card 2: Total Completions -->
+        <div class="ref-overview-card">
+          <div class="ref-card-icon-badge" style="background: rgba(6, 182, 212, 0.15); color: #06b6d4;">
+            <i data-lucide="check-circle-2" style="width: 17px; height: 17px;"></i>
+          </div>
+          <div class="ref-card-val" id="statTotalCompletions">0</div>
+          <div class="ref-card-label">Completions</div>
+          <div class="ref-card-trend up">
+            <i data-lucide="check" style="width: 12px; height: 12px;"></i>
+            <span>Total Checks</span>
+          </div>
+        </div>
+
+        <!-- Card 3: Perfect Days -->
+        <div class="ref-overview-card">
+          <div class="ref-card-icon-badge" style="background: rgba(245, 158, 11, 0.15); color: #f59e0b;">
+            <i data-lucide="star" style="width: 17px; height: 17px;"></i>
+          </div>
+          <div class="ref-card-val" id="statPerfectDays">0</div>
+          <div class="ref-card-label">Perfect Days</div>
+          <div style="font-size: 0.68rem; color: var(--text-muted); font-weight: 700;">
+            100% Habit Days
+          </div>
+        </div>
+
+        <!-- Card 4: Best Streak -->
+        <div class="ref-overview-card">
+          <div class="ref-card-icon-badge" style="background: rgba(236, 72, 153, 0.15); color: #ec4899;">
+            <i data-lucide="flame" style="width: 17px; height: 17px;"></i>
+          </div>
+          <div class="ref-card-val" id="statBestStreak">0d</div>
+          <div class="ref-card-label">Best Streak</div>
+          <div style="font-size: 0.68rem; color: var(--text-muted); font-weight: 700;">
+            Personal Record
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. LONG-TERM MILESTONES SECTION (Achieved Badges Only + Info Icon) -->
+    <section class="progress-section">
+      <div class="milestones-section-header">
+        <div class="ref-section-tag" style="color: #f59e0b;">
+          <i data-lucide="trophy" style="width: 15px; height: 15px;"></i>
+          <span>Long-Term Milestones</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 0.55rem;">
+          <span class="milestones-count-pill" id="achievementsCountText">0 Badges Earned</span>
+          <button class="milestones-info-btn" onclick="openAllBadgesModal()" title="View all badges and progress" aria-label="View all badges">
+            <i data-lucide="info" style="width: 14px; height: 14px;"></i>
+            <span>All Badges</span>
+          </button>
         </div>
       </div>
 
-      <!-- Card 3: Perfect Days -->
-      <div class="ref-overview-card">
-        <div class="ref-card-icon-badge" style="background: rgba(245, 158, 11, 0.15); color: #f59e0b;">
-          <i data-lucide="star" style="width: 17px; height: 17px;"></i>
-        </div>
-        <div class="ref-card-val" id="statPerfectDays">0</div>
-        <div class="ref-card-label">Perfect Days</div>
-        <div style="font-size: 0.68rem; color: var(--text-muted); font-weight: 700;">
-          100% Habit Days
-        </div>
+      <!-- Achieved Badges Showcase Grid -->
+      <div class="achieved-badges-wrapper" id="achievedBadgesContainer">
+        <!-- Loaded dynamically via progress.js -->
       </div>
+    </section>
+  </div>
 
-      <!-- Card 4: Best Streak -->
-      <div class="ref-overview-card">
-        <div class="ref-card-icon-badge" style="background: rgba(236, 72, 153, 0.15); color: #ec4899;">
-          <i data-lucide="flame" style="width: 17px; height: 17px;"></i>
+  <!-- All Badges & Milestones Modal -->
+  <div class="modal-overlay" id="allBadgesModalOverlay" onclick="if(event.target === this) closeAllBadgesModal()">
+    <div class="modal-box all-badges-modal">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 0.65rem;">
+          <div style="background: rgba(245, 158, 11, 0.15); color: #f59e0b; width: 34px; height: 34px; border-radius: var(--radius-xs); display: flex; align-items: center; justify-content: center;">
+            <i data-lucide="trophy" style="width: 18px; height: 18px;"></i>
+          </div>
+          <div>
+            <h3 class="modal-title" style="margin-bottom: 0.1rem; font-size: 1.05rem;">All Badges & Milestones</h3>
+            <span style="font-size: 0.72rem; color: var(--text-muted);" id="modalBadgesSummaryText">24 Milestones Available</span>
+          </div>
         </div>
-        <div class="ref-card-val" id="statBestStreak">0d</div>
-        <div class="ref-card-label">Best Streak</div>
-        <div style="font-size: 0.68rem; color: var(--text-muted); font-weight: 700;">
-          Personal Record
-        </div>
-      </div>
-    </div>
-
-    <!-- 3. LONG-TERM MILESTONES -->
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; margin-top: 1.25rem;">
-      <div class="ref-section-tag" style="color: #f59e0b;">
-        <i data-lucide="trophy" style="width: 14px; height: 14px;"></i>
-        <span>Long-Term Milestones</span>
-      </div>
-      <div style="display: flex; align-items: center; gap: 0.5rem;">
-        <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 700;" id="achievementsCountText">0 / 24 Unlocked</span>
-        <button class="btn btn-secondary" id="btnToggleAchieved" onclick="toggleAchievedFilter()" style="padding: 0.3rem 0.65rem; font-size: 0.72rem;">
-          <i data-lucide="eye" style="width: 13px; height: 13px;"></i>
-          <span>Show Achieved</span>
+        <button class="close-btn" onclick="closeAllBadgesModal()" aria-label="Close modal">
+          <i data-lucide="x" style="width: 20px; height: 20px;"></i>
         </button>
       </div>
-    </div>
 
-    <!-- Category Filter Tabs (Vector Icons, High Contrast) -->
-    <div class="achieve-tabs-bar">
-      <button class="achieve-tab-btn active" onclick="setCategoryFilter('all', this)">
-        <i data-lucide="layers" style="width: 13px; height: 13px;"></i>
-        <span>All (24)</span>
-      </button>
-      <button class="achieve-tab-btn" onclick="setCategoryFilter('streak', this)">
-        <i data-lucide="flame" style="width: 13px; height: 13px;"></i>
-        <span>Streaks (8)</span>
-      </button>
-      <button class="achieve-tab-btn" onclick="setCategoryFilter('perfect_days', this)">
-        <i data-lucide="star" style="width: 13px; height: 13px;"></i>
-        <span>Perfect Days (6)</span>
-      </button>
-      <button class="achieve-tab-btn" onclick="setCategoryFilter('consistency', this)">
-        <i data-lucide="trending-up" style="width: 13px; height: 13px;"></i>
-        <span>Consistency (4)</span>
-      </button>
-      <button class="achieve-tab-btn" onclick="setCategoryFilter('volume', this)">
-        <i data-lucide="award" style="width: 13px; height: 13px;"></i>
-        <span>Volume (6)</span>
-      </button>
-    </div>
-
-    <!-- Achievements 2-Column Compact Grid -->
-    <div class="achieve-grid-2col" id="achievementsContainer">
-      <!-- Rendered dynamically via progress.js -->
-    </div>
-
-    <!-- 4. RECENT XP TRANSACTIONS FEED -->
-    <div class="ref-overview-header" style="margin-top: 1.25rem; margin-bottom: 0.75rem;">
-      <div class="ref-section-tag" style="color: #8b5cf6;">
-        <i data-lucide="history" style="width: 14px; height: 14px;"></i>
-        <span>Recent XP Transactions</span>
+      <!-- Modal Category Tabs -->
+      <div class="achieve-tabs-bar" style="margin-bottom: 1rem;">
+        <button class="achieve-tab-btn active" onclick="setModalCategoryFilter('all', this)">
+          <i data-lucide="layers" style="width: 13px; height: 13px;"></i>
+          <span>All (24)</span>
+        </button>
+        <button class="achieve-tab-btn" onclick="setModalCategoryFilter('streak', this)">
+          <i data-lucide="flame" style="width: 13px; height: 13px;"></i>
+          <span>Streaks</span>
+        </button>
+        <button class="achieve-tab-btn" onclick="setModalCategoryFilter('perfect_days', this)">
+          <i data-lucide="star" style="width: 13px; height: 13px;"></i>
+          <span>Perfect Days</span>
+        </button>
+        <button class="achieve-tab-btn" onclick="setModalCategoryFilter('consistency', this)">
+          <i data-lucide="trending-up" style="width: 13px; height: 13px;"></i>
+          <span>Consistency</span>
+        </button>
+        <button class="achieve-tab-btn" onclick="setModalCategoryFilter('volume', this)">
+          <i data-lucide="award" style="width: 13px; height: 13px;"></i>
+          <span>Volume</span>
+        </button>
       </div>
-      <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">Last 10 Records</span>
+
+      <!-- Full Badges List Grid in Modal -->
+      <div class="modal-badges-grid" id="modalBadgesGrid">
+        <!-- Rendered dynamically via progress.js -->
+      </div>
     </div>
-    <div class="xp-feed-list" id="xpFeedList">
-      <!-- Loaded dynamically via progress.js -->
-    </div>
+  </div>
   </div>
 
   <!-- Bottom Navigation -->
