@@ -45,11 +45,91 @@ function renderLifetimeStats(stats) {
 }
 
 const CATEGORY_META = {
-  streak: { color: '#f59e0b', name: 'Streak Milestone', bg: 'rgba(245, 158, 11, 0.15)' },
-  perfect_days: { color: '#8b5cf6', name: 'Perfect Day Mastery', bg: 'rgba(139, 92, 246, 0.15)' },
-  consistency: { color: '#10b981', name: 'Consistency Pillar', bg: 'rgba(16, 185, 129, 0.15)' },
-  volume: { color: '#06b6d4', name: 'Volume Legend', bg: 'rgba(6, 182, 212, 0.15)' }
+  streak: { color: '#8b5cf6', name: 'Streaks', top: 'url(#streakTop)', bottom: 'url(#streakBottom)', ribbon: '#927FF2', ribbonShadow: '#6352B9' },
+  perfect_days: { color: '#f59e0b', name: 'Perfect Days', top: 'url(#perfectTop)', bottom: 'url(#perfectBottom)', ribbon: '#FFD36A', ribbonShadow: '#B87912' },
+  consistency: { color: '#10b981', name: 'Consistency', top: 'url(#consistencyTop)', bottom: 'url(#consistencyBottom)', ribbon: '#6DD9C1', ribbonShadow: '#438F82' },
+  volume: { color: '#06b6d4', name: 'Volume', top: 'url(#volumeTop)', bottom: 'url(#volumeBottom)', ribbon: '#65B9E8', ribbonShadow: '#397EA9' }
 };
+
+// 24 Badges Catalog matching SVG Template Specs
+const BADGE_CATALOG = {
+  // STREAKS
+  streak_7: { displayNum: '7', unitText: 'DAYS', ribbon: 'none', category: 'streak', top: 'url(#streakTop)', bottom: 'url(#streakBottom)', ribbonColor: '#927FF2', ribbonShadow: '#6352B9', title: 'Week Warrior' },
+  streak_21: { displayNum: '21', unitText: 'DAYS', ribbon: 'ribbon', category: 'streak', top: 'url(#streakTop)', bottom: 'url(#streakBottom)', ribbonColor: '#927FF2', ribbonShadow: '#6352B9', title: 'Habit Lock' },
+  streak_30: { displayNum: '30', unitText: 'DAYS', ribbon: 'starRibbon', category: 'streak', top: 'url(#streakTop)', bottom: 'url(#streakBottom)', ribbonColor: '#927FF2', ribbonShadow: '#6352B9', title: 'Month of Iron' },
+  streak_50: { displayNum: '50', unitText: 'DAYS', ribbon: 'starRibbon', category: 'streak', top: 'url(#streakTop)', bottom: 'url(#streakBottom)', ribbonColor: '#927FF2', ribbonShadow: '#6352B9', title: '50-Day Momentum' },
+  streak_100: { displayNum: '100', unitText: 'DAYS', ribbon: 'starRibbon', category: 'streak', top: 'url(#streakTop)', bottom: 'url(#streakBottom)', ribbonColor: '#927FF2', ribbonShadow: '#6352B9', title: 'Century' },
+  streak_180: { displayNum: '180', unitText: 'DAYS', ribbon: 'starRibbon', category: 'streak', top: 'url(#streakTop)', bottom: 'url(#streakBottom)', ribbonColor: '#A48FF7', ribbonShadow: '#6352B9', title: 'Half-Year Titan' },
+  streak_365: { displayNum: '365', unitText: 'DAYS', ribbon: 'starRibbon', category: 'streak', top: 'url(#streakTop)', bottom: 'url(#streakBottom)', ribbonColor: '#A48FF7', ribbonShadow: '#6352B9', title: 'Unstoppable' },
+  streak_730: { displayNum: '730', unitText: 'DAYS', ribbon: 'starRibbon', category: 'streak', top: 'url(#streakTop)', bottom: 'url(#streakBottom)', ribbonColor: '#B09EFF', ribbonShadow: '#6352B9', title: 'Grandmaster' },
+
+  // PERFECT DAYS
+  pd_1: { displayNum: '1', unitText: 'PERFECT DAY', ribbon: 'none', category: 'perfect_days', top: 'url(#perfectTop)', bottom: 'url(#perfectBottom)', ribbonColor: '#FFD36A', ribbonShadow: '#B87912', title: 'First Perfection' },
+  pd_7: { displayNum: '7', unitText: 'PERFECT DAYS', ribbon: 'ribbon', category: 'perfect_days', top: 'url(#perfectTop)', bottom: 'url(#perfectBottom)', ribbonColor: '#FFD36A', ribbonShadow: '#B87912', title: 'Flawless Week' },
+  pd_30: { displayNum: '30', unitText: 'PERFECT DAYS', ribbon: 'starRibbon', category: 'perfect_days', top: 'url(#perfectTop)', bottom: 'url(#perfectBottom)', ribbonColor: '#FFD36A', ribbonShadow: '#B87912', title: 'Month of Perfection' },
+  pd_100: { displayNum: '100', unitText: 'PERFECT DAYS', ribbon: 'starRibbon', category: 'perfect_days', top: 'url(#perfectTop)', bottom: 'url(#perfectBottom)', ribbonColor: '#FFD36A', ribbonShadow: '#B87912', title: 'Centurion' },
+  pd_365: { displayNum: '365', unitText: 'PERFECT DAYS', ribbon: 'starRibbon', category: 'perfect_days', top: 'url(#perfectTop)', bottom: 'url(#perfectBottom)', ribbonColor: '#FFD36A', ribbonShadow: '#B87912', title: 'Year of Perfection' },
+  pd_500: { displayNum: '500', unitText: 'PERFECT DAYS', ribbon: 'starRibbon', category: 'perfect_days', top: 'url(#perfectTop)', bottom: 'url(#perfectBottom)', ribbonColor: '#FFE18B', ribbonShadow: '#B87912', title: 'Legendary' },
+
+  // CONSISTENCY
+  rate_m70: { displayNum: '70%', unitText: 'MONTHLY', ribbon: 'none', category: 'consistency', top: 'url(#consistencyTop)', bottom: 'url(#consistencyBottom)', ribbonColor: '#6DD9C1', ribbonShadow: '#438F82', title: 'Consistent Builder' },
+  rate_m80: { displayNum: '80%', unitText: 'MONTHLY', ribbon: 'ribbon', category: 'consistency', top: 'url(#consistencyTop)', bottom: 'url(#consistencyBottom)', ribbonColor: '#6DD9C1', ribbonShadow: '#438F82', title: 'High Achiever' },
+  rate_m90: { displayNum: '90%', unitText: 'MONTHLY', ribbon: 'starRibbon', category: 'consistency', top: 'url(#consistencyTop)', bottom: 'url(#consistencyBottom)', ribbonColor: '#6DD9C1', ribbonShadow: '#438F82', title: 'Elite Month' },
+  rate_y80: { displayNum: '80%', unitText: 'FULL YEAR', ribbon: 'starRibbon', category: 'consistency', top: 'url(#consistencyTop)', bottom: 'url(#consistencyBottom)', ribbonColor: '#8BE5D1', ribbonShadow: '#438F82', title: 'Year of Excellence' },
+
+  // VOLUME
+  vol_100: { displayNum: '100', unitText: 'CHECK-INS', ribbon: 'none', category: 'volume', top: 'url(#volumeTop)', bottom: 'url(#volumeBottom)', ribbonColor: '#65B9E8', ribbonShadow: '#397EA9', title: 'Century Club' },
+  vol_500: { displayNum: '500', unitText: 'CHECK-INS', ribbon: 'ribbon', category: 'volume', top: 'url(#volumeTop)', bottom: 'url(#volumeBottom)', ribbonColor: '#65B9E8', ribbonShadow: '#397EA9', title: '500 Club' },
+  vol_1000: { displayNum: '1K', unitText: 'CHECK-INS', ribbon: 'starRibbon', category: 'volume', top: 'url(#volumeTop)', bottom: 'url(#volumeBottom)', ribbonColor: '#65B9E8', ribbonShadow: '#397EA9', title: 'Kilo' },
+  vol_2500: { displayNum: '2.5K', unitText: 'CHECK-INS', ribbon: 'starRibbon', category: 'volume', top: 'url(#volumeTop)', bottom: 'url(#volumeBottom)', ribbonColor: '#65B9E8', ribbonShadow: '#397EA9', title: 'Marathon' },
+  vol_5000: { displayNum: '5K', unitText: 'CHECK-INS', ribbon: 'starRibbon', category: 'volume', top: 'url(#volumeTop)', bottom: 'url(#volumeBottom)', ribbonColor: '#65B9E8', ribbonShadow: '#397EA9', title: 'Grandmaster' },
+  vol_10000: { displayNum: '10K', unitText: 'CHECK-INS', ribbon: 'starRibbon', category: 'volume', top: 'url(#volumeTop)', bottom: 'url(#volumeBottom)', ribbonColor: '#83D0F3', ribbonShadow: '#397EA9', title: 'Hall of Fame' }
+};
+
+function generateBadgeSVG(badgeId, unlocked = true) {
+  const conf = BADGE_CATALOG[badgeId] || {
+    displayNum: '★',
+    unitText: 'BADGE',
+    ribbon: 'none',
+    category: 'streak',
+    top: 'url(#streakTop)',
+    bottom: 'url(#streakBottom)',
+    ribbonColor: '#927FF2',
+    ribbonShadow: '#6352B9'
+  };
+
+  const numStr = String(conf.displayNum);
+  let numClass = 'badge-svg-number';
+  if (numStr.length >= 4) {
+    numClass = 'badge-svg-number badge-svg-number-xs';
+  } else if (numStr.length >= 3) {
+    numClass = 'badge-svg-number badge-svg-number-small';
+  }
+
+  const yNum = conf.ribbon === 'none' ? 36 : (conf.category === 'volume' ? 44 : 40);
+  const yUnit = conf.ribbon === 'none' ? 72 : 75;
+
+  let ribbonEl = '';
+  if (conf.ribbon === 'ribbon') {
+    ribbonEl = '<use href="#badge-ribbon"></use>';
+  } else if (conf.ribbon === 'starRibbon') {
+    ribbonEl = '<use href="#badge-starRibbon"></use>';
+  }
+
+  const topGrad = unlocked ? conf.top : 'url(#lockedTop)';
+  const bottomGrad = unlocked ? conf.bottom : 'url(#lockedBottom)';
+  const ribbonCol = unlocked ? conf.ribbonColor : '#4b5563';
+  const ribbonShad = unlocked ? conf.ribbonShadow : '#1f242d';
+
+  return `
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="-35 -5 200 125" class="milestone-badge-svg ${unlocked ? 'unlocked' : 'locked'}" style="--badge-top: ${topGrad}; --badge-bottom: ${bottomGrad}; --ribbon: ${ribbonCol}; --ribbon-shadow: ${ribbonShad};">
+      <use href="#badge-baseBadge"></use>
+      ${ribbonEl}
+      <text x="65" y="${yNum}" class="${numClass}">${conf.displayNum}</text>
+      <text x="65" y="${yUnit}" class="badge-svg-unit">${conf.unitText}</text>
+    </svg>
+  `;
+}
 
 function renderAchievedBadges() {
   if (!progressionData || !progressionData.achievements) return;
@@ -84,23 +164,23 @@ function renderAchievedBadges() {
   container.innerHTML = `
     <div class="achieved-badges-grid animate-fade-in">
       ${achieved.map(b => {
-        const meta = CATEGORY_META[b.category] || CATEGORY_META.streak;
+        const catMeta = CATEGORY_META[b.category] || CATEGORY_META.streak;
+        const svgMarkup = generateBadgeSVG(b.id, true);
+
         return `
           <div 
-            class="achieved-badge-item"
-            style="--badge-accent: ${meta.color}; --badge-bg: ${meta.bg};"
+            class="achieved-badge-card"
             data-badge-title="${escapeHtml(b.name)}"
             data-badge-desc="${escapeHtml(b.description)}"
             data-badge-xp="+${b.xpBonus} XP"
-            data-badge-cat="${meta.name}"
+            data-badge-cat="${catMeta.name}"
           >
-            <div class="achieved-badge-icon">
-              <i data-lucide="${b.icon || 'trophy'}" style="width: 18px; height: 18px;"></i>
+            <div class="achieved-badge-graphic">
+              ${svgMarkup}
             </div>
-            <div class="achieved-badge-check">
-              <i data-lucide="check" style="width: 9px; height: 9px; stroke-width: 3.5;"></i>
+            <div class="achieved-badge-card-name" title="${escapeHtml(b.name)}">
+              ${escapeHtml(b.name)}
             </div>
-            <span class="achieved-badge-label">${escapeHtml(b.name)}</span>
           </div>
         `;
       }).join('')}
@@ -171,7 +251,7 @@ function initBadgeHoverTooltips() {
     }, 1000);
   };
 
-  document.querySelectorAll('.achieved-badge-item').forEach(el => {
+  document.querySelectorAll('.achieved-badge-card').forEach(el => {
     el.removeEventListener('mouseenter', el._hoverIn);
     el.removeEventListener('mouseleave', el._hoverOut);
 
@@ -232,35 +312,41 @@ function renderModalBadgesGrid() {
   }
 
   container.innerHTML = list.map(a => {
-    const meta = CATEGORY_META[a.category] || CATEGORY_META.streak;
-    const color = meta.color;
+    const catMeta = CATEGORY_META[a.category] || CATEGORY_META.streak;
     const percent = Math.min(100, Math.round((a.current / a.target) * 100));
+    const svgMarkup = generateBadgeSVG(a.id, a.unlocked);
 
     return `
       <div class="modal-badge-card ${a.unlocked ? 'unlocked' : 'locked'}">
-        <div class="modal-badge-card-top">
-          <div class="modal-badge-icon" style="background: ${color}20; color: ${color};">
-            <i data-lucide="${a.icon || 'trophy'}" style="width: 17px; height: 17px;"></i>
+        <div class="modal-badge-card-layout">
+          <div class="modal-badge-svg-col">
+            ${svgMarkup}
           </div>
-          <div class="modal-badge-status-pill ${a.unlocked ? 'unlocked' : 'locked'}">
-            ${a.unlocked ? '<i data-lucide="check" style="width: 11px; height: 11px;"></i> Unlocked' : `+${a.xpBonus} XP`}
-          </div>
-        </div>
+          
+          <div class="modal-badge-content-col">
+            <div class="modal-badge-card-top">
+              <span class="modal-badge-cat-tag" style="color: ${catMeta.color};">${catMeta.name}</span>
+              <div class="modal-badge-status-pill ${a.unlocked ? 'unlocked' : 'locked'}">
+                ${a.unlocked ? '<i data-lucide="check" style="width: 10px; height: 10px; stroke-width: 3;"></i> Unlocked' : `+${a.xpBonus} XP`}
+              </div>
+            </div>
 
-        <div class="modal-badge-title">${escapeHtml(a.name)}</div>
-        <div class="modal-badge-desc">${escapeHtml(a.description)}</div>
+            <div class="modal-badge-title">${escapeHtml(a.name)}</div>
+            <div class="modal-badge-desc">${escapeHtml(a.description)}</div>
 
-        <div class="modal-badge-progress-box">
-          <div class="modal-badge-progress-labels">
-            <span style="color: ${a.unlocked ? '#10b981' : 'var(--text-muted)'}; font-weight: 750;">
-              ${a.unlocked ? 'Milestone Complete' : 'Progress'}
-            </span>
-            <span style="color: ${a.unlocked ? '#10b981' : 'var(--text-primary)'}; font-weight: 850;">
-              ${a.current.toLocaleString()}${a.unit || ''} / ${a.target.toLocaleString()}${a.unit || ''} (${percent}%)
-            </span>
-          </div>
-          <div class="modal-badge-progress-track">
-            <div class="modal-badge-progress-fill" style="width: ${percent}%; background: ${a.unlocked ? '#10b981' : color};"></div>
+            <div class="modal-badge-progress-box">
+              <div class="modal-badge-progress-labels">
+                <span style="color: ${a.unlocked ? '#10b981' : 'var(--text-muted)'}; font-weight: 750;">
+                  ${a.unlocked ? 'Completed' : 'Progress'}
+                </span>
+                <span style="color: ${a.unlocked ? '#10b981' : 'var(--text-primary)'}; font-weight: 850;">
+                  ${a.current.toLocaleString()}${a.unit || ''} / ${a.target.toLocaleString()}${a.unit || ''} (${percent}%)
+                </span>
+              </div>
+              <div class="modal-badge-progress-track">
+                <div class="modal-badge-progress-fill" style="width: ${percent}%; background: ${a.unlocked ? '#10b981' : catMeta.color};"></div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
