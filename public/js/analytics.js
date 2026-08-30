@@ -116,22 +116,22 @@ function renderInsightCards(containerId, dotsId, list) {
   }
 
   container.innerHTML = list.map((item, idx) => `
-    <div class="insight-card-item animate-fade-in" data-index="${idx}">
-      <div class="insight-card-left">
-        <div class="insight-icon-box" style="background-color: ${item.color}22; color: ${item.color};">
-          <i data-lucide="${item.icon || 'zap'}" style="width: 18px; height: 18px;"></i>
+    <div class="insight-card-item modern animate-fade-in" data-index="${idx}">
+      <div class="insight-card-top">
+        <div class="insight-icon-box" style="background-color: ${item.color}18; color: ${item.color};">
+          <i data-lucide="${item.icon || 'award'}" style="width: 15px; height: 15px;"></i>
         </div>
-        <div>
-          <div class="insight-title-line">${item.title}</div>
-          <div class="insight-message-text">${item.message}</div>
-        </div>
+        <div class="insight-title-line">${item.title}</div>
       </div>
+      
       ${item.statValue ? `
-        <div class="insight-stat-badge">
-          <div class="insight-stat-val" style="color: ${item.color};">${item.statValue}</div>
-          <div class="insight-stat-sub">${item.statSub || 'Metric'}</div>
+        <div class="insight-hero-stat-group">
+          <div class="insight-hero-stat-val" style="color: ${item.color};">${item.statValue}</div>
+          <div class="insight-hero-stat-sub">${item.statSub || 'Metric'}</div>
         </div>
       ` : ''}
+
+      <div class="insight-message-text">${item.message}</div>
     </div>
   `).join('');
 

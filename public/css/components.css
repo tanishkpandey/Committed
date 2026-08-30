@@ -1389,52 +1389,84 @@
 }
 
 .insights-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0.65rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 0.85rem;
+  width: 100%;
 }
 
 .insight-card-item {
   background-color: var(--bg-card);
   border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-md);
-  padding: 0.85rem 1rem;
+  border-radius: var(--radius-md, 14px);
+  padding: 1.15rem 1.15rem 1.05rem;
   display: flex;
-  align-items: flex-start;
-  gap: 0.75rem;
-  box-shadow: var(--shadow-card);
-  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), border-color 0.2s ease;
+  flex-direction: column;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.2);
+  transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), border-color 0.2s ease, box-shadow 0.2s ease;
+  position: relative;
+  overflow: hidden;
 }
 
 .insight-card-item:hover {
   border-color: var(--border-active);
-  transform: translateY(-1px);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
 }
 
-.insight-icon-box {
-  width: 34px;
-  height: 34px;
-  border-radius: var(--radius-xs);
+.insight-card-top {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin-bottom: 0.75rem;
+}
+
+.insight-card-top .insight-icon-box {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-xs, 7px);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
 }
 
-.insight-title-line {
-  font-size: 0.76rem;
+.insight-card-top .insight-title-line {
+  font-size: 0.74rem;
   font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.06em;
   color: var(--text-muted);
-  margin-bottom: 0.15rem;
+  margin-bottom: 0;
+}
+
+.insight-hero-stat-group {
+  margin-bottom: 0.65rem;
+}
+
+.insight-hero-stat-val {
+  font-size: 2.25rem;
+  font-weight: 900;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.2rem;
+  font-family: 'Montserrat', 'Inter', -apple-system, sans-serif;
+}
+
+.insight-hero-stat-sub {
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
 }
 
 .insight-message-text {
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: var(--text-primary);
-  line-height: 1.35;
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  line-height: 1.38;
+  font-weight: 500;
+  margin-top: auto;
 }
 
 /* Mobile Swipeable Card Carousel (<= 640px) */
@@ -1456,12 +1488,12 @@
   }
 
   .insights-list.insights-carousel .insight-card-item {
-    flex: 0 0 88% !important;
-    min-width: 88% !important;
-    max-width: 88% !important;
+    flex: 0 0 85% !important;
+    min-width: 85% !important;
+    max-width: 85% !important;
     scroll-snap-align: center !important;
     margin-bottom: 0 !important;
-    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease;
+    padding: 1.1rem 1.05rem 0.95rem !important;
   }
 
   .insights-list.insights-carousel .insight-card-item:active {
