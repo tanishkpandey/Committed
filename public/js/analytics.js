@@ -49,7 +49,30 @@ async function loadAnalytics() {
     lucide.createIcons();
   } catch (err) {
     console.error('Error loading analytics:', err);
+    const container = document.querySelector('.app-container') || document.body;
+    const banner = document.createElement('div');
+    banner.style.cssText = 'background: rgba(244, 63, 94, 0.12); border: 1px solid rgba(244, 63, 94, 0.3); color: #f43f5e; padding: 0.85rem 1rem; border-radius: var(--radius-sm); margin-bottom: 1rem; font-size: 0.85rem; display: flex; align-items: center; justify-content: space-between;';
+    banner.innerHTML = `
+      <div style="display: flex; align-items: center; gap: 0.5rem;">
+        <i data-lucide="alert-circle" style="width: 18px; height: 18px;"></i>
+        <span>Unable to fetch analytics from Supabase: ${escapeHtml(err.message || 'Connection issue')}</span>
+      </div>
+      <button class="btn btn-secondary" onclick="loadAnalytics()" style="padding: 0.3rem 0.6rem; font-size: 0.75rem;">Retry</button>
+    `;
+    container.insertBefore(banner, container.firstChild);
+    lucide.createIcons();
   }
+}
+
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str).replace(/[&<>"']/g, m => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#039;'
+  })[m]);
 }
 
 function renderVelocityCurve(velocityData) {

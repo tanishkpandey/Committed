@@ -186,7 +186,7 @@ function evaluateProgression(habits = [], logs = []) {
     {
       id: 'streak_7',
       category: 'streak',
-      name: 'Week Warrior',
+      name: '7-Day Streak',
       description: 'Maintain an unbroken 7-day streak.',
       icon: 'flame',
       target: 7,
@@ -197,7 +197,7 @@ function evaluateProgression(habits = [], logs = []) {
     {
       id: 'streak_21',
       category: 'streak',
-      name: '21-Day Habit Lock',
+      name: '21-Day Streak',
       description: 'Reach 21 consecutive days — habit automaticity unlocked.',
       icon: 'lock',
       target: 21,
@@ -208,7 +208,7 @@ function evaluateProgression(habits = [], logs = []) {
     {
       id: 'streak_30',
       category: 'streak',
-      name: 'Month of Iron',
+      name: '30-Day Streak',
       description: 'Sustain a 30-day streak without a single break.',
       icon: 'shield',
       target: 30,
@@ -219,7 +219,7 @@ function evaluateProgression(habits = [], logs = []) {
     {
       id: 'streak_50',
       category: 'streak',
-      name: '50-Day Momentum',
+      name: '50-Day Streak',
       description: 'Build an unstoppable 50-day streak.',
       icon: 'zap',
       target: 50,
@@ -230,7 +230,7 @@ function evaluateProgression(habits = [], logs = []) {
     {
       id: 'streak_100',
       category: 'streak',
-      name: 'Century of Discipline',
+      name: '100-Day Streak',
       description: 'Triple-digit mastery: 100 consecutive days.',
       icon: 'award',
       target: 100,
@@ -241,7 +241,7 @@ function evaluateProgression(habits = [], logs = []) {
     {
       id: 'streak_180',
       category: 'streak',
-      name: 'Half-Year Titan',
+      name: '180-Day Streak',
       description: 'Maintain half a year (180 days) of unbroken daily discipline.',
       icon: 'gem',
       target: 180,
@@ -252,7 +252,7 @@ function evaluateProgression(habits = [], logs = []) {
     {
       id: 'streak_365',
       category: 'streak',
-      name: '365-Day Unstoppable',
+      name: '365-Day Streak',
       description: 'One full unbroken year (365 days) of continuous execution.',
       icon: 'crown',
       target: 365,
@@ -263,7 +263,7 @@ function evaluateProgression(habits = [], logs = []) {
     {
       id: 'streak_730',
       category: 'streak',
-      name: '730-Day Grandmaster',
+      name: '730-Day Streak',
       description: 'Two full unbroken years (730 days) — pure lifestyle mastery.',
       icon: 'sparkles',
       target: 730,
@@ -276,7 +276,7 @@ function evaluateProgression(habits = [], logs = []) {
     {
       id: 'pd_1',
       category: 'perfect_days',
-      name: 'First Perfection',
+      name: 'First Perfect Day',
       description: 'Complete 100% of all active habits in a single day.',
       icon: 'check-circle-2',
       target: 1,
@@ -287,7 +287,7 @@ function evaluateProgression(habits = [], logs = []) {
     {
       id: 'pd_7',
       category: 'perfect_days',
-      name: 'Flawless Week',
+      name: 'Perfect Week',
       description: 'Accumulate 7 Perfect Days over your journey.',
       icon: 'sparkles',
       target: 7,
@@ -298,7 +298,7 @@ function evaluateProgression(habits = [], logs = []) {
     {
       id: 'pd_30',
       category: 'perfect_days',
-      name: 'Month of Perfection',
+      name: 'Perfect Month',
       description: 'Accumulate 30 Perfect Days across your lifetime.',
       icon: 'star',
       target: 30,
@@ -309,7 +309,7 @@ function evaluateProgression(habits = [], logs = []) {
     {
       id: 'pd_100',
       category: 'perfect_days',
-      name: 'Centurion of Perfection',
+      name: '100 Perfect Days',
       description: 'Accumulate 100 total Perfect Days.',
       icon: 'trophy',
       target: 100,
@@ -320,7 +320,7 @@ function evaluateProgression(habits = [], logs = []) {
     {
       id: 'pd_365',
       category: 'perfect_days',
-      name: 'Year of Perfection',
+      name: 'Perfect Year',
       description: 'Accumulate 365 lifetime Perfect Days.',
       icon: 'medal',
       target: 365,
@@ -331,7 +331,7 @@ function evaluateProgression(habits = [], logs = []) {
     {
       id: 'pd_500',
       category: 'perfect_days',
-      name: 'Legendary Perfection',
+      name: '500 Perfect Days',
       description: 'Accumulate 500 lifetime Perfect Days — superhuman dedication.',
       icon: 'crown',
       target: 500,
@@ -344,7 +344,7 @@ function evaluateProgression(habits = [], logs = []) {
     {
       id: 'rate_m70',
       category: 'consistency',
-      name: 'Consistent Builder',
+      name: '70% Monthly Consistency',
       description: 'Achieve 70%+ habit completion rate in any calendar month.',
       icon: 'trending-up',
       target: 70,
@@ -356,7 +356,7 @@ function evaluateProgression(habits = [], logs = []) {
     {
       id: 'rate_m80',
       category: 'consistency',
-      name: 'High Achiever',
+      name: '80% Monthly Consistency',
       description: 'Achieve 80%+ habit completion rate in any calendar month.',
       icon: 'activity',
       target: 80,
@@ -368,7 +368,7 @@ function evaluateProgression(habits = [], logs = []) {
     {
       id: 'rate_m90',
       category: 'consistency',
-      name: 'Elite Month',
+      name: '90% Monthly Consistency',
       description: 'Achieve 90%+ habit completion rate in any calendar month.',
       icon: 'award',
       target: 90,
@@ -380,7 +380,7 @@ function evaluateProgression(habits = [], logs = []) {
     {
       id: 'rate_y80',
       category: 'consistency',
-      name: 'Year of Excellence',
+      name: '80% Annual Consistency',
       description: 'Maintain 80%+ habit completion rate across a full rolling year.',
       icon: 'shield-check',
       target: 80,
@@ -394,7 +394,7 @@ function evaluateProgression(habits = [], logs = []) {
     {
       id: 'vol_100',
       category: 'volume',
-      name: 'Century Club',
+      name: '100 Check-Ins',
       description: 'Reach 100 total habit check-ins.',
       icon: 'check-circle',
       target: 100,
@@ -405,7 +405,7 @@ function evaluateProgression(habits = [], logs = []) {
     {
       id: 'vol_500',
       category: 'volume',
-      name: '500 Club',
+      name: '500 Check-Ins',
       description: 'Reach 500 total habit check-ins.',
       icon: 'award',
       target: 500,
@@ -416,7 +416,7 @@ function evaluateProgression(habits = [], logs = []) {
     {
       id: 'vol_1000',
       category: 'volume',
-      name: '1,000 Club (Kilo)',
+      name: '1,000 Check-Ins',
       description: 'Reach 1,000 total habit check-ins across your lifetime.',
       icon: 'trophy',
       target: 1000,
@@ -427,7 +427,7 @@ function evaluateProgression(habits = [], logs = []) {
     {
       id: 'vol_2500',
       category: 'volume',
-      name: '2,500 Marathon',
+      name: '2,500 Check-Ins',
       description: 'Reach 2,500 total habit check-ins.',
       icon: 'gem',
       target: 2500,
@@ -438,7 +438,7 @@ function evaluateProgression(habits = [], logs = []) {
     {
       id: 'vol_5000',
       category: 'volume',
-      name: '5,000 Grandmaster',
+      name: '5,000 Check-Ins',
       description: 'Reach 5,000 total habit check-ins — elite multi-year discipline.',
       icon: 'crown',
       target: 5000,
@@ -449,7 +449,7 @@ function evaluateProgression(habits = [], logs = []) {
     {
       id: 'vol_10000',
       category: 'volume',
-      name: '10,000 Hall of Fame',
+      name: '10,000 Check-Ins',
       description: 'Reach 10,000 total habit check-ins — living legend.',
       icon: 'sparkles',
       target: 10000,

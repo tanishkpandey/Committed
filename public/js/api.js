@@ -1,34 +1,25 @@
-// Committed Intelligent REST API Client with SWR Caching & Network Intelligence
+// Committed Intelligent REST API Client (Supabase Direct)
 const API = {
   baseUrl: '/api',
-  _memoryCache: new Map(),
 
-  async _request(url, options = {}, cacheKey = null) {
+  async _request(url, options = {}) {
     let slowTimer = null;
     
-    // Trigger slow-network warning if request takes longer than 2.8s
     if (window.NetworkMonitor) {
       slowTimer = setTimeout(() => {
-        NetworkMonitor.showSlowNetwork('Connection is slow. Please move to an area with stronger network reception for instant syncing.');
-      }, 2800);
+        NetworkMonitor.showSlowNetwork('Connection is slow. Syncing with Supabase...');
+      }, 3500);
     }
 
     try {
       const res = await fetch(url, options);
       if (slowTimer) clearTimeout(slowTimer);
 
+      const data = await res.json().catch(() => null);
+
       if (!res.ok) {
-        throw new Error(`HTTP error! status: ${res.status}`);
-      }
-
-      const data = await res.json();
-
-      // Cache successful GET responses in memory & sessionStorage
-      if (cacheKey && data && data.success) {
-        this._memoryCache.set(cacheKey, data);
-        try {
-          sessionStorage.setItem(`committed_cache_${cacheKey}`, JSON.stringify(data));
-        } catch (e) {}
+        const errorMsg = (data && (data.error || data.message)) || `Server returned status ${res.status}`;
+        throw new Error(errorMsg);
       }
 
       return data;
@@ -44,42 +35,7 @@ const API = {
         NetworkMonitor.showOffline();
       }
 
-      // If offline/network failed, serve cached data gracefully
-      if (cacheKey) {
-        if (this._memoryCache.has(cacheKey)) {
-          console.warn(`[API] Serving in-memory cached ${cacheKey} data.`);
-          return this._memoryCache.get(cacheKey);
-        }
-        try {
-          const cached = sessionStorage.getItem(`committed_cache_${cacheKey}`);
-          if (cached) {
-            console.warn(`[API] Serving sessionStorage cached ${cacheKey} data.`);
-            const parsed = JSON.parse(cached);
-            this._memoryCache.set(cacheKey, parsed);
-            return parsed;
-          }
-        } catch (e) {}
-      }
-
       throw err;
-    }
-  },
-
-  _invalidateCache(keys = []) {
-    if (keys.length === 0) {
-      this._memoryCache.clear();
-      try {
-        Object.keys(sessionStorage).forEach(k => {
-          if (k.startsWith('committed_cache_')) sessionStorage.removeItem(k);
-        });
-      } catch (e) {}
-    } else {
-      keys.forEach(k => {
-        this._memoryCache.delete(k);
-        try {
-          sessionStorage.removeItem(`committed_cache_${k}`);
-        } catch (e) {}
-      });
     }
   },
 
@@ -87,15 +43,14 @@ const API = {
     const url = category && category !== 'All' 
       ? `${this.baseUrl}/habits?category=${encodeURIComponent(category)}`
       : `${this.baseUrl}/habits`;
-    return this._request(url, {}, `habits_${category}`);
+    return this._request(url);
   },
 
   async getHabitById(id) {
-    return this._request(`${this.baseUrl}/habits/${id}`, {}, `habit_${id}`);
+    return this._request(`${this.baseUrl}/habits/${id}`);
   },
 
   async createHabit(habitData) {
-    this._invalidateCache();
     return this._request(`${this.baseUrl}/habits`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -104,7 +59,6 @@ const API = {
   },
 
   async updateHabit(id, updates) {
-    this._invalidateCache();
     return this._request(`${this.baseUrl}/habits/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
@@ -113,18 +67,16 @@ const API = {
   },
 
   async deleteHabit(id) {
-    this._invalidateCache();
     return this._request(`${this.baseUrl}/habits/${id}`, {
       method: 'DELETE'
     });
   },
 
   async getCategories() {
-    return this._request(`${this.baseUrl}/categories`, {}, 'categories');
+    return this._request(`${this.baseUrl}/categories`);
   },
 
   async createCategory(categoryData) {
-    this._invalidateCache(['categories']);
     return this._request(`${this.baseUrl}/categories`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -133,7 +85,6 @@ const API = {
   },
 
   async updateCategory(id, updates) {
-    this._invalidateCache(['categories']);
     return this._request(`${this.baseUrl}/categories/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
@@ -142,14 +93,12 @@ const API = {
   },
 
   async deleteCategory(id) {
-    this._invalidateCache(['categories']);
     return this._request(`${this.baseUrl}/categories/${id}`, {
       method: 'DELETE'
     });
   },
 
   async toggleLog(habitId, date) {
-    this._invalidateCache();
     return this._request(`${this.baseUrl}/logs/toggle`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -158,19 +107,19 @@ const API = {
   },
 
   async getProgression() {
-    return this._request(`${this.baseUrl}/progression`, {}, 'progression');
+    return this._request(`${this.baseUrl}/progression`);
   },
 
   async getXPHistory() {
-    return this._request(`${this.baseUrl}/progression/history`, {}, 'xp_history');
+    return this._request(`${this.baseUrl}/progression/history`);
   },
 
   async getAchievements() {
-    return this._request(`${this.baseUrl}/progression/achievements`, {}, 'achievements');
+    return this._request(`${this.baseUrl}/progression/achievements`);
   },
 
   async getAnalytics() {
-    return this._request(`${this.baseUrl}/analytics`, {}, 'analytics');
+    return this._request(`${this.baseUrl}/analytics`);
   },
 
   async exportBackup() {
@@ -178,7 +127,6 @@ const API = {
   },
 
   async importBackup(backupData) {
-    this._invalidateCache();
     return this._request(`${this.baseUrl}/backup/import`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

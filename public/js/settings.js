@@ -36,12 +36,16 @@ async function loadCategories() {
 
   try {
     const res = await API.getCategories();
-    if (!res.success || !res.categories) return;
+    if (!res.success || !res.categories) {
+      container.innerHTML = `<div style="color: var(--accent-rose); font-size: 0.8rem; text-align: center; padding: 1rem;">Unable to load categories from Supabase.</div>`;
+      return;
+    }
 
     categoriesList = res.categories;
     renderCategoriesList(categoriesList);
   } catch (err) {
     console.error('Error loading categories:', err);
+    container.innerHTML = `<div style="color: var(--accent-rose); font-size: 0.8rem; text-align: center; padding: 1rem;">Failed to load categories from Supabase: ${escapeHtml(err.message || 'Connection error')}</div>`;
   }
 }
 

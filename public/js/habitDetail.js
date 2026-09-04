@@ -49,14 +49,34 @@ async function loadHabitDetail() {
   try {
     const res = await API.getHabitById(habitId);
     if (!res.success || !res.habit) {
-      document.getElementById('detailContainer').innerHTML = '<div style="text-align: center; padding: 3rem;">Habit not found</div>';
+      document.getElementById('detailContainer').innerHTML = `
+        <div style="text-align: center; padding: 3rem 1.5rem; background: var(--bg-card); border-radius: var(--radius-sm); border: 1px solid rgba(244, 63, 94, 0.2); margin-top: 1rem;">
+          <i data-lucide="alert-circle" style="width: 38px; height: 38px; margin: 0 auto 0.75rem; color: var(--accent-rose);"></i>
+          <h3 style="font-size: 1.05rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.4rem;">Habit Not Available</h3>
+          <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 1.25rem;">${escapeHtml(res.error || res.message || 'This habit could not be retrieved from the database.')}</p>
+          <a href="/" class="btn btn-secondary">
+            <i data-lucide="arrow-left" style="width: 14px; height: 14px;"></i> Return to Dashboard
+          </a>
+        </div>
+      `;
+      lucide.createIcons();
       return;
     }
 
     currentHabit = res.habit;
     renderHabitDetail(currentHabit);
   } catch (err) {
-    console.error('Error loading habit detail:', err);
+    document.getElementById('detailContainer').innerHTML = `
+      <div style="text-align: center; padding: 3rem 1.5rem; background: var(--bg-card); border-radius: var(--radius-sm); border: 1px solid rgba(244, 63, 94, 0.2); margin-top: 1rem;">
+        <i data-lucide="wifi-off" style="width: 38px; height: 38px; margin: 0 auto 0.75rem; color: var(--accent-rose);"></i>
+        <h3 style="font-size: 1.05rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.4rem;">Connection Error</h3>
+        <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 1.25rem;">${escapeHtml(err.message || 'Unable to communicate with Supabase.')}</p>
+        <button class="btn btn-secondary" onclick="loadHabitDetail()">
+          <i data-lucide="rotate-cw" style="width: 14px; height: 14px;"></i> Retry
+        </button>
+      </div>
+    `;
+    lucide.createIcons();
   }
 }
 

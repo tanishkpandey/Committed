@@ -1,4 +1,4 @@
-const { supabase, isSupabaseConfigured, readLocalData, writeLocalData, formatYMD } = require('../config/db');
+const { supabase, isSupabaseConfigured, checkSupabase, formatYMD } = require('../config/db');
 
 function calculateHabitStreaks(datesSet, frequencyDays = 7) {
   const today = new Date();
@@ -56,9 +56,6 @@ function calculateHabitStreaks(datesSet, frequencyDays = 7) {
   let checkWeek = new Date(curWeekStart);
 
   const curWeekCount = weeksMap.get(curWeekKey) || 0;
-  const daysPassedInWeek = today.getDay() + 1;
-  const daysLeftInWeek = 7 - daysPassedInWeek;
-
   if (curWeekCount >= frequencyDays) {
     currentWeeklyStreak++;
     checkWeek.setDate(checkWeek.getDate() - 7);
@@ -161,43 +158,55 @@ function formatHabitPayload(habit, logs = []) {
 }
 
 exports.getHabits = async (req, res) => {
+  if (!checkSupabase(res)) return;
+
   try {
     const { category, include_archived } = req.query;
 
-    if (isSupabaseConfigured && supabase) {
+    try {
       let query = supabase.from('habits').select('*, habit_logs(*)').order('order_index', { ascending: true });
       if (category && category !== 'All') query = query.eq('category', category);
       if (include_archived !== 'true') query = query.eq('is_archived', false);
 
-      const { data: habits, error } = await query;
+      const { data, error } = await query;
       if (error) throw error;
-
+      const habits = data || [];
       const formatted = habits.map(h => formatHabitPayload(h, h.habit_logs || []));
       return res.json({ success: true, habits: formatted });
+    } catch (nestedErr) {
+      console.warn('[getHabits] Query fallback triggered:', nestedErr.message);
+      let hQuery = supabase.from('habits').select('*').order('order_index', { ascending: true });
+      if (category && category !== 'All') hQuery = hQuery.eq('category', category);
+      if (include_archived !== 'true') hQuery = hQuery.eq('is_archived', false);
+
+      const [hRes, lRes] = await Promise.all([
+        hQuery,
+        supabase.from('habit_logs').select('habit_id, completed_date')
+      ]);
+      if (hRes.error) throw hRes.error;
+
+      const logsByHabit = new Map();
+      (lRes.data || []).forEach(l => {
+        if (!logsByHabit.has(l.habit_id)) logsByHabit.set(l.habit_id, []);
+        logsByHabit.get(l.habit_id).push(l.completed_date);
+      });
+
+      const formatted = (hRes.data || []).map(h => formatHabitPayload(h, logsByHabit.get(h.id) || []));
+      return res.json({ success: true, habits: formatted });
     }
-
-    const store = readLocalData();
-    let habits = store.habits || [];
-    if (category && category !== 'All') habits = habits.filter(h => h.category === category);
-    if (include_archived !== 'true') habits = habits.filter(h => !h.is_archived);
-    habits.sort((a, b) => (a.order_index || 0) - (b.order_index || 0));
-
-    const formatted = habits.map(h => {
-      const logs = (store.logs || []).filter(l => l.habit_id === h.id);
-      return formatHabitPayload(h, logs);
-    });
-
-    res.json({ success: true, habits: formatted });
   } catch (err) {
+    console.error('[getHabits] Error:', err);
     res.status(500).json({ success: false, error: err.message });
   }
 };
 
 exports.getHabitById = async (req, res) => {
+  if (!checkSupabase(res)) return;
+
   try {
     const { id } = req.params;
 
-    if (isSupabaseConfigured && supabase) {
+    try {
       const { data: habit, error } = await supabase
         .from('habits')
         .select('*, habit_logs(*)')
@@ -207,20 +216,24 @@ exports.getHabitById = async (req, res) => {
       if (!habit) return res.status(404).json({ success: false, message: 'Habit not found' });
 
       return res.json({ success: true, habit: formatHabitPayload(habit, habit.habit_logs || []) });
+    } catch (nestedErr) {
+      const [hRes, lRes] = await Promise.all([
+        supabase.from('habits').select('*').eq('id', id).single(),
+        supabase.from('habit_logs').select('completed_date').eq('habit_id', id)
+      ]);
+      if (hRes.error || !hRes.data) return res.status(404).json({ success: false, message: 'Habit not found' });
+      const logsList = (lRes.data || []).map(l => l.completed_date);
+      return res.json({ success: true, habit: formatHabitPayload(hRes.data, logsList) });
     }
-
-    const store = readLocalData();
-    const habit = (store.habits || []).find(h => h.id === id);
-    if (!habit) return res.status(404).json({ success: false, message: 'Habit not found' });
-
-    const logs = (store.logs || []).filter(l => l.habit_id === id);
-    res.json({ success: true, habit: formatHabitPayload(habit, logs) });
   } catch (err) {
+    console.error('[getHabitById] Error:', err);
     res.status(500).json({ success: false, error: err.message });
   }
 };
 
 exports.createHabit = async (req, res) => {
+  if (!checkSupabase(res)) return;
+
   try {
     const {
       title,
@@ -251,28 +264,18 @@ exports.createHabit = async (req, res) => {
       order_index: Date.now()
     };
 
-    if (isSupabaseConfigured && supabase) {
-      const { data, error } = await supabase.from('habits').insert([newHabitData]).select().single();
-      if (error) throw error;
-      return res.status(201).json({ success: true, habit: formatHabitPayload(data, []) });
-    }
-
-    const store = readLocalData();
-    const newHabit = {
-      id: 'h-' + Math.random().toString(36).substr(2, 9),
-      ...newHabitData,
-      created_at: new Date().toISOString()
-    };
-    store.habits.push(newHabit);
-    writeLocalData(store);
-
-    res.status(201).json({ success: true, habit: formatHabitPayload(newHabit, []) });
+    const { data, error } = await supabase.from('habits').insert([newHabitData]).select().single();
+    if (error) throw error;
+    return res.status(201).json({ success: true, habit: formatHabitPayload(data, []) });
   } catch (err) {
+    console.error('[createHabit] Error:', err);
     res.status(500).json({ success: false, error: err.message });
   }
 };
 
 exports.updateHabit = async (req, res) => {
+  if (!checkSupabase(res)) return;
+
   try {
     const { id } = req.params;
     const updates = req.body;
@@ -281,48 +284,40 @@ exports.updateHabit = async (req, res) => {
       updates.frequency_days = Math.max(1, Math.min(7, Number(updates.frequency_days) || 7));
     }
 
-    if (isSupabaseConfigured && supabase) {
-      const { data, error } = await supabase
-        .from('habits')
-        .update({ ...updates, updated_at: new Date().toISOString() })
-        .eq('id', id)
-        .select('*, habit_logs(*)')
-        .single();
-      if (error) throw error;
-      return res.json({ success: true, habit: formatHabitPayload(data, data.habit_logs || []) });
-    }
+    const { data, error } = await supabase
+      .from('habits')
+      .update({ ...updates, updated_at: new Date().toISOString() })
+      .eq('id', id)
+      .select('*')
+      .single();
+    if (error) throw error;
 
-    const store = readLocalData();
-    const idx = (store.habits || []).findIndex(h => h.id === id);
-    if (idx === -1) return res.status(404).json({ success: false, message: 'Habit not found' });
-
-    store.habits[idx] = { ...store.habits[idx], ...updates, updated_at: new Date().toISOString() };
-    writeLocalData(store);
-
-    const logs = (store.logs || []).filter(l => l.habit_id === id);
-    res.json({ success: true, habit: formatHabitPayload(store.habits[idx], logs) });
+    const { data: logsData } = await supabase.from('habit_logs').select('completed_date').eq('habit_id', id);
+    const logsList = (logsData || []).map(l => l.completed_date);
+    return res.json({ success: true, habit: formatHabitPayload(data, logsList) });
   } catch (err) {
+    console.error('[updateHabit] Error:', err);
     res.status(500).json({ success: false, error: err.message });
   }
 };
 
 exports.deleteHabit = async (req, res) => {
+  if (!checkSupabase(res)) return;
+
   try {
     const { id } = req.params;
 
-    if (isSupabaseConfigured && supabase) {
-      const { error } = await supabase.from('habits').delete().eq('id', id);
-      if (error) throw error;
-      return res.json({ success: true, message: 'Habit deleted' });
-    }
+    // 1. Explicitly clean up child logs and XP transactions first
+    await supabase.from('habit_logs').delete().eq('habit_id', id);
+    await supabase.from('xp_transactions').delete().eq('habit_id', id);
 
-    const store = readLocalData();
-    store.habits = (store.habits || []).filter(h => h.id !== id);
-    store.logs = (store.logs || []).filter(l => l.habit_id !== id);
-    writeLocalData(store);
-
-    res.json({ success: true, message: 'Habit deleted' });
+    // 2. Delete the habit from Supabase
+    const { error } = await supabase.from('habits').delete().eq('id', id);
+    if (error) throw error;
+    console.log(`[Habit DB] Deleted habit ${id} and associated logs from Supabase.`);
+    return res.json({ success: true, message: 'Habit deleted' });
   } catch (err) {
+    console.error('[deleteHabit] Error:', err);
     res.status(500).json({ success: false, error: err.message });
   }
 };

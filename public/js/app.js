@@ -56,12 +56,16 @@ async function loadHabits() {
     const res = await API.getHabits(currentCategory);
     if (skeleton) skeleton.style.display = 'none';
 
-    if (!res.success || !res.habits || res.habits.length === 0) {
+    if (!res.success) {
+      throw new Error(res.error || 'Failed to fetch habits from database');
+    }
+
+    if (!res.habits || res.habits.length === 0) {
       container.innerHTML = `
         <div style="text-align: center; padding: 3.5rem 1rem; color: var(--text-muted);">
           <i data-lucide="sparkles" style="width: 42px; height: 42px; margin: 0 auto 0.85rem; opacity: 0.5;"></i>
-          <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.35rem;">No habits yet</h3>
-          <p style="font-size: 0.85rem; margin-bottom: 1.25rem;">Create your first habit to start building your streak grid!</p>
+          <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.35rem;">No habits found</h3>
+          <p style="font-size: 0.85rem; margin-bottom: 1.25rem;">Create your first habit to start building your streak grid in Supabase!</p>
           <button class="btn btn-primary" onclick="openHabitModal()">
             <i data-lucide="plus" style="width: 16px; height: 16px;"></i> Create Habit
           </button>
@@ -75,7 +79,17 @@ async function loadHabits() {
     renderHabitCards(habitsData);
   } catch (err) {
     if (skeleton) skeleton.style.display = 'none';
-    container.innerHTML = `<div style="text-align: center; color: var(--accent-rose); padding: 2rem;">Failed to load habits.</div>`;
+    container.innerHTML = `
+      <div style="text-align: center; padding: 3rem 1.5rem; background: var(--bg-card); border-radius: var(--radius-sm); border: 1px solid rgba(244, 63, 94, 0.2); margin-top: 1rem;">
+        <i data-lucide="alert-circle" style="width: 38px; height: 38px; margin: 0 auto 0.75rem; color: var(--accent-rose);"></i>
+        <h3 style="font-size: 1.05rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.4rem;">Unable to load habits</h3>
+        <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 1.25rem; max-width: 360px; margin-left: auto; margin-right: auto;">${escapeHtml(err.message || 'Data could not be fetched from Supabase.')}</p>
+        <button class="btn btn-secondary" onclick="loadDashboard()">
+          <i data-lucide="rotate-cw" style="width: 14px; height: 14px;"></i> Retry Connection
+        </button>
+      </div>
+    `;
+    lucide.createIcons();
   }
 }
 

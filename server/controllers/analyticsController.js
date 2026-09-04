@@ -1,19 +1,19 @@
-const { supabase, isSupabaseConfigured, readLocalData, writeLocalData, formatYMD } = require('../config/db');
+const { supabase, isSupabaseConfigured, checkSupabase, formatYMD } = require('../config/db');
 const { generateAdvancedInsights } = require('../services/insightsEngine');
 
 async function getHabitsAndLogs() {
-  if (isSupabaseConfigured && supabase) {
-    const [hRes, lRes] = await Promise.all([
-      supabase.from('habits').select('*'),
-      supabase.from('habit_logs').select('*')
-    ]);
-    return { habits: hRes.data || [], logs: lRes.data || [] };
-  }
-  const store = readLocalData();
-  return { habits: store.habits || [], logs: store.logs || [] };
+  const [hRes, lRes] = await Promise.all([
+    supabase.from('habits').select('*'),
+    supabase.from('habit_logs').select('*')
+  ]);
+  if (hRes.error) throw hRes.error;
+  if (lRes.error) throw lRes.error;
+  return { habits: hRes.data || [], logs: lRes.data || [] };
 }
 
 exports.getGlobalAnalytics = async (req, res) => {
+  if (!checkSupabase(res)) return;
+
   try {
     const { habits, logs } = await getHabitsAndLogs();
     const insightsData = generateAdvancedInsights(habits, logs);
@@ -22,7 +22,6 @@ exports.getGlobalAnalytics = async (req, res) => {
     const dayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
     const today = new Date();
 
-    // Helper: format Date to YYYY-MM-DD
     const toYMD = (d) => {
       const y = d.getFullYear();
       const m = String(d.getMonth() + 1).padStart(2, '0');
@@ -124,6 +123,7 @@ exports.getGlobalAnalytics = async (req, res) => {
       }
     });
   } catch (err) {
+    console.error('[getGlobalAnalytics] Error:', err);
     res.status(500).json({ success: false, error: err.message });
   }
 };
@@ -135,138 +135,70 @@ const COLOR_MAP = {
 };
 
 exports.exportBackup = async (req, res) => {
+  if (!checkSupabase(res)) return;
+
   try {
-    const store = readLocalData();
+    const { habits, logs } = await getHabitsAndLogs();
+    const { data: categories } = await supabase.from('categories').select('*');
+    const backupData = {
+      habits,
+      logs,
+      categories: categories || []
+    };
     res.setHeader('Content-Type', 'application/json');
-    res.setHeader('Content-Disposition', 'attachment; filename=committed_backup.json');
-    res.send(JSON.stringify(store, null, 2));
+    res.setHeader('Content-Disposition', 'attachment; filename=committed_supabase_backup.json');
+    res.send(JSON.stringify(backupData, null, 2));
   } catch (err) {
+    console.error('[exportBackup] Error:', err);
     res.status(500).json({ success: false, error: err.message });
   }
 };
 
 exports.importBackup = async (req, res) => {
+  if (!checkSupabase(res)) return;
+
   try {
     const raw = req.body;
     if (!raw || !Array.isArray(raw.habits)) {
       return res.status(400).json({ success: false, error: 'Invalid backup file: habits array is required' });
     }
 
-    let habits = [];
-    let logs = [];
+    let habits = raw.habits;
+    let logs = raw.logs || [];
 
-    const isMobileExport = Array.isArray(raw.completions) || (raw.habits[0] && raw.habits[0].name !== undefined);
-
-    if (isMobileExport) {
-      habits = raw.habits.map(h => ({
-        id: h.id || ('h-' + Math.random().toString(36).substr(2, 9)),
-        title: h.name || h.title || 'Habit',
+    for (const h of habits) {
+      await supabase.from('habits').upsert({
+        id: h.id,
+        title: h.title,
         description: h.description || '',
-        category: 'General',
-        color: COLOR_MAP[h.color] || h.color || '#10B981',
-        icon: 'zap',
-        frequency_days: 7,
-        grid_days: 365,
-        tile_shape: 'tile-rounded',
-        is_archived: Boolean(h.archived || h.is_archived),
-        order_index: h.orderIndex || h.order_index || 0,
-        created_at: h.createdAt || h.created_at || new Date().toISOString()
-      }));
-
-      const completions = raw.completions || [];
-      const logsMap = new Map();
-
-      completions.forEach(c => {
-        if (c.amountOfCompletions !== undefined && c.amountOfCompletions <= 0) return;
-        const habitId = c.habitId || c.habit_id;
-        if (!habitId) return;
-
-        let localDate = '';
-        if (c.date) {
-          const dt = new Date(c.date);
-          const offsetMs = (c.timezoneOffsetInMinutes || 0) * 60 * 1000;
-          const adjusted = new Date(dt.getTime() + offsetMs);
-          localDate = formatYMD(adjusted);
-        }
-
-        if (localDate) {
-          const key = `${habitId}_${localDate}`;
-          if (!logsMap.has(key)) {
-            logsMap.set(key, {
-              id: c.id || `log-${key}`,
-              habit_id: habitId,
-              completed_date: localDate,
-              count: 1
-            });
-          }
-        }
+        category: h.category || 'General',
+        color: h.color || '#10B981',
+        icon: h.icon || 'zap',
+        frequency_days: h.frequency_days || 7,
+        grid_days: h.grid_days || 60,
+        tile_shape: h.tile_shape || 'tile-rounded',
+        is_archived: Boolean(h.is_archived),
+        order_index: h.order_index || 0,
+        created_at: h.created_at || new Date().toISOString()
       });
-
-      logs = Array.from(logsMap.values());
-    } else {
-      habits = raw.habits;
-      logs = raw.logs || [];
     }
 
-    const payload = {
-      habits,
-      logs,
-      categories: raw.categories || [
-        { id: 'cat-1', name: 'General', color: '#6B7280' },
-        { id: 'cat-2', name: 'Fitness', color: '#10B981' },
-        { id: 'cat-3', name: 'Mindfulness', color: '#8B5CF6' },
-        { id: 'cat-4', name: 'Health', color: '#06B6D4' },
-        { id: 'cat-5', name: 'Learning', color: '#F59E0B' },
-        { id: 'cat-6', name: 'Productivity', color: '#EC4899' }
-      ],
-      settings: raw.settings || {
-        theme: 'dark',
-        sound_enabled: true,
-        confetti_enabled: true,
-        default_grid_days: 365
-      }
-    };
-
-    writeLocalData(payload);
-
-    if (isSupabaseConfigured && supabase) {
-      await supabase.from('habit_logs').delete().neq('completed_date', '1970-01-01');
-      await supabase.from('habits').delete().neq('title', '___none___');
-
-      for (const h of habits) {
-        await supabase.from('habits').upsert({
-          id: h.id,
-          title: h.title,
-          description: h.description,
-          category: h.category,
-          color: h.color,
-          icon: h.icon,
-          frequency_days: h.frequency_days || 7,
-          grid_days: h.grid_days || 365,
-          tile_shape: h.tile_shape || 'tile-rounded',
-          is_archived: h.is_archived,
-          order_index: h.order_index,
-          created_at: h.created_at
-        });
-      }
-
-      const BATCH = 50;
-      for (let i = 0; i < logs.length; i += BATCH) {
-        const batch = logs.slice(i, i + BATCH).map(l => ({
-          habit_id: l.habit_id,
-          completed_date: l.completed_date,
-          count: l.count || 1
-        }));
-        await supabase.from('habit_logs').upsert(batch, { onConflict: 'habit_id, completed_date' });
-      }
+    const BATCH = 50;
+    for (let i = 0; i < logs.length; i += BATCH) {
+      const batch = logs.slice(i, i + BATCH).map(l => ({
+        habit_id: l.habit_id,
+        completed_date: l.completed_date,
+        count: l.count || 1
+      }));
+      await supabase.from('habit_logs').upsert(batch, { onConflict: 'habit_id, completed_date' });
     }
 
     res.json({
       success: true,
-      message: `Imported ${habits.length} habits and ${logs.length} completion logs successfully!`
+      message: `Imported ${habits.length} habits and ${logs.length} completion logs into Supabase successfully!`
     });
   } catch (err) {
-    console.error('Import error:', err);
+    console.error('[importBackup] Error:', err);
     res.status(500).json({ success: false, error: err.message });
   }
 };

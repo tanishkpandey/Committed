@@ -37,16 +37,6 @@
         </div>
         <div class="skeleton-shimmer skeleton-pill" style="width: 60px; height: 28px;"></div>
       </div>
-      <div class="habit-card" style="margin-bottom: 0; display: flex; align-items: center; justify-content: space-between;">
-        <div style="display: flex; align-items: center; gap: 0.85rem;">
-          <div class="skeleton-shimmer skeleton-circle" style="width: 36px; height: 36px;"></div>
-          <div>
-            <div class="skeleton-shimmer" style="width: 100px; height: 14px; margin-bottom: 5px;"></div>
-            <div class="skeleton-shimmer" style="width: 70px; height: 10px;"></div>
-          </div>
-        </div>
-        <div class="skeleton-shimmer skeleton-pill" style="width: 60px; height: 28px;"></div>
-      </div>
     </div>
   </div>
 
@@ -63,34 +53,42 @@
       <form onsubmit="saveHabitForm(event)">
         <div class="form-group">
           <label class="form-label">Habit Name *</label>
-          <input type="text" class="form-input" id="habitTitleInput" required oninput="updateLivePreview()">
+          <input type="text" class="form-input" id="habitTitleInput" required>
         </div>
         <div class="form-group">
-          <label class="form-label">Description</label>
-          <input type="text" class="form-input" id="habitDescInput" oninput="updateLivePreview()">
+          <label class="form-label">Description / Note</label>
+          <input type="text" class="form-input" id="habitDescInput" placeholder="e.g. 15 mins daily">
         </div>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
           <div class="form-group">
             <label class="form-label">Category</label>
             <select class="form-select" id="habitCategorySelect">
               <option value="General">General</option>
-              <option value="Fitness">Fitness</option>
-              <option value="Mindfulness">Mindfulness</option>
-              <option value="Health">Health</option>
-              <option value="Learning">Learning</option>
-              <option value="Productivity">Productivity</option>
             </select>
           </div>
           <div class="form-group">
-            <label class="form-label">Grid Timeframe</label>
-            <select class="form-select" id="habitGridDaysSelect">
-              <option value="30">30 Days</option>
-              <option value="60" selected>60 Days</option>
-              <option value="90">90 Days</option>
-              <option value="180">180 Days</option>
-              <option value="365">365 Days</option>
+            <label class="form-label">Target Frequency</label>
+            <select class="form-select" id="habitFrequencySelect">
+              <option value="7" selected>7x / Week (Daily)</option>
+              <option value="6">6x / Week</option>
+              <option value="5">5x / Week (Weekdays)</option>
+              <option value="4">4x / Week</option>
+              <option value="3">3x / Week</option>
+              <option value="2">2x / Week</option>
+              <option value="1">1x / Week</option>
             </select>
           </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Grid Timeframe</label>
+          <select class="form-select" id="habitGridDaysSelect">
+            <option value="30">30 Days</option>
+            <option value="60">60 Days</option>
+            <option value="90">90 Days</option>
+            <option value="180">180 Days</option>
+            <option value="365" selected>365 Days (Full Year)</option>
+          </select>
         </div>
 
         <div class="form-group">
@@ -103,7 +101,11 @@
           <div class="icon-picker-grid" id="iconPickerGrid"></div>
         </div>
 
-        <div style="display: flex; gap: 0.75rem; margin-top: 1.5rem;">
+        <div style="display: flex; gap: 0.65rem; margin-top: 1.25rem;">
+          <button type="button" class="btn btn-secondary" id="modalDeleteBtn" onclick="handleModalDeleteClick()" style="display: none; color: var(--accent-rose); border-color: rgba(244, 63, 94, 0.3);">
+            <i data-lucide="trash-2" style="width: 15px; height: 15px;"></i>
+            <span>Delete</span>
+          </button>
           <button type="button" class="btn btn-secondary" style="flex: 1;" onclick="closeHabitModal()">Cancel</button>
           <button type="submit" class="btn btn-primary" style="flex: 2;">Save Habit</button>
         </div>
@@ -112,7 +114,6 @@
   </div>
 
   <!-- Bottom Nav -->
-    <!-- Bottom Nav -->
   <nav class="bottom-nav">
     <a href="/" class="nav-item">
       <i data-lucide="grid"></i>
@@ -140,33 +141,57 @@
   <script src="js/utils.js?v=1787946236"></script>
   <script src="js/habitStudio.js?v=1787946236"></script>
   <script>
-    document.addEventListener('DOMContentLoaded', async () => {
+    async function loadStudioHabits() {
+      const list = document.getElementById('studioList');
+      try {
+        const res = await API.getHabits();
+        if (res.success && res.habits) {
+          if (res.habits.length === 0) {
+            list.innerHTML = `
+              <div style="text-align: center; padding: 3rem 1rem; color: var(--text-muted);">
+                <i data-lucide="sparkles" style="width: 36px; height: 36px; margin: 0 auto 0.5rem; opacity: 0.5;"></i>
+                <p>No habits yet. Click "New Habit" to create one.</p>
+              </div>
+            `;
+            lucide.createIcons();
+            return;
+          }
+
+          list.innerHTML = res.habits.map(h => {
+            const hJson = JSON.stringify(h).replace(/'/g, "&apos;").replace(/"/g, '&quot;');
+            return `
+              <div class="habit-card" style="margin-bottom: 0; display: flex; align-items: center; justify-content: space-between;">
+                <div style="display: flex; align-items: center; gap: 0.85rem; min-width: 0; flex: 1;">
+                  <div class="habit-icon-badge" style="background-color: ${h.color};">
+                    <i data-lucide="${h.icon || 'zap'}"></i>
+                  </div>
+                  <div style="min-width: 0; flex: 1;">
+                    <h4 style="font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${escapeHtml(h.title)}</h4>
+                    <span style="font-size: 0.75rem; color: var(--text-muted);">${escapeHtml(h.category || 'General')} • ${h.grid_days || 60}d grid • ${h.totalCompletions || 0} logs</span>
+                  </div>
+                </div>
+                <div style="display: flex; gap: 0.4rem;">
+                  <button class="btn btn-secondary" onclick='openHabitModal(${hJson})' style="padding: 0.4rem 0.65rem; font-size: 0.8rem;" title="Edit Habit">
+                    <i data-lucide="edit-2" style="width: 14px; height: 14px;"></i> Edit
+                  </button>
+                  <button class="btn btn-secondary" onclick='deleteStudioHabit("${h.id}", "${escapeHtml(h.title)}")' style="padding: 0.4rem 0.65rem; font-size: 0.8rem; color: var(--accent-rose);" title="Delete Habit">
+                    <i data-lucide="trash-2" style="width: 14px; height: 14px;"></i>
+                  </button>
+                </div>
+              </div>
+            `;
+          }).join('');
+          lucide.createIcons();
+        }
+      } catch (e) {
+        list.innerHTML = '<div style="color: var(--accent-rose); text-align: center; padding: 2rem;">Failed to load habits.</div>';
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
       const saved = localStorage.getItem('committed_theme' || localStorage.getItem('habitkit_theme')) || 'dark';
       document.documentElement.setAttribute('data-theme', saved);
-      
-      const res = await API.getHabits();
-      const list = document.getElementById('studioList');
-      if (res.success && res.habits) {
-        list.innerHTML = res.habits.map(h => `
-          <div class="habit-card" style="margin-bottom: 0; display: flex; align-items: center; justify-content: space-between;">
-            <div style="display: flex; align-items: center; gap: 0.85rem;">
-              <div class="habit-icon-badge" style="background-color: ${h.color};">
-                <i data-lucide="${h.icon || 'zap'}"></i>
-              </div>
-              <div>
-                <h4 style="font-weight: 700;">${h.title}</h4>
-                <span style="font-size: 0.75rem; color: var(--text-muted);">${h.category} • ${h.grid_days || 60} days grid</span>
-              </div>
-            </div>
-            <div style="display: flex; gap: 0.5rem;">
-              <button class="btn btn-secondary" onclick='openHabitModal(${JSON.stringify(h)})' style="padding: 0.4rem 0.8rem; font-size: 0.8rem;">
-                <i data-lucide="edit-2" style="width: 14px; height: 14px;"></i> Edit
-              </button>
-            </div>
-          </div>
-        `).join('');
-        lucide.createIcons();
-      }
+      loadStudioHabits();
     });
   </script>
 </body>

@@ -26,7 +26,30 @@ async function loadProgressData() {
     lucide.createIcons();
   } catch (err) {
     console.error('Error loading progress data:', err);
+    const container = document.querySelector('.app-container') || document.body;
+    const banner = document.createElement('div');
+    banner.style.cssText = 'background: rgba(244, 63, 94, 0.12); border: 1px solid rgba(244, 63, 94, 0.3); color: #f43f5e; padding: 0.85rem 1rem; border-radius: var(--radius-sm); margin-bottom: 1rem; font-size: 0.85rem; display: flex; align-items: center; justify-content: space-between;';
+    banner.innerHTML = `
+      <div style="display: flex; align-items: center; gap: 0.5rem;">
+        <i data-lucide="alert-circle" style="width: 18px; height: 18px;"></i>
+        <span>Unable to fetch progression data from Supabase: ${escapeHtml(err.message || 'Connection error')}</span>
+      </div>
+      <button class="btn btn-secondary" onclick="loadProgressData()" style="padding: 0.3rem 0.6rem; font-size: 0.75rem;">Retry</button>
+    `;
+    container.insertBefore(banner, container.firstChild);
+    lucide.createIcons();
   }
+}
+
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str).replace(/[&<>"']/g, m => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#039;'
+  })[m]);
 }
 
 function renderHeroCard(data) {
@@ -45,147 +68,418 @@ function renderLifetimeStats(stats) {
 }
 
 const CATEGORY_META = {
-  streak: { color: '#8b5cf6', name: 'Streaks', top: 'url(#streakTop)', bottom: 'url(#streakBottom)', ribbon: '#927FF2', ribbonShadow: '#6352B9' },
-  perfect_days: { color: '#f59e0b', name: 'Perfect Days', top: 'url(#perfectTop)', bottom: 'url(#perfectBottom)', ribbon: '#FFD36A', ribbonShadow: '#B87912' },
-  consistency: { color: '#10b981', name: 'Consistency', top: 'url(#consistencyTop)', bottom: 'url(#consistencyBottom)', ribbon: '#6DD9C1', ribbonShadow: '#438F82' },
-  volume: { color: '#06b6d4', name: 'Volume', top: 'url(#volumeTop)', bottom: 'url(#volumeBottom)', ribbon: '#65B9E8', ribbonShadow: '#397EA9' }
+  streak: {
+    color: '#8B5CF6',
+    name: 'Streaks',
+    glow: 'rgba(139, 92, 246, 0.22)',
+    top: '#241C4A',
+    topLight: '#49359A',
+    bottom: '#6D5BC7',
+    bottomDark: '#30245F',
+    ribbon: '#806EE0',
+    ribbonShadow: '#4B3D91'
+  },
+
+  perfect_days: {
+    color: '#F59E0B',
+    name: 'Perfect Days',
+    glow: 'rgba(245, 158, 11, 0.20)',
+    top: '#49330F',
+    topLight: '#8B6218',
+    bottom: '#C28A24',
+    bottomDark: '#65430D',
+    ribbon: '#D7A83F',
+    ribbonShadow: '#765716'
+  },
+
+  consistency: {
+    color: '#10B981',
+    name: 'Consistency',
+    glow: 'rgba(16, 185, 129, 0.20)',
+    top: '#123A35',
+    topLight: '#1F7668',
+    bottom: '#3DAF9B',
+    bottomDark: '#164E47',
+    ribbon: '#58C6B0',
+    ribbonShadow: '#347D70'
+  },
+
+  volume: {
+    color: '#06B6D4',
+    name: 'Volume',
+    glow: 'rgba(6, 182, 212, 0.20)',
+    top: '#103B49',
+    topLight: '#176E87',
+    bottom: '#3C9FC0',
+    bottomDark: '#154E63',
+    ribbon: '#5BB6D5',
+    ribbonShadow: '#347A96'
+  }
 };
 
 // 24 Badges Catalog matching SVG Template Specs
 const BADGE_CATALOG = {
   // STREAKS
-  streak_7: { displayNum: '7', unitText: 'DAYS', ribbon: 'none', category: 'streak', top: 'url(#streakTop)', bottom: 'url(#streakBottom)', ribbonColor: '#927FF2', ribbonShadow: '#6352B9', title: 'Week Warrior' },
-  streak_21: { displayNum: '21', unitText: 'DAYS', ribbon: 'ribbon', category: 'streak', top: 'url(#streakTop)', bottom: 'url(#streakBottom)', ribbonColor: '#927FF2', ribbonShadow: '#6352B9', title: 'Habit Lock' },
-  streak_30: { displayNum: '30', unitText: 'DAYS', ribbon: 'starRibbon', category: 'streak', top: 'url(#streakTop)', bottom: 'url(#streakBottom)', ribbonColor: '#927FF2', ribbonShadow: '#6352B9', title: 'Month of Iron' },
-  streak_50: { displayNum: '50', unitText: 'DAYS', ribbon: 'starRibbon', category: 'streak', top: 'url(#streakTop)', bottom: 'url(#streakBottom)', ribbonColor: '#927FF2', ribbonShadow: '#6352B9', title: '50-Day Momentum' },
-  streak_100: { displayNum: '100', unitText: 'DAYS', ribbon: 'starRibbon', category: 'streak', top: 'url(#streakTop)', bottom: 'url(#streakBottom)', ribbonColor: '#927FF2', ribbonShadow: '#6352B9', title: 'Century' },
-  streak_180: { displayNum: '180', unitText: 'DAYS', ribbon: 'starRibbon', category: 'streak', top: 'url(#streakTop)', bottom: 'url(#streakBottom)', ribbonColor: '#A48FF7', ribbonShadow: '#6352B9', title: 'Half-Year Titan' },
-  streak_365: { displayNum: '365', unitText: 'DAYS', ribbon: 'starRibbon', category: 'streak', top: 'url(#streakTop)', bottom: 'url(#streakBottom)', ribbonColor: '#A48FF7', ribbonShadow: '#6352B9', title: 'Unstoppable' },
-  streak_730: { displayNum: '730', unitText: 'DAYS', ribbon: 'starRibbon', category: 'streak', top: 'url(#streakTop)', bottom: 'url(#streakBottom)', ribbonColor: '#B09EFF', ribbonShadow: '#6352B9', title: 'Grandmaster' },
+  streak_7: { displayNum: '7', unitText: 'DAYS', ribbon: 'none', category: 'streak', title: '7-Day Streak' },
+  streak_21: { displayNum: '21', unitText: 'DAYS', ribbon: 'ribbon', category: 'streak', title: '21-Day Streak' },
+  streak_30: { displayNum: '30', unitText: 'DAYS', ribbon: 'starRibbon', category: 'streak', title: '30-Day Streak' },
+  streak_50: { displayNum: '50', unitText: 'DAYS', ribbon: 'starRibbon', category: 'streak', title: '50-Day Streak' },
+  streak_100: { displayNum: '100', unitText: 'DAYS', ribbon: 'starRibbon', category: 'streak', title: '100-Day Streak' },
+  streak_180: { displayNum: '180', unitText: 'DAYS', ribbon: 'starRibbon', category: 'streak', title: '180-Day Streak' },
+  streak_365: { displayNum: '365', unitText: 'DAYS', ribbon: 'starRibbon', category: 'streak', title: '365-Day Streak' },
+  streak_730: { displayNum: '730', unitText: 'DAYS', ribbon: 'starRibbon', category: 'streak', title: '730-Day Streak' },
 
   // PERFECT DAYS
-  pd_1: { displayNum: '1', unitText: 'PERFECT DAY', ribbon: 'none', category: 'perfect_days', top: 'url(#perfectTop)', bottom: 'url(#perfectBottom)', ribbonColor: '#FFD36A', ribbonShadow: '#B87912', title: 'First Perfection' },
-  pd_7: { displayNum: '7', unitText: 'PERFECT DAYS', ribbon: 'ribbon', category: 'perfect_days', top: 'url(#perfectTop)', bottom: 'url(#perfectBottom)', ribbonColor: '#FFD36A', ribbonShadow: '#B87912', title: 'Flawless Week' },
-  pd_30: { displayNum: '30', unitText: 'PERFECT DAYS', ribbon: 'starRibbon', category: 'perfect_days', top: 'url(#perfectTop)', bottom: 'url(#perfectBottom)', ribbonColor: '#FFD36A', ribbonShadow: '#B87912', title: 'Month of Perfection' },
-  pd_100: { displayNum: '100', unitText: 'PERFECT DAYS', ribbon: 'starRibbon', category: 'perfect_days', top: 'url(#perfectTop)', bottom: 'url(#perfectBottom)', ribbonColor: '#FFD36A', ribbonShadow: '#B87912', title: 'Centurion' },
-  pd_365: { displayNum: '365', unitText: 'PERFECT DAYS', ribbon: 'starRibbon', category: 'perfect_days', top: 'url(#perfectTop)', bottom: 'url(#perfectBottom)', ribbonColor: '#FFD36A', ribbonShadow: '#B87912', title: 'Year of Perfection' },
-  pd_500: { displayNum: '500', unitText: 'PERFECT DAYS', ribbon: 'starRibbon', category: 'perfect_days', top: 'url(#perfectTop)', bottom: 'url(#perfectBottom)', ribbonColor: '#FFE18B', ribbonShadow: '#B87912', title: 'Legendary' },
+  pd_1: { displayNum: '1', unitText: 'PERFECT DAY', ribbon: 'none', category: 'perfect_days', title: 'First Perfect Day' },
+  pd_7: { displayNum: '7', unitText: 'PERFECT DAYS', ribbon: 'ribbon', category: 'perfect_days', title: 'Perfect Week' },
+  pd_30: { displayNum: '30', unitText: 'PERFECT DAYS', ribbon: 'starRibbon', category: 'perfect_days', title: 'Perfect Month' },
+  pd_100: { displayNum: '100', unitText: 'PERFECT DAYS', ribbon: 'starRibbon', category: 'perfect_days', title: '100 Perfect Days' },
+  pd_365: { displayNum: '365', unitText: 'PERFECT DAYS', ribbon: 'starRibbon', category: 'perfect_days', title: 'Perfect Year' },
+  pd_500: { displayNum: '500', unitText: 'PERFECT DAYS', ribbon: 'starRibbon', category: 'perfect_days', title: '500 Perfect Days' },
 
   // CONSISTENCY
-  rate_m70: { displayNum: '70%', unitText: 'MONTHLY', ribbon: 'none', category: 'consistency', top: 'url(#consistencyTop)', bottom: 'url(#consistencyBottom)', ribbonColor: '#6DD9C1', ribbonShadow: '#438F82', title: 'Consistent Builder' },
-  rate_m80: { displayNum: '80%', unitText: 'MONTHLY', ribbon: 'ribbon', category: 'consistency', top: 'url(#consistencyTop)', bottom: 'url(#consistencyBottom)', ribbonColor: '#6DD9C1', ribbonShadow: '#438F82', title: 'High Achiever' },
-  rate_m90: { displayNum: '90%', unitText: 'MONTHLY', ribbon: 'starRibbon', category: 'consistency', top: 'url(#consistencyTop)', bottom: 'url(#consistencyBottom)', ribbonColor: '#6DD9C1', ribbonShadow: '#438F82', title: 'Elite Month' },
-  rate_y80: { displayNum: '80%', unitText: 'FULL YEAR', ribbon: 'starRibbon', category: 'consistency', top: 'url(#consistencyTop)', bottom: 'url(#consistencyBottom)', ribbonColor: '#8BE5D1', ribbonShadow: '#438F82', title: 'Year of Excellence' },
+  rate_m70: { displayNum: '70%', unitText: 'MONTHLY', ribbon: 'none', category: 'consistency', title: '70% Monthly' },
+  rate_m80: { displayNum: '80%', unitText: 'MONTHLY', ribbon: 'ribbon', category: 'consistency', title: '80% Monthly' },
+  rate_m90: { displayNum: '90%', unitText: 'MONTHLY', ribbon: 'starRibbon', category: 'consistency', title: '90% Monthly' },
+  rate_y80: { displayNum: '80%', unitText: 'FULL YEAR', ribbon: 'starRibbon', category: 'consistency', title: '80% Annual' },
 
   // VOLUME
-  vol_100: { displayNum: '100', unitText: 'CHECK-INS', ribbon: 'none', category: 'volume', top: 'url(#volumeTop)', bottom: 'url(#volumeBottom)', ribbonColor: '#65B9E8', ribbonShadow: '#397EA9', title: 'Century Club' },
-  vol_500: { displayNum: '500', unitText: 'CHECK-INS', ribbon: 'ribbon', category: 'volume', top: 'url(#volumeTop)', bottom: 'url(#volumeBottom)', ribbonColor: '#65B9E8', ribbonShadow: '#397EA9', title: '500 Club' },
-  vol_1000: { displayNum: '1K', unitText: 'CHECK-INS', ribbon: 'starRibbon', category: 'volume', top: 'url(#volumeTop)', bottom: 'url(#volumeBottom)', ribbonColor: '#65B9E8', ribbonShadow: '#397EA9', title: 'Kilo' },
-  vol_2500: { displayNum: '2.5K', unitText: 'CHECK-INS', ribbon: 'starRibbon', category: 'volume', top: 'url(#volumeTop)', bottom: 'url(#volumeBottom)', ribbonColor: '#65B9E8', ribbonShadow: '#397EA9', title: 'Marathon' },
-  vol_5000: { displayNum: '5K', unitText: 'CHECK-INS', ribbon: 'starRibbon', category: 'volume', top: 'url(#volumeTop)', bottom: 'url(#volumeBottom)', ribbonColor: '#65B9E8', ribbonShadow: '#397EA9', title: 'Grandmaster' },
-  vol_10000: { displayNum: '10K', unitText: 'CHECK-INS', ribbon: 'starRibbon', category: 'volume', top: 'url(#volumeTop)', bottom: 'url(#volumeBottom)', ribbonColor: '#83D0F3', ribbonShadow: '#397EA9', title: 'Hall of Fame' }
+  vol_100: { displayNum: '100', unitText: 'CHECK-INS', ribbon: 'none', category: 'volume', title: '100 Check-Ins' },
+  vol_500: { displayNum: '500', unitText: 'CHECK-INS', ribbon: 'ribbon', category: 'volume', title: '500 Check-Ins' },
+  vol_1000: { displayNum: '1K', unitText: 'CHECK-INS', ribbon: 'starRibbon', category: 'volume', title: '1,000 Check-Ins' },
+  vol_2500: { displayNum: '2.5K', unitText: 'CHECK-INS', ribbon: 'starRibbon', category: 'volume', title: '2,500 Check-Ins' },
+  vol_5000: { displayNum: '5K', unitText: 'CHECK-INS', ribbon: 'starRibbon', category: 'volume', title: '5,000 Check-Ins' },
+  vol_10000: { displayNum: '10K', unitText: 'CHECK-INS', ribbon: 'starRibbon', category: 'volume', title: '10,000 Check-Ins' }
 };
 
 function generateBadgeSVG(badgeId, unlocked = true) {
   const conf = BADGE_CATALOG[badgeId] || BADGE_CATALOG.streak_7;
-  const uid = 'b_' + badgeId.replace(/[^a-zA-Z0-9_]/g, '_') + (unlocked ? '_u' : '_l');
+  const meta = CATEGORY_META[conf.category] || CATEGORY_META.streak;
+
+  const uid =
+    'b_' +
+    badgeId.replace(/[^a-zA-Z0-9_]/g, '_') +
+    (unlocked ? '_u' : '_l');
 
   const numStr = String(conf.displayNum);
+
   let numClass = 'badge-svg-number';
+
   if (numStr.length >= 4) {
-    numClass = 'badge-svg-number badge-svg-number-xs';
+    numClass += ' badge-svg-number-xs';
   } else if (numStr.length >= 3) {
-    numClass = 'badge-svg-number badge-svg-number-small';
+    numClass += ' badge-svg-number-small';
   }
 
-  const yNum = conf.ribbon === 'none' ? 36 : (conf.category === 'volume' ? 44 : 40);
+  const yNum = conf.ribbon === 'none'
+    ? 36
+    : conf.category === 'volume'
+      ? 44
+      : 40;
+
   const yUnit = conf.ribbon === 'none' ? 72 : 75;
 
-  let topC1, topC2, botC1, botC2, ribColor, ribShadow;
+  /*
+   * ------------------------------------------------------------
+   * COLOR SYSTEM
+   * ------------------------------------------------------------
+   */
+
+  let topC1;
+  let topC2;
+  let botC1;
+  let botC2;
+  let ribColor;
+  let ribShadow;
+  let glowColor;
+
   if (!unlocked) {
-    topC1 = '#2c3038'; topC2 = '#3d4450';
-    botC1 = '#4b5563'; botC2 = '#1f242d';
-    ribColor = '#4b5563'; ribShadow = '#1f242d';
-  } else if (conf.category === 'streak') {
-    topC1 = '#40318F'; topC2 = '#6752D6';
-    botC1 = '#806BE7'; botC2 = '#342779';
-    ribColor = conf.ribbonColor || '#927FF2';
-    ribShadow = conf.ribbonShadow || '#6352B9';
-  } else if (conf.category === 'perfect_days') {
-    topC1 = '#C78312'; topC2 = '#F3B52E';
-    botC1 = '#FFD66B'; botC2 = '#D99217';
-    ribColor = conf.ribbonColor || '#FFD36A';
-    ribShadow = conf.ribbonShadow || '#B87912';
-  } else if (conf.category === 'consistency') {
-    topC1 = '#176A61'; topC2 = '#2D9A89';
-    botC1 = '#55C7B0'; botC2 = '#1C7065';
-    ribColor = conf.ribbonColor || '#6DD9C1';
-    ribShadow = conf.ribbonShadow || '#438F82';
+    // Locked = neutral, quiet, almost monochrome
+    topC1 = '#181C22';
+    topC2 = '#252B34';
+
+    botC1 = '#303640';
+    botC2 = '#1B2027';
+
+    ribColor = '#343A44';
+    ribShadow = '#181C22';
+
+    glowColor = 'rgba(0,0,0,0)';
   } else {
-    topC1 = '#164B78'; topC2 = '#247DB5';
-    botC1 = '#5DB8E8'; botC2 = '#1C5D89';
-    ribColor = conf.ribbonColor || '#65B9E8';
-    ribShadow = conf.ribbonShadow || '#397EA9';
+    topC1 = meta.top;
+    topC2 = meta.topLight;
+
+    botC1 = meta.bottom;
+    botC2 = meta.bottomDark;
+
+    ribColor = conf.ribbonColor || meta.ribbon;
+    ribShadow = conf.ribbonShadow || meta.ribbonShadow;
+
+    glowColor = meta.glow;
   }
 
-  const hexD = "M 38,0 L 92,0 Q 98,0 101,6 L 124,49 Q 127,55 124,61 L 101,104 Q 98,110 92,110 L 38,110 Q 32,110 29,104 L 6,61 Q 3,55 6,49 L 29,6 Q 32,0 38,0 Z";
+  /*
+   * ------------------------------------------------------------
+   * BADGE GEOMETRY
+   * ------------------------------------------------------------
+   */
+
+  const hexD = `
+    M 38,0
+    L 92,0
+    Q 98,0 101,6
+    L 124,49
+    Q 127,55 124,61
+    L 101,104
+    Q 98,110 92,110
+    L 38,110
+    Q 32,110 29,104
+    L 6,61
+    Q 3,55 6,49
+    L 29,6
+    Q 32,0 38,0
+    Z
+  `;
+
+  /*
+   * ------------------------------------------------------------
+   * RIBBON
+   * ------------------------------------------------------------
+   */
 
   let ribbonMarkup = '';
+
   if (conf.ribbon === 'ribbon' || conf.ribbon === 'starRibbon') {
-    const starMarkup = conf.ribbon === 'starRibbon' ? `
-      <path d="M18,37 L20,42 L25,42 L21,45 L23,50 L18,47 L13,50 L15,45 L11,42 L16,42 Z" fill="#FFFFFF"/>
-      <path d="M112,37 L114,42 L119,42 L115,45 L117,50 L112,47 L107,50 L109,45 L105,42 L110,42 Z" fill="#FFFFFF"/>
-    ` : '';
+    const starMarkup =
+      conf.ribbon === 'starRibbon'
+        ? `
+          <path
+            d="M18,37 L20,42 L25,42 L21,45 L23,50
+               L18,47 L13,50 L15,45 L11,42 L16,42 Z"
+            fill="#FFFFFF"
+            fill-opacity="${unlocked ? '0.88' : '0.25'}"
+          />
+
+          <path
+            d="M112,37 L114,42 L119,42 L115,45 L117,50
+               L112,47 L107,50 L109,45 L105,42 L110,42 Z"
+            fill="#FFFFFF"
+            fill-opacity="${unlocked ? '0.88' : '0.25'}"
+          />
+        `
+        : '';
 
     ribbonMarkup = `
-      <path d="M15 44 L-30 44 L-15 59 L-30 74 L15 74 Z" fill="${ribShadow}"/>
-      <path d="M-15 59 L15 74 L15 59 Z" fill="#000000" fill-opacity="0.25"/>
-      <path d="M115 44 L160 44 L145 59 L160 74 L115 74 Z" fill="${ribShadow}"/>
-      <path d="M145 59 L115 74 L115 59 Z" fill="#000000" fill-opacity="0.25"/>
-      <path d="M-15 29 Q65 14 145 29 L145 59 Q65 44 -15 59 Z" fill="${ribColor}" filter="url(#ribbonShad_${uid})"/>
+      <!-- Ribbon shadow -->
+      <path
+        d="M15 44 L-30 44 L-15 59 L-30 74 L15 74 Z"
+        fill="${ribShadow}"
+      />
+
+      <path
+        d="M115 44 L160 44 L145 59 L160 74 L115 74 Z"
+        fill="${ribShadow}"
+      />
+
+      <!-- Ribbon fold -->
+      <path
+        d="M-15 59 L15 74 L15 59 Z"
+        fill="#000000"
+        fill-opacity="${unlocked ? '0.22' : '0.35'}"
+      />
+
+      <path
+        d="M145 59 L115 74 L115 59 Z"
+        fill="#000000"
+        fill-opacity="${unlocked ? '0.22' : '0.35'}"
+      />
+
+      <!-- Main ribbon -->
+      <path
+        d="M-15 29 Q65 14 145 29 L145 59 Q65 44 -15 59 Z"
+        fill="${ribColor}"
+        filter="url(#ribbonShad_${uid})"
+      />
+
       ${starMarkup}
     `;
   }
 
+  /*
+   * ------------------------------------------------------------
+   * SVG
+   * ------------------------------------------------------------
+   */
+
   return `
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="-35 -5 200 125" class="milestone-badge-svg ${unlocked ? 'unlocked' : 'locked'}">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="-35 -8 200 135"
+      class="milestone-badge-svg ${unlocked ? 'unlocked' : 'locked'}"
+      aria-label="${escapeHtml(conf.title)}"
+    >
       <defs>
-        <linearGradient id="top_${uid}" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="${topC1}"/>
-          <stop offset="100%" stop-color="${topC2}"/>
+        <!-- Main badge gradient -->
+        <linearGradient
+          id="top_${uid}"
+          x1="0"
+          y1="0"
+          x2="0"
+          y2="1"
+        >
+          <stop offset="0%" stop-color="${topC1}" />
+          <stop offset="100%" stop-color="${topC2}" />
         </linearGradient>
-        <linearGradient id="bot_${uid}" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="${botC1}"/>
-          <stop offset="100%" stop-color="${botC2}"/>
+
+        <!-- Lower badge gradient -->
+        <linearGradient
+          id="bot_${uid}"
+          x1="0"
+          y1="0"
+          x2="0"
+          y2="1"
+        >
+          <stop offset="0%" stop-color="${botC1}" />
+          <stop offset="100%" stop-color="${botC2}" />
         </linearGradient>
+
+        <!-- Very subtle category glow -->
+        <filter
+          id="badgeGlow_${uid}"
+          x="-45%"
+          y="-45%"
+          width="190%"
+          height="190%"
+        >
+          <feGaussianBlur
+            stdDeviation="5"
+            result="blur"
+          />
+
+          <feFlood
+            flood-color="${glowColor}"
+            flood-opacity="${unlocked ? '1' : '0'}"
+            result="glowColor"
+          />
+
+          <feComposite
+            in="glowColor"
+            in2="blur"
+            operator="in"
+            result="coloredGlow"
+          />
+
+          <feMerge>
+            <feMergeNode in="coloredGlow" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
+
+        <!-- Very subtle depth shadow -->
+        <filter
+          id="badgeShad_${uid}"
+          x="-35%"
+          y="-35%"
+          width="170%"
+          height="180%"
+        >
+          <feDropShadow
+            dx="0"
+            dy="4"
+            stdDeviation="3"
+            flood-color="#000000"
+            flood-opacity="0.35"
+          />
+        </filter>
+
+        <!-- Ribbon shadow -->
+        <filter
+          id="ribbonShad_${uid}"
+          x="-30%"
+          y="-30%"
+          width="160%"
+          height="170%"
+        >
+          <feDropShadow
+            dx="0"
+            dy="2"
+            stdDeviation="2.5"
+            flood-color="#000000"
+            flood-opacity="0.25"
+          />
+        </filter>
+
         <clipPath id="clip_${uid}">
-          <path d="${hexD}"/>
+          <path d="${hexD}" />
         </clipPath>
-        <filter id="badgeShad_${uid}" x="-30%" y="-30%" width="160%" height="170%">
-          <feDropShadow dx="0" dy="5" stdDeviation="4" flood-color="#000000" flood-opacity="0.35"/>
-        </filter>
-        <filter id="ribbonShad_${uid}" x="-30%" y="-30%" width="160%" height="170%">
-          <feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#000000" flood-opacity="0.28"/>
-        </filter>
       </defs>
 
-      <!-- Base Hexagon -->
-      <g filter="url(#badgeShad_${uid})">
-        <path d="${hexD}" fill="url(#top_${uid})"/>
-        <g clip-path="url(#clip_${uid})">
-          <path d="M0 58 Q65 43 130 58 L130 115 L0 115 Z" fill="url(#bot_${uid})"/>
+      <!-- =====================================================
+           BADGE BODY
+           ===================================================== -->
+      <g filter="url(#badgeGlow_${uid})">
+        <g filter="url(#badgeShad_${uid})">
+          <!-- Main hex -->
+          <path
+            d="${hexD}"
+            fill="url(#top_${uid})"
+          />
+
+          <!-- Lower section -->
+          <g clip-path="url(#clip_${uid})">
+            <path
+              d="M0 58 Q65 43 130 58 L130 115 L0 115 Z"
+              fill="url(#bot_${uid})"
+            />
+          </g>
         </g>
+
+        <!-- Thin premium edge -->
+        <path
+          d="${hexD}"
+          fill="none"
+          stroke="${unlocked ? meta.color : '#4B5563'}"
+          stroke-opacity="${unlocked ? '0.65' : '0.35'}"
+          stroke-width="1.2"
+        />
+
+        <!-- Top highlight -->
+        <path
+          d="M30 7 Q65 -1 100 7"
+          fill="none"
+          stroke="#FFFFFF"
+          stroke-opacity="${unlocked ? '0.16' : '0.06'}"
+          stroke-width="1.6"
+        />
       </g>
 
-      <!-- Top Highlight Arc -->
-      <path d="M30 7 Q65 -1 100 7" fill="none" stroke="#FFFFFF" stroke-opacity="0.25" stroke-width="2.2"/>
-
-      <!-- Ribbon -->
+      <!-- =====================================================
+           RIBBON
+           ===================================================== -->
       ${ribbonMarkup}
 
-      <!-- Badge Text -->
-      <text x="65" y="${yNum}" class="${numClass}">${conf.displayNum}</text>
-      <text x="65" y="${yUnit}" class="badge-svg-unit">${conf.unitText}</text>
+      <!-- =====================================================
+           BADGE TEXT
+           ===================================================== -->
+      <text
+        x="65"
+        y="${yNum}"
+        class="${numClass}"
+        fill="#FFFFFF"
+        fill-opacity="${unlocked ? '1' : '0.45'}"
+      >
+        ${escapeHtml(conf.displayNum)}
+      </text>
+
+      <text
+        x="65"
+        y="${yUnit}"
+        class="badge-svg-unit"
+        fill="#FFFFFF"
+        fill-opacity="${unlocked ? '0.82' : '0.35'}"
+      >
+        ${escapeHtml(conf.unitText)}
+      </text>
     </svg>
   `;
 }

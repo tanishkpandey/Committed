@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Insights & Analytics - Committed</title>
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
-  <link rel="preconnect" href="https://unpkg.com">
-  <link rel="dns-prefetch" href="https://unpkg.com">
   <link rel="stylesheet" href="css/main.css?v=1787955555">
   <link rel="stylesheet" href="css/components.css?v=1787955555">
   <link rel="stylesheet" href="css/animations.css?v=1787955555">
   <script src="https://unpkg.com/lucide@latest"></script>
 </head>
+
 <body>
 
   <div class="app-container">
@@ -38,7 +38,7 @@
           <div class="ref-card-icon-badge" style="background: rgba(16, 185, 129, 0.15); color: #10b981;">
             <i data-lucide="activity" style="width: 17px; height: 17px;"></i>
           </div>
-          <div class="ref-card-val" id="ovConsistency"><span class="skeleton-shimmer" style="width: 45px; height: 1.5rem; display: inline-block;"></span></div>
+          <div class="ref-card-val" id="ovConsistency">0%</div>
           <div class="ref-card-label">Consistency</div>
           <div class="ref-card-trend up">
             <i data-lucide="check" style="width: 12px; height: 12px;"></i>
@@ -51,7 +51,7 @@
           <div class="ref-card-icon-badge" style="background: rgba(6, 182, 212, 0.15); color: #06b6d4;">
             <i data-lucide="circle-dot" style="width: 17px; height: 17px;"></i>
           </div>
-          <div class="ref-card-val" id="ovCompletionRate"><span class="skeleton-shimmer" style="width: 45px; height: 1.5rem; display: inline-block;"></span></div>
+          <div class="ref-card-val" id="ovCompletionRate">0%</div>
           <div class="ref-card-label">Completion Rate</div>
           <div class="ref-card-trend up">
             <i data-lucide="arrow-up-right" style="width: 12px; height: 12px;"></i>
@@ -64,7 +64,7 @@
           <div class="ref-card-icon-badge" style="background: rgba(139, 92, 246, 0.15); color: #8b5cf6;">
             <i data-lucide="layers" style="width: 17px; height: 17px;"></i>
           </div>
-          <div class="ref-card-val" id="ovActiveHabits"><span class="skeleton-shimmer" style="width: 30px; height: 1.5rem; display: inline-block;"></span></div>
+          <div class="ref-card-val" id="ovActiveHabits">0</div>
           <div class="ref-card-label">Active Habits</div>
           <div style="font-size: 0.68rem; color: var(--text-muted); font-weight: 700;">
             Currently Tracked
@@ -76,7 +76,7 @@
           <div class="ref-card-icon-badge" style="background: rgba(245, 158, 11, 0.15); color: #f59e0b;">
             <i data-lucide="trending-up" style="width: 17px; height: 17px;"></i>
           </div>
-          <div class="ref-card-val" id="ovTrendDelta"><span class="skeleton-shimmer" style="width: 40px; height: 1.5rem; display: inline-block;"></span></div>
+          <div class="ref-card-val" id="ovTrendDelta">+0%</div>
           <div class="ref-card-label">30-Day Change</div>
           <div class="ref-card-trend up" id="ovTrendBadge">
             <i data-lucide="trending-up" style="width: 12px; height: 12px;"></i>
@@ -105,7 +105,7 @@
               <div class="chart-header-sub">30-day compounding growth</div>
             </div>
             <div style="background: rgba(16, 185, 129, 0.15); color: #10b981; font-size: 0.75rem; font-weight: 850; padding: 0.25rem 0.55rem; border-radius: var(--radius-full);" id="velocityTotalBadge">
-              ...
+              +0 Logs
             </div>
           </div>
           <div style="position: relative; height: 130px; width: 100%;">
@@ -121,7 +121,7 @@
               <div class="chart-header-sub">7-day execution curve</div>
             </div>
             <div style="background: rgba(139, 92, 246, 0.2); color: #c084fc; font-size: 0.75rem; font-weight: 850; padding: 0.25rem 0.55rem; border-radius: var(--radius-full);" id="curvePeakBadge">
-              ...
+              --%
             </div>
           </div>
           <div style="position: relative; height: 130px; width: 100%;">
@@ -143,17 +143,7 @@
 
       <div class="habit-card" style="margin-bottom: 0;">
         <div class="neon-donut-container" id="habitDistributionContainer">
-          <div class="neon-donut-layout">
-            <div class="neon-donut-visual">
-              <div class="skeleton-shimmer skeleton-circle" style="width: 140px; height: 140px;"></div>
-            </div>
-            <div class="neon-donut-breakdown">
-              <div class="neon-donut-grid">
-                <div class="neon-breakdown-card"><div class="skeleton-shimmer" style="width: 100%; height: 50px;"></div></div>
-                <div class="neon-breakdown-card"><div class="skeleton-shimmer" style="width: 100%; height: 50px;"></div></div>
-              </div>
-            </div>
-          </div>
+          <!-- Rendered dynamically via analytics.js -->
         </div>
       </div>
     </section>
@@ -167,11 +157,10 @@
         </div>
         <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">Patterns & Strengths</span>
       </div>
-      
+
       <div class="insights-carousel-wrapper">
         <div class="insights-list insights-carousel" id="behavioralInsightsContainer">
-          <div class="insight-card-item"><div class="skeleton-shimmer" style="width: 100%; height: 90px;"></div></div>
-          <div class="insight-card-item"><div class="skeleton-shimmer" style="width: 100%; height: 90px;"></div></div>
+          <!-- Rendered dynamically via analytics.js -->
         </div>
         <div class="carousel-dots" id="behavioralDots"></div>
       </div>
@@ -189,8 +178,7 @@
 
       <div class="insights-carousel-wrapper">
         <div class="insights-list insights-carousel" id="consistencyPatternsContainer">
-          <div class="insight-card-item"><div class="skeleton-shimmer" style="width: 100%; height: 90px;"></div></div>
-          <div class="insight-card-item"><div class="skeleton-shimmer" style="width: 100%; height: 90px;"></div></div>
+          <!-- Rendered dynamically via analytics.js -->
         </div>
         <div class="carousel-dots" id="consistencyDots"></div>
       </div>
@@ -206,18 +194,11 @@
           </div>
           <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">Last 6 Months</span>
         </div>
-        <div id="monthlyChartContainer" style="display: flex; gap: 0.4rem; align-items: flex-end; padding-top: 1rem; min-height: 140px;">
-          <div class="skeleton-shimmer" style="flex: 1; height: 60px; border-radius: 6px;"></div>
-          <div class="skeleton-shimmer" style="flex: 1; height: 80px; border-radius: 6px;"></div>
-          <div class="skeleton-shimmer" style="flex: 1; height: 100px; border-radius: 6px;"></div>
-          <div class="skeleton-shimmer" style="flex: 1; height: 120px; border-radius: 6px;"></div>
-          <div class="skeleton-shimmer" style="flex: 1; height: 90px; border-radius: 6px;"></div>
-          <div class="skeleton-shimmer" style="flex: 1; height: 110px; border-radius: 6px;"></div>
-        </div>
+        <div id="monthlyChartContainer" style="display: flex; gap: 0.4rem; align-items: flex-end; padding-top: 1rem; min-height: 140px;"></div>
       </div>
     </section>
 
-    <!-- 6. MOTIVATION BANNER SECTION -->
+    <!-- 7. MOTIVATION BANNER SECTION -->
     <section class="analytics-section">
       <div class="quote-motivational-banner">
         <div class="quote-left-group">
@@ -230,18 +211,17 @@
           </div>
         </div>
         <svg class="neon-wave-svg" viewBox="0 0 160 50" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M0 40C30 10 50 45 80 20C110 -5 130 35 160 15" stroke="url(#neonGrad)" stroke-width="3" stroke-linecap="round"/>
+          <path d="M0 40C30 10 50 45 80 20C110 -5 130 35 160 15" stroke="url(#neonGrad)" stroke-width="3" stroke-linecap="round" />
           <defs>
             <linearGradient id="neonGrad" x1="0" y1="20" x2="160" y2="20" gradientUnits="userSpaceOnUse">
-              <stop stop-color="#EC4899" stop-opacity="0.3"/>
-              <stop offset="0.5" stop-color="#EC4899"/>
-              <stop offset="1" stop-color="#8B5CF6"/>
+              <stop stop-color="#EC4899" stop-opacity="0.3" />
+              <stop offset="0.5" stop-color="#EC4899" />
+              <stop offset="1" stop-color="#8B5CF6" />
             </linearGradient>
           </defs>
         </svg>
       </div>
     </section>
-  </div>
   </div>
 
   <!-- Bottom Navigation -->
@@ -254,6 +234,10 @@
       <i data-lucide="award"></i>
       <span>Progress</span>
     </a>
+    <a href="/manage-habits.html" class="nav-item">
+      <i data-lucide="list-plus"></i>
+      <span>Studio</span>
+    </a>
     <a href="/analytics.html" class="nav-item active">
       <i data-lucide="bar-chart-3"></i>
       <span>Insights</span>
@@ -264,8 +248,9 @@
     </a>
   </nav>
 
-  <script src="js/api.js?v=1787951555"></script>
-  <script src="js/utils.js?v=1787951555"></script>
-  <script src="js/analytics.js?v=1787951555"></script>
+  <script src="js/api.js?v=1787955555"></script>
+  <script src="js/utils.js?v=1787955555"></script>
+  <script src="js/analytics.js?v=1787955555"></script>
 </body>
+
 </html>

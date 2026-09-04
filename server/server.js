@@ -13,7 +13,13 @@ app.use(express.urlencoded({ extended: true }));
 
 // Health check endpoint for Render / monitoring
 app.get('/health', (req, res) => {
-  res.json({ status: 'ok', app: 'Committed', timestamp: new Date().toISOString() });
+  res.json({
+    status: 'ok',
+    app: 'Committed',
+    commit: process.env.RENDER_GIT_COMMIT || 'local-dev',
+    branch: process.env.RENDER_GIT_BRANCH || 'main',
+    timestamp: new Date().toISOString()
+  });
 });
 
 // Performance & Security Headers

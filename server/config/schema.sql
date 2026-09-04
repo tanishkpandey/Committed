@@ -1,5 +1,5 @@
 -- ==============================================================================
--- HabitKit Complete Supabase PostgreSQL Schema
+-- Committed Complete Supabase PostgreSQL Schema & RLS Setup
 -- Run this in your Supabase SQL Editor (Dashboard -> SQL Editor -> New Query)
 -- ==============================================================================
 
@@ -89,3 +89,11 @@ CREATE INDEX IF NOT EXISTS idx_habit_logs_date ON habit_logs(completed_date);
 CREATE INDEX IF NOT EXISTS idx_habit_logs_habit ON habit_logs(habit_id);
 CREATE INDEX IF NOT EXISTS idx_habits_category ON habits(category);
 CREATE INDEX IF NOT EXISTS idx_xp_tx_date ON xp_transactions(event_date);
+
+-- 9. Row-Level Security (RLS) Configuration for Anon Client Access
+ALTER TABLE categories DISABLE ROW LEVEL SECURITY;
+ALTER TABLE habits DISABLE ROW LEVEL SECURITY;
+ALTER TABLE habit_logs DISABLE ROW LEVEL SECURITY;
+ALTER TABLE xp_transactions DISABLE ROW LEVEL SECURITY;
+ALTER TABLE achievements DISABLE ROW LEVEL SECURITY;
+ALTER TABLE user_settings DISABLE ROW LEVEL SECURITY;
