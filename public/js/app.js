@@ -42,7 +42,7 @@ function updateWidgetUI(data) {
   if (xpCounts) xpCounts.textContent = `${(data.currentLevelXP || 0).toLocaleString()} / ${(data.nextLevelTargetXP || 100).toLocaleString()} XP`;
   if (fill) fill.style.width = `${data.progressPercent}%`;
   if (streakText) streakText.textContent = `${data.lifetimeStats.perfectDaysStreak || 0} Perfect Day Streak`;
-  renderDashboardGreeting(data.lifetimeStats.longestStreak || 19);
+  renderDashboardGreeting(data.lifetimeStats ? data.lifetimeStats.longestStreak || 0 : 0);
   lucide.createIcons();
   Utils.initGlobalTooltips();
 }
@@ -413,7 +413,7 @@ function escapeHtml(str) {
 }
 
 
-function renderDashboardGreeting(longestStreak = 19) {
+function renderDashboardGreeting(longestStreak = 0) {
   const hour = new Date().getHours();
   let timeStr = 'Good evening';
   if (hour < 12) timeStr = 'Good morning';

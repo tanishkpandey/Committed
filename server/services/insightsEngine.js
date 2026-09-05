@@ -18,8 +18,12 @@ function generateAdvancedInsights(habits = [], logs = []) {
     logsByDate.get(l.completed_date).add(l.habit_id);
   });
 
+  const activeHabitIds = new Set(activeHabits.map(h => h.id));
+
   const habitMetrics = activeHabits.map(h => {
     const datesSet = logsByHabit.get(h.id) || new Set();
+    const freq = h.frequency_days || 7;
+    const expected30Target = Math.max(1, Math.round((freq / 7) * 30));
 
     // 30-Day Completion Rate
     let current30Count = 0;
@@ -28,7 +32,7 @@ function generateAdvancedInsights(habits = [], logs = []) {
       d.setDate(today.getDate() - i);
       if (datesSet.has(formatYMD(d))) current30Count++;
     }
-    const rate30 = Math.round((current30Count / 30) * 100);
+    const rate30 = Math.min(100, Math.round((current30Count / expected30Target) * 100));
 
     // Previous 30-Day Rate (Days 31-60)
     let prev30Count = 0;
@@ -37,7 +41,7 @@ function generateAdvancedInsights(habits = [], logs = []) {
       d.setDate(today.getDate() - i);
       if (datesSet.has(formatYMD(d))) prev30Count++;
     }
-    const prevRate30 = Math.round((prev30Count / 30) * 100);
+    const prevRate30 = Math.min(100, Math.round((prev30Count / expected30Target) * 100));
     const delta = rate30 - prevRate30;
 
     // Streaks for this habit
@@ -112,7 +116,9 @@ function generateAdvancedInsights(habits = [], logs = []) {
   for (let dayNum = 1; dayNum <= currentDayNum; dayNum++) {
     const dStr = `${curYear}-${String(curMonth + 1).padStart(2, '0')}-${String(dayNum).padStart(2, '0')}`;
     const completedForDate = logsByDate.get(dStr) || new Set();
-    totalCompletionsThisMonth += completedForDate.size;
+    completedForDate.forEach(hId => {
+      if (activeHabitIds.has(hId)) totalCompletionsThisMonth++;
+    });
   }
 
   const overallMonthConsistency = totalPossibleThisMonth > 0 
@@ -130,7 +136,9 @@ function generateAdvancedInsights(habits = [], logs = []) {
   for (let dayNum = 1; dayNum <= daysInPrevMonth; dayNum++) {
     const dStr = `${pYear}-${String(pMonth + 1).padStart(2, '0')}-${String(dayNum).padStart(2, '0')}`;
     const completedForDate = logsByDate.get(dStr) || new Set();
-    prevMonthCompletions += completedForDate.size;
+    completedForDate.forEach(hId => {
+      if (activeHabitIds.has(hId)) prevMonthCompletions++;
+    });
   }
   const prevMonthConsistency = prevMonthPossible > 0
     ? Math.min(100, Math.round((prevMonthCompletions / prevMonthPossible) * 100))

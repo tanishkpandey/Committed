@@ -1837,6 +1837,134 @@
 }
 
 /* ==============================================================================
+   Habit Distribution Radar Chart Styles (3 to 8 Active Habits)
+   ============================================================================== */
+.radar-distribution-layout {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  padding: 0.5rem 0;
+}
+
+@media (max-width: 768px) {
+  .radar-distribution-layout {
+    flex-direction: column;
+    gap: 1.25rem;
+    align-items: center;
+  }
+}
+
+.radar-visual-wrapper {
+  width: 320px;
+  max-width: 100%;
+  height: auto;
+  aspect-ratio: 1;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.radar-svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.radar-axis-label-group {
+  user-select: none;
+  pointer-events: none;
+}
+
+.radar-breakdown-wrapper {
+  flex: 1;
+  min-width: 0;
+  width: 100%;
+}
+
+.radar-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0.65rem;
+  width: 100%;
+}
+
+@media (max-width: 520px) {
+  .radar-summary-grid {
+    grid-template-columns: 1fr;
+    gap: 0.55rem;
+  }
+}
+
+.radar-summary-card {
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm, 10px);
+  padding: 0.75rem 0.85rem 0.65rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  transition: transform 0.2s ease, border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.radar-summary-card:hover {
+  border-color: var(--border-active);
+  background: rgba(255, 255, 255, 0.04);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+}
+
+.radar-summary-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.radar-summary-title {
+  font-size: 0.78rem;
+  font-weight: 750;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.radar-summary-pct {
+  font-size: 0.72rem;
+  font-weight: 850;
+  padding: 0.15rem 0.45rem;
+  border-radius: var(--radius-full);
+  line-height: 1;
+  background: rgba(16, 185, 129, 0.12);
+  color: #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.radar-summary-bar-track {
+  height: 5px;
+  background-color: var(--bg-input);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  position: relative;
+}
+
+.radar-summary-bar-fill {
+  height: 100%;
+  border-radius: var(--radius-full);
+  background: #10b981;
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.6);
+  transition: width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.radar-summary-sub {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+/* ==============================================================================
    Neon Habit Distribution Donut & Breakdown Styles
    ============================================================================== */
 .neon-donut-container {

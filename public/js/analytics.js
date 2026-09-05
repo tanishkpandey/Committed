@@ -128,6 +128,197 @@ function renderHabitDistribution(dist) {
 
   const activeDist = dist.filter(h => h.count > 0);
   const inactiveDist = dist.filter(h => h.count === 0);
+
+  // Conditional Chart Rendering Logic:
+  // - 3 to 8 active habits (inclusive) -> Radar chart view
+  // - 2 or fewer, or 9 or more -> Existing Donut + Bar list view
+  const activeCount = activeDist.length;
+  if (activeCount >= 3 && activeCount <= 8) {
+    renderRadarHabitDistribution(activeDist, inactiveDist, container);
+  } else {
+    renderDonutHabitDistribution(activeDist, inactiveDist, container);
+  }
+}
+
+function renderRadarHabitDistribution(activeDist, inactiveDist, container) {
+  const N = activeDist.length;
+  const size = 340;
+  const cx = size / 2;
+  const cy = 155;
+  const radius = 90;
+
+  // 1. Calculate angles & data points (Fixed scale: 0% to 100%)
+  const angles = activeDist.map((_, i) => -Math.PI / 2 + (2 * Math.PI * i) / N);
+  
+  const dataPoints = activeDist.map((item, i) => {
+    const angle = angles[i];
+    const pct = Math.min(100, Math.max(0, item.percentage || 0));
+    const r = (pct / 100) * radius;
+    const x = cx + r * Math.cos(angle);
+    const y = cy + r * Math.sin(angle);
+    return { x, y, pct, item, angle };
+  });
+
+  const polygonPointsStr = dataPoints.map(p => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ');
+
+  // 2. Concentric Web Rings (Fixed 0–100% scale grid: 25%, 50%, 75%, 100%)
+  const levels = [25, 50, 75, 100];
+  const gridPolygonsHtml = levels.map(level => {
+    const rL = (level / 100) * radius;
+    const pts = angles.map(angle => {
+      const x = cx + rL * Math.cos(angle);
+      const y = cy + rL * Math.sin(angle);
+      return `${x.toFixed(1)},${y.toFixed(1)}`;
+    }).join(' ');
+
+    const isOuter = level === 100;
+    return `
+      <polygon points="${pts}" 
+        fill="${level === 100 ? 'rgba(255, 255, 255, 0.015)' : 'none'}" 
+        stroke="${isOuter ? 'rgba(255, 255, 255, 0.18)' : 'rgba(255, 255, 255, 0.07)'}" 
+        stroke-width="${isOuter ? '1.2' : '1'}" 
+        stroke-dasharray="${isOuter ? 'none' : '2 3'}" 
+      />
+      <text x="${cx + 3}" y="${(cy - rL + 3.5).toFixed(1)}" 
+        font-size="7.5" font-weight="700" fill="var(--text-muted)" opacity="0.7">${level}%</text>
+    `;
+  }).join('');
+
+  // 3. Axis Spokes
+  const spokesHtml = angles.map(angle => {
+    const x2 = cx + radius * Math.cos(angle);
+    const y2 = cy + radius * Math.sin(angle);
+    return `
+      <line x1="${cx}" y1="${cy}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}" 
+        stroke="rgba(255, 255, 255, 0.12)" stroke-width="1" stroke-dasharray="2 2" />
+    `;
+  }).join('');
+
+  // 4. Axis Labels (Habit Name + 30-day percentage)
+  const labelRadius = radius + 20;
+  const labelsHtml = dataPoints.map((dp, i) => {
+    const angle = dp.angle;
+    let lx = cx + labelRadius * Math.cos(angle);
+    let ly = cy + labelRadius * Math.sin(angle);
+
+    const cosA = Math.cos(angle);
+    const sinA = Math.sin(angle);
+
+    let textAnchor = 'middle';
+    if (cosA > 0.25) {
+      textAnchor = 'start';
+      lx += 4;
+    } else if (cosA < -0.25) {
+      textAnchor = 'end';
+      lx -= 4;
+    }
+
+    if (sinA < -0.6) ly -= 5;
+    else if (sinA > 0.6) ly += 5;
+
+    const rawTitle = dp.item.title || 'Habit';
+    const cleanTitle = rawTitle.length > 13 ? rawTitle.slice(0, 12) + '…' : rawTitle;
+
+    return `
+      <g class="radar-axis-label-group">
+        <text x="${lx.toFixed(1)}" y="${ly.toFixed(1)}" text-anchor="${textAnchor}" dominant-baseline="central">
+          <tspan x="${lx.toFixed(1)}" dy="-4" font-size="9.5" font-weight="750" fill="var(--text-primary)">${escapeHtml(cleanTitle)}</tspan>
+          <tspan x="${lx.toFixed(1)}" dy="12" font-size="8.5" font-weight="700" fill="#10B981">${dp.pct}%</tspan>
+        </text>
+      </g>
+    `;
+  }).join('');
+
+  // 5. Data Points Circles
+  const dataDotsHtml = dataPoints.map(dp => `
+    <circle cx="${dp.x.toFixed(1)}" cy="${dp.y.toFixed(1)}" r="3.5" 
+      fill="#34D399" stroke="var(--bg-card, #0f172a)" stroke-width="1.5"
+      style="filter: drop-shadow(0 0 4px #10B981);" />
+  `).join('');
+
+  container.innerHTML = `
+    <div class="radar-distribution-layout">
+      <div class="radar-visual-wrapper">
+        <svg viewBox="0 0 ${size} ${size}" class="radar-svg">
+          <defs>
+            <radialGradient id="radarFillGrad" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#10B981" stop-opacity="0.36"/>
+              <stop offset="60%" stop-color="#10B981" stop-opacity="0.18"/>
+              <stop offset="100%" stop-color="#10B981" stop-opacity="0.05"/>
+            </radialGradient>
+            <filter id="radarNeonGlow" x="-20%" y="-20%" width="140%" height="140%">
+              <feDropShadow dx="0" dy="0" stdDeviation="5" flood-color="#10B981" flood-opacity="0.5"/>
+            </filter>
+          </defs>
+
+          <!-- Concentric Web Polygons -->
+          ${gridPolygonsHtml}
+
+          <!-- Spoke Lines -->
+          ${spokesHtml}
+
+          <!-- Data Area Polygon (Single Brand Color Fill & Stroke) -->
+          <polygon points="${polygonPointsStr}" 
+            fill="url(#radarFillGrad)" 
+            stroke="#10B981" 
+            stroke-width="2.2" 
+            stroke-linejoin="round" 
+            filter="url(#radarNeonGlow)"
+            style="transition: all 0.5s ease;"
+          />
+
+          <!-- Data Vertex Dots -->
+          ${dataDotsHtml}
+
+          <!-- Axis Labels -->
+          ${labelsHtml}
+        </svg>
+      </div>
+
+      <div class="radar-breakdown-wrapper">
+        <div class="radar-summary-grid">
+          ${activeDist.map(item => `
+            <div class="radar-summary-card">
+              <div class="radar-summary-header">
+                <span class="radar-summary-title" title="${escapeHtml(item.title)}">${escapeHtml(item.title)}</span>
+                <span class="radar-summary-pct">${item.percentage}%</span>
+              </div>
+              <div class="radar-summary-bar-track">
+                <div class="radar-summary-bar-fill" style="width: ${item.percentage}%;"></div>
+              </div>
+              <div class="radar-summary-sub">${item.count} check-in${item.count === 1 ? '' : 's'} (last 30d)</div>
+            </div>
+          `).join('')}
+        </div>
+
+        ${inactiveDist.length > 0 ? `
+          <details class="inactive-habits-accordion">
+            <summary class="inactive-habits-summary">
+              <div style="display: flex; align-items: center; gap: 0.4rem;">
+                <i data-lucide="archive" style="width: 13px; height: 13px;"></i>
+                <span>Inactive Habits (${inactiveDist.length})</span>
+              </div>
+              <i data-lucide="chevron-down" style="width: 14px; height: 14px;"></i>
+            </summary>
+            <div class="inactive-habits-list">
+              ${inactiveDist.map(item => `
+                <div class="inactive-habit-row">
+                  <div style="display: flex; align-items: center; gap: 0.4rem;">
+                    <span class="neon-glow-dot" style="background: var(--text-muted); opacity: 0.6;"></span>
+                    <span>${escapeHtml(item.title)}</span>
+                  </div>
+                  <span style="font-size: 0.7rem; color: var(--text-muted);">0 check-ins (last 30d)</span>
+                </div>
+              `).join('')}
+            </div>
+          </details>
+        ` : ''}
+      </div>
+    </div>
+  `;
+}
+
+function renderDonutHabitDistribution(activeDist, inactiveDist, container) {
   const totalLogs = activeDist.reduce((acc, h) => acc + h.count, 0);
 
   // Calculate SVG donut segments with neon glow from active habits only

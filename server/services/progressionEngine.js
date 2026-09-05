@@ -29,6 +29,7 @@ function getLevelFromXP(totalXP = 0) {
 
 function evaluateProgression(habits = [], logs = []) {
   const activeHabits = habits.filter(h => !h.is_archived);
+  const activeHabitIds = new Set(activeHabits.map(h => h.id));
   const transactions = [];
 
   const logsByHabit = new Map();
@@ -46,8 +47,10 @@ function evaluateProgression(habits = [], logs = []) {
     if (!logsByDate.has(l.completed_date)) logsByDate.set(l.completed_date, new Set());
     logsByDate.get(l.completed_date).add(l.habit_id);
 
-    const mKey = l.completed_date.substring(0, 7);
-    logsByMonth.set(mKey, (logsByMonth.get(mKey) || 0) + 1);
+    if (activeHabitIds.has(l.habit_id)) {
+      const mKey = l.completed_date.substring(0, 7);
+      logsByMonth.set(mKey, (logsByMonth.get(mKey) || 0) + 1);
+    }
 
     const h = habits.find(habit => habit.id === l.habit_id);
     const title = h ? h.title : 'Habit';
@@ -170,7 +173,10 @@ function evaluateProgression(habits = [], logs = []) {
     const d = new Date(today);
     d.setDate(today.getDate() - i);
     const dStr = formatYMD(d);
-    pastYearLogs += (logsByDate.get(dStr) || new Set()).size;
+    const completedSet = logsByDate.get(dStr) || new Set();
+    completedSet.forEach(hId => {
+      if (activeHabitIds.has(hId)) pastYearLogs++;
+    });
   }
   const annualPossible = Math.max(activeHabits.length * 365, 1);
   const annualCompletionRate = Math.min(100, Math.round((pastYearLogs / annualPossible) * 100));

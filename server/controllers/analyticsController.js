@@ -29,6 +29,8 @@ exports.getGlobalAnalytics = async (req, res) => {
       return `${y}-${m}-${day}`;
     };
 
+    const activeHabitIds = new Set(activeHabits.map(h => h.id));
+
     // 1. 30-Day Cumulative Check-In Velocity
     const cumulativeVelocity30 = [];
     let runningTotal = 0;
@@ -36,7 +38,7 @@ exports.getGlobalAnalytics = async (req, res) => {
       const d = new Date(today);
       d.setDate(today.getDate() - i);
       const dStr = toYMD(d);
-      const dayLogs = logs.filter(l => l.completed_date === dStr).length;
+      const dayLogs = logs.filter(l => l.completed_date === dStr && activeHabitIds.has(l.habit_id)).length;
       runningTotal += dayLogs;
       const monthShort = d.toLocaleDateString('en-US', { month: 'short' });
       const dayNum = d.getDate();
@@ -56,7 +58,7 @@ exports.getGlobalAnalytics = async (req, res) => {
       d.setDate(today.getDate() - i);
       const dStr = toYMD(d);
       const dayName = dayNames[d.getDay() === 0 ? 6 : d.getDay() - 1];
-      const dayLogs = logs.filter(l => l.completed_date === dStr).length;
+      const dayLogs = logs.filter(l => l.completed_date === dStr && activeHabitIds.has(l.habit_id)).length;
       const possible = Math.max(activeHabits.length, 1);
       const rate = Math.min(100, Math.round((dayLogs / possible) * 100));
 
@@ -79,7 +81,7 @@ exports.getGlobalAnalytics = async (req, res) => {
     cutoff30.setDate(today.getDate() - 30);
     const cutoff30Str = toYMD(cutoff30);
 
-    const logsLast30 = logs.filter(l => l.completed_date >= cutoff30Str);
+    const logsLast30 = logs.filter(l => l.completed_date >= cutoff30Str && activeHabitIds.has(l.habit_id));
     const total30Logs = Math.max(logsLast30.length, 1);
 
     const habitDistribution = activeHabits.map((h, idx) => {
@@ -102,7 +104,7 @@ exports.getGlobalAnalytics = async (req, res) => {
       const monthPrefix = `${targetDate.getFullYear()}-${String(targetDate.getMonth() + 1).padStart(2, '0')}`;
       const monthName = targetDate.toLocaleDateString('en-US', { month: 'short' });
 
-      const count = logs.filter(l => l.completed_date && l.completed_date.startsWith(monthPrefix)).length;
+      const count = logs.filter(l => l.completed_date && l.completed_date.startsWith(monthPrefix) && activeHabitIds.has(l.habit_id)).length;
       monthlyCounts.push({
         month: monthName,
         prefix: monthPrefix,
