@@ -3,12 +3,13 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Insights & Analytics - Committed</title>
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
-  <link rel="stylesheet" href="css/main.css?v=1787955555">
-  <link rel="stylesheet" href="css/components.css?v=1787955555">
-  <link rel="stylesheet" href="css/animations.css?v=1787955555">
+  <link rel="stylesheet" href="css/main.css?v=1788627500">
+  <link rel="stylesheet" href="css/components.css?v=1788627500">
+  <link rel="stylesheet" href="css/animations.css?v=1788627500">
   <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 
@@ -35,7 +36,7 @@
       <div class="ref-overview-grid">
         <!-- Card A: Overall Consistency -->
         <div class="ref-overview-card">
-          <div class="ref-card-icon-badge" style="background: rgba(16, 185, 129, 0.15); color: #10b981;">
+          <div class="ref-card-icon-badge" style="background: rgba(16, 185, 129, 0.12); color: #10b981;">
             <i data-lucide="activity" style="width: 17px; height: 17px;"></i>
           </div>
           <div class="ref-card-val" id="ovConsistency">0%</div>
@@ -46,13 +47,13 @@
           </div>
         </div>
 
-        <!-- Card B: Completion Rate -->
+        <!-- Card B: 30-Day Avg Rate -->
         <div class="ref-overview-card">
-          <div class="ref-card-icon-badge" style="background: rgba(6, 182, 212, 0.15); color: #06b6d4;">
+          <div class="ref-card-icon-badge" style="background: rgba(16, 185, 129, 0.12); color: #10b981;">
             <i data-lucide="circle-dot" style="width: 17px; height: 17px;"></i>
           </div>
           <div class="ref-card-val" id="ovCompletionRate">0%</div>
-          <div class="ref-card-label">Completion Rate</div>
+          <div class="ref-card-label">30-Day Avg Rate</div>
           <div class="ref-card-trend up">
             <i data-lucide="arrow-up-right" style="width: 12px; height: 12px;"></i>
             <span>30-Day Reliability</span>
@@ -61,7 +62,7 @@
 
         <!-- Card C: Active Habits -->
         <div class="ref-overview-card">
-          <div class="ref-card-icon-badge" style="background: rgba(139, 92, 246, 0.15); color: #8b5cf6;">
+          <div class="ref-card-icon-badge" style="background: var(--bg-input); color: var(--text-secondary);">
             <i data-lucide="layers" style="width: 17px; height: 17px;"></i>
           </div>
           <div class="ref-card-val" id="ovActiveHabits">0</div>
@@ -73,7 +74,7 @@
 
         <!-- Card D: 30-Day Trend -->
         <div class="ref-overview-card">
-          <div class="ref-card-icon-badge" style="background: rgba(245, 158, 11, 0.15); color: #f59e0b;">
+          <div class="ref-card-icon-badge" style="background: rgba(16, 185, 129, 0.12); color: #10b981;">
             <i data-lucide="trending-up" style="width: 17px; height: 17px;"></i>
           </div>
           <div class="ref-card-val" id="ovTrendDelta">+0%</div>
@@ -86,55 +87,65 @@
       </div>
     </section>
 
-    <!-- 2. HABIT ANALYTICS SECTION: 30-Day Velocity & 7-Day Completion Rate Curve -->
+    <!-- 2. HABIT ANALYTICS SECTION: Long-Term Velocity vs Weekly Execution -->
     <section class="analytics-section">
       <div class="ref-overview-header">
-        <div class="ref-section-tag" style="color: #8b5cf6;">
+        <div class="ref-section-tag">
           <i data-lucide="bar-chart-2" style="width: 14px; height: 14px;"></i>
-          <span>Habit Analytics</span>
+          <span>Execution Curves</span>
         </div>
-        <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">Velocity & Momentum</span>
+        <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">Long-Term vs Weekly</span>
       </div>
 
       <div class="analytics-two-col">
-        <!-- 30-Day Cumulative Velocity -->
+        <!-- 30-Day Cumulative Velocity (Long-Term) -->
         <div class="chart-card-box">
           <div style="display: flex; justify-content: space-between; align-items: flex-start;">
             <div>
-              <div class="chart-header-title">Check-In Velocity</div>
-              <div class="chart-header-sub">30-day compounding growth</div>
+              <div style="display: flex; align-items: center; gap: 0.45rem;">
+                <span class="chart-header-title">Check-In Velocity</span>
+              </div>
+              <div class="chart-header-sub">Compounding monthly growth</div>
             </div>
-            <div style="background: rgba(16, 185, 129, 0.15); color: #10b981; font-size: 0.75rem; font-weight: 850; padding: 0.25rem 0.55rem; border-radius: var(--radius-full);" id="velocityTotalBadge">
+            <div
+              style="background: rgba(16, 185, 129, 0.15); color: #10b981; font-size: 0.75rem; font-weight: 850; padding: 0.25rem 0.55rem; border-radius: var(--radius-full);"
+              id="velocityTotalBadge">
               +0 Logs
             </div>
           </div>
           <div style="position: relative; height: 130px; width: 100%;">
-            <svg id="velocityCurveSvg" viewBox="0 0 300 110" style="width: 100%; height: 100%; overflow: visible;"></svg>
+            <svg id="velocityCurveSvg" viewBox="0 0 300 110"
+              style="width: 100%; height: 100%; overflow: visible;"></svg>
           </div>
         </div>
 
-        <!-- Completion Rate Curve -->
+        <!-- Weekly Completion Rate Curve (7-Day Focus) -->
         <div class="chart-card-box">
           <div style="display: flex; justify-content: space-between; align-items: flex-start;">
             <div>
-              <div class="chart-header-title">Completion Rate</div>
-              <div class="chart-header-sub">7-day execution curve</div>
+              <div style="display: flex; align-items: center; gap: 0.45rem;">
+                <span class="chart-header-title">Weekly Execution</span>
+              </div>
+              <div class="chart-header-sub">Daily completion percentage</div>
             </div>
-            <div style="background: rgba(139, 92, 246, 0.2); color: #c084fc; font-size: 0.75rem; font-weight: 850; padding: 0.25rem 0.55rem; border-radius: var(--radius-full);" id="curvePeakBadge">
+            <div
+              style="background: rgba(139, 92, 246, 0.15); color: #8b5cf6; font-size: 0.75rem; font-weight: 850; padding: 0.25rem 0.55rem; border-radius: var(--radius-full); border: 1px solid rgba(139, 92, 246, 0.3);"
+              id="curvePeakBadge">
               --%
             </div>
           </div>
           <div style="position: relative; height: 130px; width: 100%;">
-            <svg id="completionCurveSvg" viewBox="0 0 300 110" style="width: 100%; height: 100%; overflow: visible;"></svg>
+            <svg id="completionCurveSvg" viewBox="0 0 300 110"
+              style="width: 100%; height: 100%; overflow: visible;"></svg>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- 3. HABIT DISTRIBUTION SECTION (Neon Donut & Breakdown) -->
+    <!-- 3. HABIT DISTRIBUTION SECTION (Donut & Category Breakdown) -->
     <section class="analytics-section">
       <div class="ref-overview-header">
-        <div class="ref-section-tag" style="color: #ec4899;">
+        <div class="ref-section-tag">
           <i data-lucide="pie-chart" style="width: 14px; height: 14px;"></i>
           <span>Habit Distribution</span>
         </div>
@@ -142,20 +153,29 @@
       </div>
 
       <div class="habit-card" style="margin-bottom: 0;">
-        <div class="neon-donut-container" id="habitDistributionContainer">
-          <!-- Rendered dynamically via analytics.js -->
+        <div id="habitDistributionContainer">
+          <!-- Rendered via analytics.js -->
         </div>
       </div>
     </section>
 
-    <!-- 4. BEHAVIORAL INSIGHTS SECTION (Swipeable Cards on Mobile) -->
+    <!-- 4. BEHAVIORAL INSIGHTS SECTION (Swipeable Cards with Peek & Nav) -->
     <section class="analytics-section">
       <div class="ref-overview-header">
-        <div class="ref-section-tag" style="color: #10b981;">
+        <div class="ref-section-tag">
           <i data-lucide="brain" style="width: 14px; height: 14px;"></i>
           <span>Behavioral Insights</span>
         </div>
-        <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">Patterns & Strengths</span>
+        <div class="carousel-nav-arrows">
+          <button class="carousel-nav-btn" onclick="scrollCarousel('behavioralInsightsContainer', -1)"
+            title="Previous card" aria-label="Previous card">
+            <i data-lucide="chevron-left" style="width: 16px; height: 16px;"></i>
+          </button>
+          <button class="carousel-nav-btn" onclick="scrollCarousel('behavioralInsightsContainer', 1)" title="Next card"
+            aria-label="Next card">
+            <i data-lucide="chevron-right" style="width: 16px; height: 16px;"></i>
+          </button>
+        </div>
       </div>
 
       <div class="insights-carousel-wrapper">
@@ -166,14 +186,23 @@
       </div>
     </section>
 
-    <!-- 5. CONSISTENCY PATTERNS SECTION (Swipeable Cards on Mobile) -->
+    <!-- 5. CONSISTENCY PATTERNS SECTION (Swipeable Cards with Peek & Nav) -->
     <section class="analytics-section">
       <div class="ref-overview-header">
-        <div class="ref-section-tag" style="color: #06b6d4;">
+        <div class="ref-section-tag">
           <i data-lucide="repeat" style="width: 14px; height: 14px;"></i>
           <span>Consistency Patterns</span>
         </div>
-        <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">Recovery & Cadence</span>
+        <div class="carousel-nav-arrows">
+          <button class="carousel-nav-btn" onclick="scrollCarousel('consistencyPatternsContainer', -1)"
+            title="Previous card" aria-label="Previous card">
+            <i data-lucide="chevron-left" style="width: 16px; height: 16px;"></i>
+          </button>
+          <button class="carousel-nav-btn" onclick="scrollCarousel('consistencyPatternsContainer', 1)" title="Next card"
+            aria-label="Next card">
+            <i data-lucide="chevron-right" style="width: 16px; height: 16px;"></i>
+          </button>
+        </div>
       </div>
 
       <div class="insights-carousel-wrapper">
@@ -184,42 +213,31 @@
       </div>
     </section>
 
-    <!-- 6. HISTORY SECTION: Monthly Check-ins -->
+    <!-- 6. 6-MONTH MACRO ACTIVITY BAR CHART SECTION -->
     <section class="analytics-section">
+      <div class="ref-overview-header">
+        <div class="ref-section-tag">
+          <i data-lucide="activity" style="width: 14px; height: 14px;"></i>
+          <span>Macro Volume</span>
+        </div>
+        <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">Monthly Check-Ins</span>
+      </div>
+
       <div class="habit-card" style="margin-bottom: 0;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.85rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
           <div>
             <h3 style="font-size: 0.92rem; font-weight: 750;">Monthly Check-Ins</h3>
-            <p style="font-size: 0.72rem; color: var(--text-muted);">Historical execution volume over the last 6 months</p>
           </div>
           <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">Last 6 Months</span>
         </div>
-        <div id="monthlyChartContainer" style="display: flex; gap: 0.4rem; align-items: flex-end; padding-top: 1rem; min-height: 140px;"></div>
-      </div>
-    </section>
-
-    <!-- 7. MOTIVATION BANNER SECTION -->
-    <section class="analytics-section">
-      <div class="quote-motivational-banner">
-        <div class="quote-left-group">
-          <div class="quote-icon-badge">
-            <i data-lucide="zap" style="width: 18px; height: 18px;"></i>
-          </div>
-          <div>
-            <div class="quote-bold-text">Discipline today, freedom tomorrow.</div>
-            <div class="quote-sub-text">You're building the life you've always wanted.</div>
-          </div>
+        <div id="monthlyChartContainer"
+          style="display: flex; gap: 0.4rem; align-items: flex-end; padding-top: 1rem; min-height: 140px;"></div>
+        <div
+          style="margin-top: 0.75rem; padding-top: 0.65rem; border-top: 1px solid var(--border-subtle); display: flex; align-items: center; justify-content: space-between; font-size: 0.68rem; color: var(--text-muted);">
+          <span><i data-lucide="info"
+              style="width: 12px; height: 12px; vertical-align: middle; margin-right: 0.2rem;"></i> Bars reflect total
+            recorded check-ins per calendar month</span>
         </div>
-        <svg class="neon-wave-svg" viewBox="0 0 160 50" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M0 40C30 10 50 45 80 20C110 -5 130 35 160 15" stroke="url(#neonGrad)" stroke-width="3" stroke-linecap="round" />
-          <defs>
-            <linearGradient id="neonGrad" x1="0" y1="20" x2="160" y2="20" gradientUnits="userSpaceOnUse">
-              <stop stop-color="#EC4899" stop-opacity="0.3" />
-              <stop offset="0.5" stop-color="#EC4899" />
-              <stop offset="1" stop-color="#8B5CF6" />
-            </linearGradient>
-          </defs>
-        </svg>
       </div>
     </section>
   </div>
@@ -234,10 +252,6 @@
       <i data-lucide="award"></i>
       <span>Progress</span>
     </a>
-    <a href="/manage-habits.html" class="nav-item">
-      <i data-lucide="list-plus"></i>
-      <span>Studio</span>
-    </a>
     <a href="/analytics.html" class="nav-item active">
       <i data-lucide="bar-chart-3"></i>
       <span>Insights</span>
@@ -248,9 +262,9 @@
     </a>
   </nav>
 
-  <script src="js/api.js?v=1787955555"></script>
-  <script src="js/utils.js?v=1787955555"></script>
-  <script src="js/analytics.js?v=1787955555"></script>
+  <script src="js/api.js?v=1788627500"></script>
+  <script src="js/utils.js?v=1788627500"></script>
+  <script src="js/analytics.js?v=1788627500"></script>
 </body>
 
 </html>

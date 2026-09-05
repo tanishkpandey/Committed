@@ -126,16 +126,18 @@ function renderHabitDistribution(dist) {
     return;
   }
 
-  const totalLogs = dist.reduce((acc, h) => acc + h.count, 0);
+  const activeDist = dist.filter(h => h.count > 0);
+  const inactiveDist = dist.filter(h => h.count === 0);
+  const totalLogs = activeDist.reduce((acc, h) => acc + h.count, 0);
 
-  // Calculate SVG donut segments with neon glow
+  // Calculate SVG donut segments with neon glow from active habits only
   const size = 160;
   const center = size / 2;
   const radius = 54;
   const circumference = 2 * Math.PI * radius;
 
   let cumulativeOffset = 0;
-  const segments = dist.map(item => {
+  const segments = activeDist.map(item => {
     const pct = totalLogs > 0 ? item.count / totalLogs : 0;
     const strokeDash = Math.max(2, pct * circumference);
     const strokeOffset = -cumulativeOffset;
@@ -172,7 +174,7 @@ function renderHabitDistribution(dist) {
 
       <div class="neon-donut-breakdown">
         <div class="neon-donut-grid">
-          ${dist.map(item => `
+          ${activeDist.map(item => `
             <div class="neon-breakdown-card">
               <div class="neon-breakdown-header">
                 <div class="neon-breakdown-left">
@@ -190,6 +192,29 @@ function renderHabitDistribution(dist) {
             </div>
           `).join('')}
         </div>
+
+        ${inactiveDist.length > 0 ? `
+          <details class="inactive-habits-accordion">
+            <summary class="inactive-habits-summary">
+              <div style="display: flex; align-items: center; gap: 0.4rem;">
+                <i data-lucide="archive" style="width: 13px; height: 13px;"></i>
+                <span>Inactive Habits (${inactiveDist.length})</span>
+              </div>
+              <i data-lucide="chevron-down" style="width: 14px; height: 14px;"></i>
+            </summary>
+            <div class="inactive-habits-list">
+              ${inactiveDist.map(item => `
+                <div class="inactive-habit-row">
+                  <div style="display: flex; align-items: center; gap: 0.4rem;">
+                    <span class="neon-glow-dot" style="background: ${item.color}; opacity: 0.6;"></span>
+                    <span>${item.title}</span>
+                  </div>
+                  <span style="font-size: 0.7rem; color: var(--text-muted);">0 check-ins (last 30d)</span>
+                </div>
+              `).join('')}
+            </div>
+          </details>
+        ` : ''}
       </div>
     </div>
   `;
@@ -221,13 +246,13 @@ function renderCompletionCurve(weekCurve) {
 
   svg.innerHTML = `
     <defs>
-      <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="#8B5CF6" stop-opacity="0.45"/>
+      <linearGradient id="completionGrad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#8B5CF6" stop-opacity="0.38"/>
         <stop offset="100%" stop-color="#8B5CF6" stop-opacity="0.0"/>
       </linearGradient>
     </defs>
-    <path d="${areaD}" fill="url(#areaGrad)"/>
-    <path d="${pathD}" fill="none" stroke="#A855F7" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="${areaD}" fill="url(#completionGrad)"/>
+    <path d="${pathD}" fill="none" stroke="#8B5CF6" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
     ${points.map(p => `
       <circle cx="${p.x}" cy="${p.y}" r="${p === peakPoint ? 4.5 : 3}" fill="${p === peakPoint ? '#C084FC' : '#8B5CF6'}" stroke="#0b0f19" stroke-width="1.5"/>
       <text x="${p.x}" y="${height + 15}" text-anchor="middle" font-size="9" fill="#94A3B8" font-weight="700">${p.day}</text>
@@ -275,6 +300,14 @@ function renderInsightCards(containerId, dotsId, list) {
   } else if (dotsContainer) {
     dotsContainer.innerHTML = '';
   }
+}
+
+function scrollCarousel(containerId, direction) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  const firstCard = container.querySelector('.insight-card-item');
+  const scrollAmount = firstCard ? (firstCard.offsetWidth + 12) : 260;
+  container.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
 }
 
 function setupSwipeCarousel(container, dotsContainer) {
@@ -340,12 +373,12 @@ function renderMonthlyChart(monthlyCounts) {
   const maxCount = Math.max(...monthlyCounts.map(m => m.count), 1);
 
   container.innerHTML = monthlyCounts.map(item => {
-    const heightPercent = Math.max(12, Math.round((item.count / maxCount) * 100));
+    const heightPercent = Math.max(14, Math.round((item.count / maxCount) * 100));
     return `
       <div class="monthly-bar-item">
-        <div class="monthly-bar-val">${item.count}</div>
+        <div class="monthly-bar-val" style="font-weight: 800; font-size: 0.72rem; color: var(--text-primary);">${item.count}</div>
         <div style="height: 100px; width: 100%; display: flex; align-items: flex-end; justify-content: center;">
-          <div style="width: 65%; height: ${heightPercent}%; background: linear-gradient(180deg, #8b5cf6, #ec4899); border-radius: 4px 4px 2px 2px; transition: height 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); box-shadow: 0 4px 12px rgba(139, 92, 246, 0.25);"></div>
+          <div style="width: 65%; height: ${heightPercent}%; background: linear-gradient(180deg, #10b981, rgba(16, 185, 129, 0.35)); border-radius: 4px 4px 2px 2px; transition: height 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);" title="${item.month}: ${item.count} check-ins"></div>
         </div>
         <span style="font-size: 0.72rem; font-weight: 750; color: var(--text-secondary);">${item.month}</span>
       </div>

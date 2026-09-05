@@ -99,6 +99,7 @@ function renderHabitDetail(habit) {
 }
 
 function setViewMode(mode) {
+  const currentScroll = window.scrollY;
   currentViewMode = mode;
   const yearBtn = document.getElementById('btnViewYear');
   const monthBtn = document.getElementById('btnViewMonth');
@@ -107,6 +108,8 @@ function setViewMode(mode) {
   if (monthBtn) monthBtn.classList.toggle('active', mode === 'month');
 
   renderActivityDots();
+  // Prevent jumping or unwanted scroll reset
+  window.scrollTo({ top: currentScroll, behavior: 'instant' });
 }
 
 function renderActivityDots() {
@@ -120,11 +123,8 @@ function renderActivityDots() {
     monthContainer.style.display = 'none';
     renderYearGrid();
   } else {
-    yearContainer.style.display = 'block'; // Keep wrapper display handled
     yearContainer.style.display = 'none';
     monthContainer.style.display = 'block';
-    renderMonthNavigator();
-    renderMonthChips();
     renderMonthBreakdown();
   }
   lucide.createIcons();
@@ -188,8 +188,10 @@ function renderYearGrid() {
 }
 
 // ------------------------------------------------------------------------------
-// Month Breakdown Navigation (Prev / Next Arrows & Touch Gestures)
+// Month Breakdown Navigation & Month-Year Picker
 // ------------------------------------------------------------------------------
+let pickerYear = new Date().getFullYear();
+
 function prevMonth(e) {
   if (e) e.stopPropagation();
   Utils.playSound('click');
@@ -205,8 +207,6 @@ function prevMonth(e) {
     }
   }
 
-  renderMonthNavigator();
-  renderMonthChips();
   renderMonthBreakdown('prev');
   lucide.createIcons();
   Utils.initGlobalTooltips();
@@ -227,87 +227,70 @@ function nextMonth(e) {
     }
   }
 
-  renderMonthNavigator();
-  renderMonthChips();
   renderMonthBreakdown('next');
   lucide.createIcons();
   Utils.initGlobalTooltips();
 }
 
-function filterMonth(monthIdxStr) {
+function openMonthPickerModal() {
+  pickerYear = detailYear;
+  const yearTitle = document.getElementById('pickerYearTitle');
+  if (yearTitle) yearTitle.textContent = pickerYear;
+  renderMonthPickerGrid();
+  const overlay = document.getElementById('monthPickerModalOverlay');
+  if (overlay) overlay.classList.add('open');
+  lucide.createIcons();
+}
+
+function closeMonthPickerModal() {
+  const overlay = document.getElementById('monthPickerModalOverlay');
+  if (overlay) overlay.classList.remove('open');
+}
+
+function changePickerYear(delta) {
+  pickerYear += delta;
+  const yearTitle = document.getElementById('pickerYearTitle');
+  if (yearTitle) yearTitle.textContent = pickerYear;
+  renderMonthPickerGrid();
+  lucide.createIcons();
+}
+
+function selectPickerMonth(idx) {
   Utils.playSound('click');
-  if (monthIdxStr === 'all') {
-    isAllMonthsView = true;
-  } else {
-    isAllMonthsView = false;
-    selectedMonthIdx = parseInt(monthIdxStr, 10);
-  }
-  renderMonthNavigator();
-  renderMonthChips();
+  detailYear = pickerYear;
+  selectedMonthIdx = idx;
+  isAllMonthsView = false;
+  closeMonthPickerModal();
   renderMonthBreakdown();
   lucide.createIcons();
   Utils.initGlobalTooltips();
 }
 
-function renderMonthNavigator() {
-  const titleEl = document.getElementById('monthNavigatorTitle');
-  const summaryEl = document.getElementById('monthNavigatorSummary');
-  if (!titleEl || !summaryEl || !currentHabit) return;
-
-  const logsSet = new Set(currentHabit.logs || []);
-
-  if (isAllMonthsView) {
-    titleEl.textContent = `All Months (${detailYear})`;
-    const totalLogsInYear = (currentHabit.logs || []).filter(d => d.startsWith(`${detailYear}-`)).length;
-    summaryEl.textContent = `${totalLogsInYear} logs in ${detailYear}`;
-  } else {
-    const mName = MONTH_NAMES[selectedMonthIdx];
-    titleEl.textContent = `${mName} ${detailYear}`;
-
-    const monthPrefix = `${detailYear}-${String(selectedMonthIdx + 1).padStart(2, '0')}`;
-    const totalDaysInMonth = new Date(detailYear, selectedMonthIdx + 1, 0).getDate();
-    let completedInMonth = 0;
-    for (let dayNum = 1; dayNum <= totalDaysInMonth; dayNum++) {
-      const dateStr = `${monthPrefix}-${String(dayNum).padStart(2, '0')}`;
-      if (logsSet.has(dateStr)) completedInMonth++;
-    }
-    const percent = Math.round((completedInMonth / totalDaysInMonth) * 100);
-    summaryEl.textContent = `${completedInMonth} / ${totalDaysInMonth} days (${percent}%)`;
-  }
-}
-
-function renderMonthChips() {
-  const container = document.getElementById('monthChipsBar');
+function renderMonthPickerGrid() {
+  const container = document.getElementById('monthPickerGrid');
   if (!container) return;
 
-  const currentRealMonthIdx = new Date().getMonth();
+  const currentRealMonth = new Date().getMonth();
   const currentRealYear = new Date().getFullYear();
 
-  const chipsHtml = [
-    `<button class="month-chip ${isAllMonthsView ? 'active' : ''}" onclick="filterMonth('all')">All Months</button>`,
-    ...MONTH_NAMES.map((name, idx) => `
-      <button 
-        class="month-chip ${!isAllMonthsView && selectedMonthIdx === idx ? 'active' : ''}" 
-        id="monthChip-${idx}"
-        onclick="filterMonth('${idx}')"
-      >
-        ${name.slice(0, 3)} ${detailYear === currentRealYear && idx === currentRealMonthIdx ? '•' : ''}
-      </button>
-    `)
+  const months = [
+    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
   ];
 
-  container.innerHTML = chipsHtml.join('');
-
-  // Smooth auto-scroll active chip into view on mobile
-  if (!isAllMonthsView) {
-    setTimeout(() => {
-      const activeChip = document.getElementById(`monthChip-${selectedMonthIdx}`);
-      if (activeChip && container) {
-        const scrollLeft = activeChip.offsetLeft - (container.offsetWidth / 2) + (activeChip.offsetWidth / 2);
-        container.scrollTo({ left: Math.max(0, scrollLeft), behavior: 'smooth' });
-      }
-    }, 50);
-  }
+  container.innerHTML = months.map((name, idx) => {
+    const isSelected = !isAllMonthsView && pickerYear === detailYear && selectedMonthIdx === idx;
+    const isCurrent = pickerYear === currentRealYear && idx === currentRealMonth;
+    return `
+      <button 
+        type="button" 
+        class="month-picker-btn ${isSelected ? 'active' : ''} ${isCurrent ? 'is-current-month' : ''}" 
+        onclick="selectPickerMonth(${idx})"
+      >
+        <span>${name}</span>
+      </button>
+    `;
+  }).join('');
 }
 
 function renderMonthBreakdown(animDirection = null) {
@@ -370,18 +353,44 @@ function renderMonthBreakdown(animDirection = null) {
                 <i data-lucide="chevron-left" style="width: 16px; height: 16px;"></i>
               </button>
             ` : ''}
-            <span class="month-card-title">${mName} ${detailYear}</span>
+            <button class="month-card-title-btn" onclick="openMonthPickerModal()" title="Select Month and Year" aria-label="Select Month and Year">
+              <span>${mName} ${detailYear}</span>
+              <i data-lucide="chevron-down" style="width: 13px; height: 13px;"></i>
+            </button>
             ${!isAllMonthsView ? `
               <button class="month-card-nav-arrow" onclick="nextMonth(event)" title="Next Month" aria-label="Next Month">
                 <i data-lucide="chevron-right" style="width: 16px; height: 16px;"></i>
               </button>
             ` : ''}
           </div>
-          <span class="month-count-pill" id="monthCountPill-${mIdx}">${completedInMonth}/${totalDaysInMonth} (${percent}%)</span>
         </div>
         <div class="month-mini-calendar">
           ${weekdayHeaders}
           ${miniTiles.join('')}
+        </div>
+        <div class="month-card-footer">
+          <div class="month-footer-stat" id="monthFooterStat-${mIdx}">
+            <i data-lucide="check-circle-2" style="width: 14px; height: 14px; color: var(--text-muted); flex-shrink: 0;"></i>
+            <span class="month-footer-stat-label">Check-ins this month:</span>
+            <span class="month-footer-stat-value" id="monthFooterStatVal-${mIdx}">
+              <strong>${completedInMonth} / ${totalDaysInMonth}</strong>
+              <span class="month-footer-stat-pct">(${percent}%)</span>
+            </span>
+          </div>
+          <div class="calendar-legend">
+            <div class="calendar-legend-item">
+              <span class="legend-swatch completed" style="background-color: ${currentHabit.color};"></span>
+              <span>Logged</span>
+            </div>
+            <div class="calendar-legend-item">
+              <span class="legend-swatch is-today"></span>
+              <span>Today</span>
+            </div>
+            <div class="calendar-legend-item">
+              <span class="legend-swatch empty"></span>
+              <span>Not logged</span>
+            </div>
+          </div>
         </div>
       </div>
     `;
@@ -522,14 +531,11 @@ async function toggleDetailDate(dateStr, tileElem, event) {
   const totalEl = document.getElementById('statTotalCompletions');
   if (totalEl) totalEl.textContent = currentHabit.totalCompletions;
 
-  // 4. Update month breakdown summary & header
-  renderMonthNavigator();
-
-  // If on month breakdown, update the month card pill
+  // 4. If on month breakdown, update the month card footer stat
   const [yStr, mStr] = dateStr.split('-');
   const clickedMonthIdx = parseInt(mStr, 10) - 1;
-  const monthPill = document.getElementById(`monthCountPill-${clickedMonthIdx}`);
-  if (monthPill && parseInt(yStr, 10) === detailYear) {
+  const footerStatVal = document.getElementById(`monthFooterStatVal-${clickedMonthIdx}`);
+  if (footerStatVal && parseInt(yStr, 10) === detailYear) {
     const totalDaysInMonth = new Date(detailYear, clickedMonthIdx + 1, 0).getDate();
     const monthPrefix = `${detailYear}-${mStr}`;
     let count = 0;
@@ -537,7 +543,7 @@ async function toggleDetailDate(dateStr, tileElem, event) {
       if (logsSet.has(`${monthPrefix}-${String(d).padStart(2, '0')}`)) count++;
     }
     const pct = Math.round((count / totalDaysInMonth) * 100);
-    monthPill.textContent = `${count}/${totalDaysInMonth} (${pct}%)`;
+    footerStatVal.innerHTML = `<strong>${count} / ${totalDaysInMonth}</strong> <span class="month-footer-stat-pct">(${pct}%)</span>`;
   }
 
   renderTop3Streaks(currentHabit);
@@ -552,7 +558,6 @@ async function toggleDetailDate(dateStr, tileElem, event) {
       if (curStreakEl) curStreakEl.textContent = `${currentHabit.currentStreak}${currentHabit.streakUnit || 'd'}`;
       if (longestStreakEl) longestStreakEl.textContent = `${currentHabit.longestStreak}${currentHabit.streakUnit || 'd'}`;
       if (totalEl) totalEl.textContent = currentHabit.totalCompletions;
-      renderMonthNavigator();
       renderTop3Streaks(currentHabit);
     }
   } catch (err) {

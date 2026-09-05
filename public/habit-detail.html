@@ -1,34 +1,35 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
+
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Habit Details - Committed</title>
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="preconnect" href="https://unpkg.com">
   <link rel="dns-prefetch" href="https://unpkg.com">
-  <link rel="stylesheet" href="css/main.css?v=1787955555">
-  <link rel="stylesheet" href="css/components.css?v=1787955555">
-  <link rel="stylesheet" href="css/animations.css?v=1787955555">
+  <link rel="stylesheet" href="css/main.css?v=1788627500">
+  <link rel="stylesheet" href="css/components.css?v=1788627500">
+  <link rel="stylesheet" href="css/animations.css?v=1788627500">
   <script src="https://unpkg.com/lucide@latest"></script>
 </head>
+
 <body>
 
   <div class="app-container">
     <!-- Top Header Bar with Edit & Delete Actions -->
     <header class="header-bar">
-      <a href="/" class="btn btn-secondary" style="padding: 0.45rem 0.8rem;">
+      <a href="/" class="btn btn-secondary">
         <i data-lucide="arrow-left" style="width: 16px; height: 16px;"></i>
         <span>Back</span>
       </a>
       <div style="display: flex; align-items: center; gap: 0.5rem;">
-        <button class="btn btn-secondary" onclick="openEditModal()" style="padding: 0.45rem 0.8rem;">
+        <button class="btn btn-secondary" onclick="openEditModal()">
           <i data-lucide="edit-3" style="width: 15px; height: 15px;"></i>
-          <span>Edit</span>
         </button>
-        <button class="btn btn-secondary" onclick="deleteCurrentHabit()" style="color: var(--accent-rose); padding: 0.45rem 0.8rem;">
+        <button class="btn btn-secondary" onclick="deleteCurrentHabit()" style="color: var(--accent-rose);">
           <i data-lucide="trash-2" style="width: 15px; height: 15px;"></i>
-          <span>Delete</span>
         </button>
       </div>
     </header>
@@ -38,29 +39,49 @@
       <div class="habit-card" style="margin-bottom: 1.15rem;">
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.15rem;">
           <div style="display: flex; align-items: center; gap: 0.85rem; min-width: 0; flex: 1;">
-            <div class="habit-icon-badge" id="habitDetailBadge" style="width: 46px; height: 46px; border-radius: var(--radius-sm);">
+            <div class="habit-icon-badge" id="habitDetailBadge"
+              style="width: 46px; height: 46px; border-radius: var(--radius-sm);">
               <i data-lucide="zap"></i>
             </div>
             <div style="min-width: 0; flex: 1;">
-              <h1 id="habitDetailTitle" style="font-size: 1.25rem; font-weight: 800; letter-spacing: -0.02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><span class="skeleton-shimmer" style="width: 140px; height: 1.25rem; display: inline-block;"></span></h1>
-              <p id="habitDetailDesc" style="color: var(--text-muted); font-size: 0.8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><span class="skeleton-shimmer" style="width: 90px; height: 12px; display: inline-block;"></span></p>
+              <h1 id="habitDetailTitle"
+                style="font-size: 1.25rem; font-weight: 800; letter-spacing: -0.02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                <span class="skeleton-shimmer" style="width: 140px; height: 1.25rem; display: inline-block;"></span>
+              </h1>
+              <p id="habitDetailDesc"
+                style="color: var(--text-muted); font-size: 0.8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                <span class="skeleton-shimmer" style="width: 90px; height: 12px; display: inline-block;"></span>
+              </p>
             </div>
           </div>
         </div>
 
         <!-- 3-Column Metrics -->
-        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; text-align: center; background: var(--bg-input); padding: 0.75rem 0.5rem; border-radius: var(--radius-sm); margin-bottom: 1.15rem;">
+        <div class="detail-metrics-grid"
+          style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.35rem; text-align: center; background: var(--bg-input); padding: 0.75rem 0.4rem; border-radius: var(--radius-sm); margin-bottom: 1.15rem;">
           <div>
-            <div style="font-size: 0.68rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">Current Streak</div>
-            <div id="statCurrentStreak" style="font-size: 1.2rem; font-weight: 800; color: #f59e0b;"><span class="skeleton-shimmer" style="width: 35px; height: 1.2rem; display: inline-block;"></span></div>
+            <div class="detail-metric-label"
+              style="font-size: 0.65rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">Current
+              Streak</div>
+            <div id="statCurrentStreak" class="detail-metric-val"
+              style="font-size: 1.2rem; font-weight: 800; color: #f59e0b;"><span class="skeleton-shimmer"
+                style="width: 35px; height: 1.2rem; display: inline-block;"></span></div>
           </div>
           <div>
-            <div style="font-size: 0.68rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">Best Streak</div>
-            <div id="statLongestStreak" style="font-size: 1.2rem; font-weight: 800; color: #10b981;"><span class="skeleton-shimmer" style="width: 35px; height: 1.2rem; display: inline-block;"></span></div>
+            <div class="detail-metric-label"
+              style="font-size: 0.65rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">Best
+              Streak</div>
+            <div id="statLongestStreak" class="detail-metric-val"
+              style="font-size: 1.2rem; font-weight: 800; color: #10b981;"><span class="skeleton-shimmer"
+                style="width: 35px; height: 1.2rem; display: inline-block;"></span></div>
           </div>
           <div>
-            <div style="font-size: 0.68rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">Total Logs</div>
-            <div id="statTotalCompletions" style="font-size: 1.2rem; font-weight: 800; color: #06b6d4;"><span class="skeleton-shimmer" style="width: 35px; height: 1.2rem; display: inline-block;"></span></div>
+            <div class="detail-metric-label"
+              style="font-size: 0.65rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">Total
+              Logs</div>
+            <div id="statTotalCompletions" class="detail-metric-val"
+              style="font-size: 1.2rem; font-weight: 800; color: var(--text-primary);"><span class="skeleton-shimmer"
+                style="width: 35px; height: 1.2rem; display: inline-block;"></span></div>
           </div>
         </div>
 
@@ -68,18 +89,19 @@
         <div class="detail-view-switcher">
           <button class="detail-view-btn active" id="btnViewYear" onclick="setViewMode('year')">
             <i data-lucide="grid" style="width: 15px; height: 15px;"></i>
-            <span>Year Grid</span>
+            <span>Year</span>
           </button>
           <button class="detail-view-btn" id="btnViewMonth" onclick="setViewMode('month')">
             <i data-lucide="calendar" style="width: 15px; height: 15px;"></i>
-            <span>Months Breakdown</span>
+            <span>Months</span>
           </button>
         </div>
 
         <!-- 1. Full Current Year Grid View -->
         <div id="yearGridWrapper">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.55rem;">
-            <span style="font-size: 0.78rem; font-weight: 750; color: var(--text-primary);" id="yearGridTitle">2026 Calendar Grid</span>
+            <span style="font-size: 0.78rem; font-weight: 750; color: var(--text-primary);" id="yearGridTitle">2026
+              Calendar Grid</span>
             <span style="font-size: 0.72rem; color: var(--text-muted);" id="yearGridStatsLabel">Jan 1 – Dec 31</span>
           </div>
           <div class="grid-wrapper">
@@ -91,26 +113,6 @@
 
         <!-- 2. Months Breakdown View -->
         <div id="monthBreakdownWrapper" style="display: none;">
-          <!-- Mobile-Optimized Month Navigation Bar with Prev/Next Arrows -->
-          <div class="month-navigator-bar" id="monthNavigatorBar">
-            <button class="month-nav-arrow-btn" id="btnPrevMonth" onclick="prevMonth()" title="Previous Month" aria-label="Previous Month">
-              <i data-lucide="chevron-left" style="width: 18px; height: 18px;"></i>
-            </button>
-            <div class="month-nav-center">
-              <div class="month-nav-title" id="monthNavigatorTitle">August 2026</div>
-              <div class="month-nav-meta">
-                <span class="month-nav-pill" id="monthNavigatorSummary">0 / 31 days (0%)</span>
-              </div>
-            </div>
-            <button class="month-nav-arrow-btn" id="btnNextMonth" onclick="nextMonth()" title="Next Month" aria-label="Next Month">
-              <i data-lucide="chevron-right" style="width: 18px; height: 18px;"></i>
-            </button>
-          </div>
-
-          <div class="month-chips-scroll" id="monthChipsBar">
-            <!-- Rendered via habitDetail.js -->
-          </div>
-
           <div class="months-breakdown-grid" id="monthBreakdownGrid">
             <!-- Rendered via habitDetail.js -->
           </div>
@@ -154,7 +156,7 @@
           <input type="text" class="form-input" id="editHabitDesc" placeholder="e.g. 15 mins daily">
         </div>
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+        <div class="form-row-2col">
           <div class="form-group">
             <label class="form-label">Category</label>
             <select class="form-select" id="editHabitCategory">
@@ -204,6 +206,30 @@
     </div>
   </div>
 
+  <!-- Month & Year Selector Modal -->
+  <div class="modal-overlay" id="monthPickerModalOverlay" onclick="if(event.target === this) closeMonthPickerModal()">
+    <div class="modal-box" style="max-width: 360px;">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+          <button class="month-card-nav-arrow" onclick="changePickerYear(-1)" title="Previous Year" aria-label="Previous Year">
+            <i data-lucide="chevron-left" style="width: 15px; height: 15px;"></i>
+          </button>
+          <span id="pickerYearTitle" style="font-size: 1.05rem; font-weight: 800; color: var(--text-primary);">2026</span>
+          <button class="month-card-nav-arrow" onclick="changePickerYear(1)" title="Next Year" aria-label="Next Year">
+            <i data-lucide="chevron-right" style="width: 15px; height: 15px;"></i>
+          </button>
+        </div>
+        <button class="close-btn" onclick="closeMonthPickerModal()" aria-label="Close modal">
+          <i data-lucide="x" style="width: 20px; height: 20px;"></i>
+        </button>
+      </div>
+
+      <div class="month-picker-grid" id="monthPickerGrid">
+        <!-- Rendered via habitDetail.js -->
+      </div>
+    </div>
+  </div>
+
   <!-- Clean 4-Tab Bottom Navigation -->
   <nav class="bottom-nav">
     <a href="/" class="nav-item active">
@@ -224,8 +250,9 @@
     </a>
   </nav>
 
-  <script src="js/api.js?v=1787946236"></script>
-  <script src="js/utils.js?v=1787946236"></script>
-  <script src="js/habitDetail.js?v=1787946236"></script>
+  <script src="js/api.js?v=1788627600"></script>
+  <script src="js/utils.js?v=1788627600"></script>
+  <script src="js/habitDetail.js?v=1788627600"></script>
 </body>
+
 </html>

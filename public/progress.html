@@ -9,9 +9,9 @@
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="preconnect" href="https://unpkg.com">
   <link rel="dns-prefetch" href="https://unpkg.com">
-  <link rel="stylesheet" href="css/main.css?v=1787955555">
-  <link rel="stylesheet" href="css/components.css?v=1787955555">
-  <link rel="stylesheet" href="css/animations.css?v=1787955555">
+  <link rel="stylesheet" href="css/main.css?v=1788627500">
+  <link rel="stylesheet" href="css/components.css?v=1788627500">
+  <link rel="stylesheet" href="css/animations.css?v=1788627500">
   <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 
@@ -134,11 +134,10 @@
     <!-- 1. PLAYER RANK & LEVEL SECTION -->
     <section class="progress-section">
       <div class="ref-overview-header">
-        <div class="ref-section-tag" style="color: #10b981;">
+        <div class="ref-section-tag">
           <i data-lucide="award" style="width: 14px; height: 14px;"></i>
           <span>Player Rank</span>
         </div>
-        <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">Active Level</span>
       </div>
 
       <div class="hero-level-card">
@@ -148,7 +147,8 @@
               <i data-lucide="award" style="width: 22px; height: 22px;"></i>
             </div>
             <div style="text-align: left;">
-              <div class="hero-level-title" id="heroLevelNum" style="font-size: 1.45rem;"><span class="skeleton-shimmer" style="width: 90px; height: 1.45rem; display: inline-block;"></span></div>
+              <div class="hero-level-title" id="heroLevelNum" style="font-size: 1.45rem;"><span class="skeleton-shimmer"
+                  style="width: 90px; height: 1.45rem; display: inline-block;"></span></div>
               <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">Mastery Rank</div>
             </div>
           </div>
@@ -163,70 +163,88 @@
         </div>
 
         <div class="hero-xp-labels">
-          <span id="heroXpCurrentText"><span class="skeleton-shimmer" style="width: 75px; height: 12px; display: inline-block;"></span></span>
-          <span id="heroXpRemainingText"><span class="skeleton-shimmer" style="width: 100px; height: 12px; display: inline-block;"></span></span>
+          <span id="heroXpCurrentText"><span class="skeleton-shimmer"
+              style="width: 75px; height: 12px; display: inline-block;"></span></span>
+          <span id="heroXpRemainingText"><span class="skeleton-shimmer"
+              style="width: 100px; height: 12px; display: inline-block;"></span></span>
         </div>
       </div>
     </section>
 
-    <!-- 2. LIFETIME ACCUMULATION SECTION -->
+    <!-- 2. LIFETIME ACCUMULATION SECTION (Tiered Structured Board to break card repetition) -->
     <section class="progress-section">
       <div class="ref-overview-header">
-        <div class="ref-section-tag" style="color: #06b6d4;">
+        <div class="ref-section-tag">
           <i data-lucide="layers" style="width: 14px; height: 14px;"></i>
           <span>Lifetime Accumulation</span>
         </div>
         <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">All-Time Records</span>
       </div>
 
-      <div class="ref-overview-grid">
-        <!-- Card 1: Total XP -->
-        <div class="ref-overview-card">
-          <div class="ref-card-icon-badge" style="background: rgba(16, 185, 129, 0.15); color: #10b981;">
-            <i data-lucide="sparkles" style="width: 17px; height: 17px;"></i>
+
+      <!-- Lifetime Grid: Total XP, Completions, Perfect Days, Best Streak -->
+      <div class="lifetime-grid">
+        <!-- Total XP -->
+        <div class="lifetime-card">
+          <div class="lifetime-card-left">
+            <div class="lifetime-card-icon" style="background: rgba(16, 185, 129, 0.12); color: #10b981;">
+              <i data-lucide="sparkles" style="width: 16px; height: 16px;"></i>
+            </div>
+            <div class="lifetime-card-text">
+              <div class="lifetime-card-title">Total XP</div>
+              <div class="lifetime-card-sub">Cumulative experience points</div>
+            </div>
           </div>
-          <div class="ref-card-val" id="statLifetimeXP"><span class="skeleton-shimmer" style="width: 45px; height: 1.5rem; display: inline-block;"></span></div>
-          <div class="ref-card-label">Total XP</div>
-          <div class="ref-card-trend up">
-            <i data-lucide="zap" style="width: 12px; height: 12px;"></i>
-            <span>Lifetime Points</span>
+          <div class="lifetime-card-val" id="statLifetimeXP">
+            <span class="skeleton-shimmer" style="width: 50px; height: 1.4rem; display: inline-block;"></span>
           </div>
         </div>
 
-        <!-- Card 2: Total Completions -->
-        <div class="ref-overview-card">
-          <div class="ref-card-icon-badge" style="background: rgba(6, 182, 212, 0.15); color: #06b6d4;">
-            <i data-lucide="check-circle-2" style="width: 17px; height: 17px;"></i>
+        <!-- Total Completions -->
+        <div class="lifetime-card">
+          <div class="lifetime-card-left">
+            <div class="lifetime-card-icon" style="background: rgba(16, 185, 129, 0.12); color: #10b981;">
+              <i data-lucide="check-circle-2" style="width: 16px; height: 16px;"></i>
+            </div>
+            <div class="lifetime-card-text">
+              <div class="lifetime-card-title">Completions</div>
+              <div class="lifetime-card-sub">Total verified check-ins</div>
+            </div>
           </div>
-          <div class="ref-card-val" id="statTotalCompletions"><span class="skeleton-shimmer" style="width: 45px; height: 1.5rem; display: inline-block;"></span></div>
-          <div class="ref-card-label">Completions</div>
-          <div class="ref-card-trend up">
-            <i data-lucide="check" style="width: 12px; height: 12px;"></i>
-            <span>Total Checks</span>
-          </div>
-        </div>
-
-        <!-- Card 3: Perfect Days -->
-        <div class="ref-overview-card">
-          <div class="ref-card-icon-badge" style="background: rgba(245, 158, 11, 0.15); color: #f59e0b;">
-            <i data-lucide="star" style="width: 17px; height: 17px;"></i>
-          </div>
-          <div class="ref-card-val" id="statPerfectDays"><span class="skeleton-shimmer" style="width: 30px; height: 1.5rem; display: inline-block;"></span></div>
-          <div class="ref-card-label">Perfect Days</div>
-          <div style="font-size: 0.68rem; color: var(--text-muted); font-weight: 700;">
-            100% Habit Days
+          <div class="lifetime-card-val" id="statTotalCompletions">
+            <span class="skeleton-shimmer" style="width: 45px; height: 1.4rem; display: inline-block;"></span>
           </div>
         </div>
 
-        <!-- Card 4: Best Streak -->
-        <div class="ref-overview-card">
-          <div class="ref-card-icon-badge" style="background: rgba(236, 72, 153, 0.15); color: #ec4899;">
-            <i data-lucide="flame" style="width: 17px; height: 17px;"></i>
+        <!-- Perfect Days -->
+        <div class="lifetime-card">
+          <div class="lifetime-card-left">
+            <div class="lifetime-card-icon" style="background: rgba(16, 185, 129, 0.12); color: #10b981;">
+              <i data-lucide="star" style="width: 16px; height: 16px;"></i>
+            </div>
+            <div class="lifetime-card-text">
+              <div class="lifetime-card-title">Perfect Days</div>
+              <div class="lifetime-card-sub">100% daily habit completion days</div>
+            </div>
           </div>
-          <div class="ref-card-val" id="statBestStreak"><span class="skeleton-shimmer" style="width: 40px; height: 1.5rem; display: inline-block;"></span></div>
-          <div class="ref-card-label">Best Streak</div>
-          <div style="font-size: 0.68rem; color: var(--text-muted); font-weight: 700;">
-            Personal Record
+          <div class="lifetime-card-val" id="statPerfectDays">
+            <span class="skeleton-shimmer" style="width: 30px; height: 1.4rem; display: inline-block;"></span>
+          </div>
+        </div>
+
+        <!-- Best Streak -->
+        <div class="lifetime-card">
+          <div class="lifetime-card-left">
+            <div class="lifetime-card-icon" style="background: rgba(245, 158, 11, 0.15); color: #f59e0b;">
+              <i data-lucide="flame" style="width: 16px; height: 16px;"></i>
+            </div>
+            <div class="lifetime-card-text">
+              <div class="lifetime-card-title">Best Streak</div>
+              <div class="lifetime-card-sub">Personal best consecutive record</div>
+            </div>
+          </div>
+          <div class="lifetime-card-val" id="statBestStreak" style="color: #f59e0b;">
+            <span class="skeleton-shimmer" style="width: 40px; height: 1.4rem; display: inline-block;"></span>
           </div>
         </div>
       </div>
@@ -235,7 +253,7 @@
     <!-- 3. LONG-TERM MILESTONES SECTION (Achieved Badges Only + Info Icon) -->
     <section class="progress-section">
       <div class="milestones-section-header">
-        <div class="ref-section-tag" style="color: #f59e0b;">
+        <div class="ref-section-tag">
           <i data-lucide="trophy" style="width: 15px; height: 15px;"></i>
           <span>Long-Term Milestones</span>
         </div>
@@ -272,7 +290,7 @@
       <div class="modal-header">
         <div style="display: flex; align-items: center; gap: 0.65rem;">
           <div
-            style="background: rgba(245, 158, 11, 0.15); color: #f59e0b; width: 34px; height: 34px; border-radius: var(--radius-xs); display: flex; align-items: center; justify-content: center;">
+            style="background: rgba(16, 185, 129, 0.12); color: #10b981; width: 34px; height: 34px; border-radius: var(--radius-xs); display: flex; align-items: center; justify-content: center;">
             <i data-lucide="trophy" style="width: 18px; height: 18px;"></i>
           </div>
           <div>
@@ -316,7 +334,6 @@
       </div>
     </div>
   </div>
-  </div>
 
   <!-- Bottom Navigation -->
   <nav class="bottom-nav">
@@ -338,9 +355,9 @@
     </a>
   </nav>
 
-  <script src="js/api.js?v=1787947888"></script>
-  <script src="js/utils.js?v=1787947888"></script>
-  <script src="js/progress.js?v=1787947888"></script>
+  <script src="js/api.js?v=1788627500"></script>
+  <script src="js/utils.js?v=1788627500"></script>
+  <script src="js/progress.js?v=1788627500"></script>
 </body>
 
 </html>

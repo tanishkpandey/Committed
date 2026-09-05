@@ -216,7 +216,7 @@ const Utils = {
     modal.style.zIndex = '9999';
     modal.innerHTML = `
       <div class="modal-box animate-pop-in" style="max-width: 360px; text-align: center; padding: 2rem 1.5rem;">
-        <div style="width: 64px; height: 64px; border-radius: 50%; background: linear-gradient(135deg, #10b981, #06b6d4); color: #fff; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; box-shadow: 0 0 30px rgba(16, 185, 129, 0.5);">
+        <div style="width: 64px; height: 64px; border-radius: 50%; background: linear-gradient(135deg, #10b981, #059669); color: #fff; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; box-shadow: 0 0 30px rgba(16, 185, 129, 0.4);">
           <i data-lucide="award" style="width: 32px; height: 32px;"></i>
         </div>
         <div style="font-size: 0.8rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: #10b981; margin-bottom: 0.35rem;">LEVEL UP!</div>

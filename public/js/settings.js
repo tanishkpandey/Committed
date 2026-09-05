@@ -68,10 +68,10 @@ function renderCategoriesList(categories) {
         </div>
       </div>
       <div class="category-actions">
-        <button class="btn btn-icon" onclick="openEditCategoryModal('${cat.id}')" title="Edit Category" style="width: 30px; height: 30px;">
+        <button class="btn btn-icon" onclick="openEditCategoryModal('${cat.id}')" title="Edit Category" style="width: 32px; height: 32px;">
           <i data-lucide="edit-2" style="width: 14px; height: 14px;"></i>
         </button>
-        <button class="btn btn-icon" onclick="handleDeleteCategory('${cat.id}', '${escapeHtml(cat.name)}')" title="Delete Category" style="width: 30px; height: 30px; color: var(--accent-rose);">
+        <button class="btn btn-icon category-btn-delete" onclick="handleDeleteCategory('${cat.id}', '${escapeHtml(cat.name)}')" title="Delete Category" style="width: 32px; height: 32px;">
           <i data-lucide="trash-2" style="width: 14px; height: 14px;"></i>
         </button>
       </div>
@@ -81,23 +81,41 @@ function renderCategoriesList(categories) {
   lucide.createIcons();
 }
 
-function renderCategoryPalette() {
+function renderCategoryPalette(currentEditId = null) {
   const grid = document.getElementById('catPaletteGrid');
   if (!grid) return;
 
-  grid.innerHTML = PALETTE_COLORS.map(color => `
-    <div 
-      class="color-swatch ${color === selectedCategoryColor ? 'selected' : ''}" 
-      style="background-color: ${color};"
-      onclick="selectCatColor('${color}', this)"
-    >
-      ${color === selectedCategoryColor ? '<i data-lucide="check" style="width: 14px; height: 14px;"></i>' : ''}
-    </div>
-  `).join('');
+  const usedColors = new Set(
+    categoriesList
+      .filter(c => !currentEditId || c.id !== currentEditId)
+      .map(c => (c.color || '').toUpperCase())
+  );
+
+  grid.innerHTML = PALETTE_COLORS.map(color => {
+    const isTaken = usedColors.has(color.toUpperCase());
+    const isSelected = color.toUpperCase() === (selectedCategoryColor || '').toUpperCase();
+    const opacityStyle = isTaken ? 'opacity: 0.35; filter: grayscale(0.5);' : '';
+    const tooltipTitle = isTaken ? 'Color already assigned to another category' : 'Select color';
+
+    return `
+      <div 
+        class="color-swatch ${isSelected ? 'selected' : ''}" 
+        style="background-color: ${color}; ${opacityStyle} position: relative;"
+        title="${tooltipTitle}"
+        onclick="selectCatColor('${color}', this, ${isTaken})"
+      >
+        ${isSelected ? '<i data-lucide="check" style="width: 14px; height: 14px;"></i>' : ''}
+      </div>
+    `;
+  }).join('');
   lucide.createIcons();
 }
 
-function selectCatColor(color, elem) {
+function selectCatColor(color, elem, isTaken = false) {
+  if (isTaken) {
+    alert('This color is already assigned to another category. Each category must have a unique color.');
+    return;
+  }
   selectedCategoryColor = color;
   document.querySelectorAll('#catPaletteGrid .color-swatch').forEach(s => {
     s.classList.remove('selected');
@@ -114,8 +132,12 @@ function openAddCategoryModal() {
   document.getElementById('catModalTitle').textContent = 'Add Category';
   document.getElementById('catEditId').value = '';
   document.getElementById('catNameInput').value = '';
-  selectedCategoryColor = '#10B981';
-  renderCategoryPalette();
+  
+  const usedColors = new Set(categoriesList.map(c => (c.color || '').toUpperCase()));
+  const availableColor = PALETTE_COLORS.find(c => !usedColors.has(c.toUpperCase())) || PALETTE_COLORS[0];
+  selectedCategoryColor = availableColor;
+  
+  renderCategoryPalette(null);
   document.getElementById('categoryModalOverlay').classList.add('open');
 }
 
@@ -127,7 +149,7 @@ function openEditCategoryModal(catId) {
   document.getElementById('catEditId').value = cat.id;
   document.getElementById('catNameInput').value = cat.name;
   selectedCategoryColor = cat.color || '#10B981';
-  renderCategoryPalette();
+  renderCategoryPalette(cat.id);
   document.getElementById('categoryModalOverlay').classList.add('open');
 }
 
@@ -141,6 +163,12 @@ async function saveCategoryForm(e) {
   const name = document.getElementById('catNameInput').value.trim();
 
   if (!name) return;
+
+  const usedByOther = categoriesList.find(c => (!id || c.id !== id) && (c.color || '').toUpperCase() === selectedCategoryColor.toUpperCase());
+  if (usedByOther) {
+    alert(`The color ${selectedCategoryColor} is already assigned to "${usedByOther.name}". Please pick a unique color.`);
+    return;
+  }
 
   try {
     if (id) {

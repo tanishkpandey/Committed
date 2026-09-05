@@ -1,24 +1,28 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
+
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Committed - Visual Habit Tracker</title>
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="preconnect" href="https://unpkg.com">
   <link rel="dns-prefetch" href="https://unpkg.com">
-  <link rel="stylesheet" href="css/main.css?v=1787955555">
-  <link rel="stylesheet" href="css/components.css?v=1787955555">
-  <link rel="stylesheet" href="css/animations.css?v=1787955555">
+  <link rel="stylesheet" href="css/main.css?v=1788627000">
+  <link rel="stylesheet" href="css/components.css?v=1788627000">
+  <link rel="stylesheet" href="css/animations.css?v=1788627000">
   <script src="https://unpkg.com/lucide@latest"></script>
 </head>
+
 <body>
 
   <div class="app-container">
     <!-- Header Top Bar -->
     <header class="header-bar">
       <a href="/" class="logo-group">
-        <img src="img/logo.svg" alt="Committed Logo" style="width: 36px; height: 36px; border-radius: var(--radius-sm);" />
+        <img src="img/logo.svg" alt="Committed Logo"
+          style="width: 36px; height: 36px; border-radius: var(--radius-sm);" />
         <span class="app-title">Committed</span>
       </a>
 
@@ -35,7 +39,7 @@
 
     <!-- Clean Progress Widget -->
     <a href="/progress.html" class="progress-widget" id="progressWidget">
-      <div class="widget-header-row">
+      <div class="widget-header-row" style="margin-bottom: 0.5rem;">
         <span class="widget-level-badge" id="widgetLevelBadge">
           <i data-lucide="zap" style="width: 11px; height: 11px;"></i>
           <span id="widgetLevelText">LEVEL 1</span>
@@ -48,10 +52,6 @@
       </div>
 
       <div class="widget-footer-row">
-        <span class="widget-streak-tag" id="widgetStreakTag">
-          <i data-lucide="flame" style="width: 13px; height: 13px;"></i>
-          <span id="widgetStreakText">0 Day Streak</span>
-        </span>
         <span class="widget-action-link">
           <span>View Progress</span>
           <i data-lucide="chevron-right" style="width: 13px; height: 13px;"></i>
@@ -59,14 +59,16 @@
       </div>
     </a>
 
-    <!-- Category Filter Chips -->
-    <div class="filter-scroll">
-      <button class="chip active" data-category="All">All</button>
-      <button class="chip" data-category="Fitness">Fitness</button>
-      <button class="chip" data-category="Mindfulness">Mindfulness</button>
-      <button class="chip" data-category="Health">Health</button>
-      <button class="chip" data-category="Learning">Learning</button>
-      <button class="chip" data-category="Productivity">Productivity</button>
+    <!-- Category Filter Chips with Horizontal Scroll Cue -->
+    <div class="scroll-fade-wrapper">
+      <div class="filter-scroll">
+        <button class="chip active" data-category="All">All</button>
+        <button class="chip" data-category="Fitness">Fitness</button>
+        <button class="chip" data-category="Mindfulness">Mindfulness</button>
+        <button class="chip" data-category="Health">Health</button>
+        <button class="chip" data-category="Learning">Learning</button>
+        <button class="chip" data-category="Productivity">Productivity</button>
+      </div>
     </div>
 
     <!-- Habit Cards Container (With Component Skeletons by default) -->
@@ -189,15 +191,17 @@
       <form onsubmit="saveHabitForm(event)">
         <div class="form-group">
           <label class="form-label">Habit Name *</label>
-          <input type="text" class="form-input" id="habitTitleInput" placeholder="e.g. Daily Workout" required oninput="updateLivePreview()">
+          <input type="text" class="form-input" id="habitTitleInput" placeholder="e.g. Daily Workout" required
+            oninput="updateLivePreview()">
         </div>
 
         <div class="form-group">
           <label class="form-label">Goal / Note (Optional)</label>
-          <input type="text" class="form-input" id="habitDescInput" placeholder="e.g. 15 mins daily" oninput="updateLivePreview()">
+          <input type="text" class="form-input" id="habitDescInput" placeholder="e.g. 15 mins daily"
+            oninput="updateLivePreview()">
         </div>
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+        <div class="form-row-2col">
           <div class="form-group">
             <label class="form-label">Category</label>
             <select class="form-select" id="habitCategorySelect">
@@ -248,7 +252,7 @@
   </div>
 
   <!-- Bottom Navigation -->
-    <!-- Clean 4-Tab Bottom Navigation -->
+  <!-- Clean 4-Tab Bottom Navigation -->
   <nav class="bottom-nav">
     <a href="/" class="nav-item active">
       <i data-lucide="grid"></i>
@@ -268,10 +272,10 @@
     </a>
   </nav>
 
-  <script src="js/api.js?v=1787946236"></script>
-  <script src="js/utils.js?v=1787946236"></script>
-  <script src="js/habitStudio.js?v=1787946236"></script>
-  <script src="js/app.js?v=1787946236"></script>
+  <script src="js/api.js?v=1788627000"></script>
+  <script src="js/utils.js?v=1788627000"></script>
+  <script src="js/habitStudio.js?v=1788627000"></script>
+  <script src="js/app.js?v=1788627000"></script>
   <script>
     function toggleQuickTheme() {
       const current = document.documentElement.getAttribute('data-theme') || 'dark';
@@ -283,4 +287,5 @@
     }
   </script>
 </body>
+
 </html>

@@ -491,48 +491,63 @@ function renderAchievedBadges() {
 
   const all = progressionData.achievements;
   const achieved = all.filter(a => a.unlocked);
+  const locked = all.filter(a => !a.unlocked);
 
   if (countLabel) {
     countLabel.textContent = `${achieved.length} / ${all.length} Badges Earned`;
   }
 
-  if (achieved.length === 0) {
+  if (achieved.length === 0 && locked.length === 0) {
     container.innerHTML = `
       <div class="achieved-empty-state animate-fade-in">
         <div class="achieved-empty-icon">
           <i data-lucide="sparkles" style="width: 26px; height: 26px;"></i>
         </div>
-        <div class="achieved-empty-title">No Milestones Unlocked Yet</div>
+        <div class="achieved-empty-title">No Milestones Available</div>
         <div class="achieved-empty-desc">Complete habit streaks and perfect days to unlock your first milestone badge!</div>
-        <button class="btn btn-secondary" onclick="openAllBadgesModal()" style="margin-top: 0.85rem; font-size: 0.78rem; padding: 0.4rem 0.85rem;">
-          <i data-lucide="trophy" style="width: 14px; height: 14px;"></i>
-          <span>View Available Badges</span>
-        </button>
       </div>
     `;
     lucide.createIcons();
     return;
   }
 
+  // Display all unlocked badges. If fewer than 3, fill row with next upcoming locked badges
+  let displayBadges = [...achieved];
+  if (displayBadges.length < 3 && locked.length > 0) {
+    const sortedLocked = [...locked].sort((a, b) => {
+      const pctA = a.target > 0 ? (a.current / a.target) : 0;
+      const pctB = b.target > 0 ? (b.current / b.target) : 0;
+      return pctB - pctA;
+    });
+    const needed = 3 - displayBadges.length;
+    displayBadges = displayBadges.concat(sortedLocked.slice(0, needed));
+  }
+
   container.innerHTML = `
     <div class="achieved-badges-grid animate-fade-in">
-      ${achieved.map(b => {
+      ${displayBadges.map(b => {
+        const isUnlocked = !!b.unlocked;
         const catMeta = CATEGORY_META[b.category] || CATEGORY_META.streak;
-        const svgMarkup = generateBadgeSVG(b.id, true);
+        const svgMarkup = generateBadgeSVG(b.id, isUnlocked);
+        const currentVal = b.current || 0;
+        const targetVal = b.target || 1;
+        const unit = b.unit || '';
 
         return `
           <div 
-            class="achieved-badge-card"
+            class="achieved-badge-card ${isUnlocked ? 'unlocked' : 'locked-preview'}"
             data-badge-title="${escapeHtml(b.name)}"
             data-badge-desc="${escapeHtml(b.description)}"
-            data-badge-xp="+${b.xpBonus} XP"
+            data-badge-xp="${isUnlocked ? `+${b.xpBonus} XP` : `${currentVal} / ${targetVal}${unit}`}"
+            data-badge-status="${isUnlocked ? '✓ Milestone Completed' : '🔒 Upcoming Milestone'}"
             data-badge-cat="${catMeta.name}"
+            onclick="openAllBadgesModal()"
           >
             <div class="achieved-badge-graphic">
               ${svgMarkup}
             </div>
             <div class="achieved-badge-card-name" title="${escapeHtml(b.name)}">
-              ${escapeHtml(b.name)}
+              ${isUnlocked ? escapeHtml(b.name) : `<span style="opacity: 0.7;">🔒 ${escapeHtml(b.name)}</span>`}
             </div>
           </div>
         `;
@@ -570,10 +585,11 @@ function initBadgeHoverTooltips() {
     const desc = badgeEl.dataset.badgeDesc;
     const xp = badgeEl.dataset.badgeXp;
     const cat = badgeEl.dataset.badgeCat;
+    const status = badgeEl.dataset.badgeStatus || '✓ Milestone Completed';
 
     tooltipEl.innerHTML = `
       <div class="badge-tt-header">
-        <span class="badge-tt-tag">✓ Milestone Completed</span>
+        <span class="badge-tt-tag">${status}</span>
         <span class="badge-tt-xp">${xp}</span>
       </div>
       <div class="badge-tt-title">${title}</div>

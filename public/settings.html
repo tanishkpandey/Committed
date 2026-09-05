@@ -29,7 +29,7 @@
           <i data-lucide="tag" style="width: 16px; height: 16px; color: var(--accent-emerald);"></i>
           <h3 style="font-size: 0.95rem; font-weight: 750;">Manage Categories</h3>
         </div>
-        <button class="btn btn-primary" onclick="openAddCategoryModal()" style="padding: 0.35rem 0.75rem; font-size: 0.75rem;">
+        <button class="btn btn-primary" onclick="openAddCategoryModal()" style="min-height: 44px; padding: 0.45rem 0.85rem; font-size: 0.8rem;">
           <i data-lucide="plus" style="width: 14px; height: 14px;"></i>
           <span>Add Category</span>
         </button>
@@ -67,41 +67,59 @@
     <div class="habit-card" style="margin-bottom: 1rem;">
       <h3 style="font-size: 0.95rem; font-weight: 750; margin-bottom: 1rem;">Feedback & Sound</h3>
       
-      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.85rem;">
-        <div>
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.85rem; min-height: 44px;">
+        <label for="soundToggle" style="flex: 1; cursor: pointer; padding-right: 0.75rem;">
           <div style="font-weight: 600; font-size: 0.85rem;">Haptic Audio Feedback</div>
           <div style="font-size: 0.72rem; color: var(--text-muted);">Subtle click sound when toggling tiles</div>
-        </div>
-        <input type="checkbox" id="soundToggle" onchange="handleSoundToggle(event)" style="width: 18px; height: 18px;">
+        </label>
+        <label class="toggle-switch">
+          <input type="checkbox" id="soundToggle" onchange="handleSoundToggle(event)">
+          <span class="toggle-slider"></span>
+        </label>
       </div>
 
-      <div style="display: flex; align-items: center; justify-content: space-between;">
-        <div>
+      <div style="display: flex; align-items: center; justify-content: space-between; min-height: 44px;">
+        <label for="confettiToggle" style="flex: 1; cursor: pointer; padding-right: 0.75rem;">
           <div style="font-weight: 600; font-size: 0.85rem;">Celebratory Confetti</div>
           <div style="font-size: 0.72rem; color: var(--text-muted);">Confetti burst when completing habits</div>
-        </div>
-        <input type="checkbox" id="confettiToggle" onchange="handleConfettiToggle(event)" style="width: 18px; height: 18px;">
-      </div>
-    </div>
-
-    <!-- 4. Backup & Restore -->
-    <div class="habit-card">
-      <h3 style="font-size: 0.95rem; font-weight: 750; margin-bottom: 0.75rem;">Backup & Export</h3>
-      <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 1rem;">
-        Export your habit history as JSON to safely store or migrate your data.
-      </p>
-      <div style="display: flex; gap: 0.5rem;">
-        <button class="btn btn-secondary" onclick="triggerExport()" style="flex: 1;">
-          <i data-lucide="download" style="width: 15px; height: 15px;"></i>
-          <span>Export JSON</span>
-        </button>
-        <label class="btn btn-secondary" style="flex: 1; margin-bottom: 0; cursor: pointer;">
-          <i data-lucide="upload" style="width: 15px; height: 15px;"></i>
-          <span>Import JSON</span>
-          <input type="file" accept=".json" onchange="triggerImport(event)" style="display: none;">
+        </label>
+        <label class="toggle-switch">
+          <input type="checkbox" id="confettiToggle" onchange="handleConfettiToggle(event)">
+          <span class="toggle-slider"></span>
         </label>
       </div>
     </div>
+
+    <!-- 4. Advanced Data Management (Collapsible) -->
+    <details class="habit-card settings-advanced-card">
+      <summary class="settings-advanced-summary" style="padding: 0.2rem 0;">
+        <div>
+          <div style="display: flex; align-items: center; gap: 0.4rem;">
+            <i data-lucide="database" style="width: 15px; height: 15px; color: var(--text-muted);"></i>
+            <h3 style="font-size: 0.92rem; font-weight: 750;">Advanced Data Controls</h3>
+          </div>
+          <p style="font-size: 0.72rem; color: var(--text-muted); margin-top: 0.15rem;">Export JSON backup or restore habit data</p>
+        </div>
+        <i data-lucide="chevron-down" style="width: 15px; height: 15px; color: var(--text-muted);"></i>
+      </summary>
+
+      <div style="margin-top: 1rem; padding-top: 0.85rem; border-top: 1px solid var(--border-subtle);">
+        <p style="font-size: 0.74rem; color: var(--text-muted); margin-bottom: 0.85rem; line-height: 1.4;">
+          Export your complete habit history as JSON to safely store or migrate your data. Note: Importing will replace existing records.
+        </p>
+        <div style="display: flex; gap: 0.5rem;">
+          <button class="btn btn-secondary" onclick="triggerExport()" style="flex: 1; min-height: 44px; font-size: 0.8rem;">
+            <i data-lucide="download" style="width: 15px; height: 15px;"></i>
+            <span>Export JSON</span>
+          </button>
+          <label class="btn btn-secondary" style="flex: 1; margin-bottom: 0; min-height: 44px; font-size: 0.8rem; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem;">
+            <i data-lucide="upload" style="width: 15px; height: 15px;"></i>
+            <span>Import JSON</span>
+            <input type="file" accept=".json" onchange="triggerImport(event)" style="display: none;">
+          </label>
+        </div>
+      </div>
+    </details>
   </div>
 
   <!-- Add / Edit Category Modal -->

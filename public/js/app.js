@@ -39,7 +39,7 @@ function updateWidgetUI(data) {
   const streakText = document.getElementById('widgetStreakText');
 
   if (levelText) levelText.textContent = `LEVEL ${data.level}`;
-  if (xpCounts) xpCounts.textContent = `${data.totalXP.toLocaleString()} / ${data.nextLevelTargetXP.toLocaleString()} XP`;
+  if (xpCounts) xpCounts.textContent = `${(data.currentLevelXP || 0).toLocaleString()} / ${(data.nextLevelTargetXP || 100).toLocaleString()} XP`;
   if (fill) fill.style.width = `${data.progressPercent}%`;
   if (streakText) streakText.textContent = `${data.lifetimeStats.perfectDaysStreak || 0} Perfect Day Streak`;
   renderDashboardGreeting(data.lifetimeStats.longestStreak || 19);
@@ -109,8 +109,8 @@ function renderHabitCards(habits) {
       }
 
       const isCompleted = logsSet.has(day.date);
-      const bgStyle = isCompleted 
-        ? `background-color: ${habit.color}; --tile-glow-color: ${habit.color};` 
+      const bgStyle = isCompleted
+        ? `background-color: ${habit.color}; --tile-glow-color: ${habit.color};`
         : '';
       const completedClass = isCompleted ? 'completed' : '';
       const todayClass = day.isToday ? 'is-today' : '';
@@ -133,7 +133,7 @@ function renderHabitCards(habits) {
         <div class="habit-header">
           <div class="habit-info-group">
             <div class="habit-icon-badge" style="background-color: ${habit.color};">
-              <i data-lucide="${habit.icon || 'zap'}" style="width: 20px; height: 20px;"></i>
+              <i data-lucide="${habit.icon || 'zap'}" style="width: 15px; height: 15px;"></i>
             </div>
             <div class="habit-text">
               <a href="/habit-detail.html?id=${habit.id}" class="habit-title">${escapeHtml(habit.title)}</a>
@@ -172,21 +172,21 @@ function renderHabitCards(habits) {
           </div>
         </div>
 
-        <div class="habit-footer">
-          <div class="stat-item">
-            <span>30-Day:</span>
-            <span class="stat-highlight rate-val" id="rate-${habit.id}" style="color: ${habit.color};">${habit.completionRate || 0}%</span>
+        <div class="habit-card-footer">
+          <div class="habit-footer-stats">
+            <div class="habit-footer-stat">
+              <i data-lucide="flame" style="width: 12px; height: 12px; color: #f59e0b;"></i>
+              <span class="habit-footer-label">Best:</span>
+              <span class="habit-footer-val" id="best-${habit.id}">${habit.longestStreak || 0}${habit.streakUnit || 'd'}</span>
+            </div>
+            <div class="habit-footer-stat">
+              <i data-lucide="activity" style="width: 12px; height: 12px; color: #10b981;"></i>
+              <span class="habit-footer-label">Month:</span>
+              <span class="habit-footer-val" id="rate-${habit.id}">${habit.completionRate || 0}%</span>
+            </div>
           </div>
-          <div class="stat-item">
-            <span>Best:</span>
-            <span class="stat-highlight" id="best-${habit.id}">${habit.longestStreak || 0}d</span>
-          </div>
-          <div class="stat-item">
-            <span>Total:</span>
-            <span class="stat-highlight" id="total-${habit.id}">${habit.totalCompletions || 0}</span>
-          </div>
-          <a href="/habit-detail.html?id=${habit.id}" style="color: var(--text-muted); text-decoration: none; display: flex; align-items: center; gap: 0.2rem;">
-            <span>Details</span> <i data-lucide="chevron-right" style="width: 13px; height: 13px;"></i>
+          <a href="/habit-detail.html?id=${habit.id}" class="habit-details-link" title="View Full Statistics & Breakdown">
+            <span>Details</span> <i data-lucide="arrow-right" style="width: 12px; height: 12px;"></i>
           </a>
         </div>
       </div>
@@ -349,7 +349,7 @@ function calculateLocalStreaks(datesSet) {
 
   let checkDate = new Date(today);
   let todayStr = Utils.formatYMD(checkDate);
-  
+
   if (!datesSet.has(todayStr)) {
     checkDate.setDate(checkDate.getDate() - 1);
   }
@@ -367,7 +367,7 @@ function calculateLocalStreaks(datesSet) {
       const [py, pm, pd] = sortedDates[i - 1].split('-').map(Number);
       const [cy, cm, cd] = sortedDates[i].split('-').map(Number);
       const diffDays = Math.round((new Date(cy, cm - 1, cd) - new Date(py, pm - 1, pd)) / (1000 * 60 * 60 * 24));
-      
+
       if (diffDays === 1) {
         tempStreak++;
       } else if (diffDays > 1) {

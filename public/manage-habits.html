@@ -2,7 +2,7 @@
 <html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <title>Habit Studio - Committed</title>
   <link rel="preconnect" href="https://unpkg.com">
@@ -59,7 +59,7 @@
           <label class="form-label">Description / Note</label>
           <input type="text" class="form-input" id="habitDescInput" placeholder="e.g. 15 mins daily">
         </div>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+        <div class="form-row-2col">
           <div class="form-group">
             <label class="form-label">Category</label>
             <select class="form-select" id="habitCategorySelect">
@@ -170,11 +170,11 @@
                     <span style="font-size: 0.75rem; color: var(--text-muted);">${escapeHtml(h.category || 'General')} • ${h.grid_days || 60}d grid • ${h.totalCompletions || 0} logs</span>
                   </div>
                 </div>
-                <div style="display: flex; gap: 0.4rem;">
-                  <button class="btn btn-secondary" onclick='openHabitModal(${hJson})' style="padding: 0.4rem 0.65rem; font-size: 0.8rem;" title="Edit Habit">
+                <div style="display: flex; gap: 0.4rem; align-items: center;">
+                  <button class="btn btn-secondary" onclick='openHabitModal(${hJson})' style="min-height: 44px; padding: 0.45rem 0.75rem; font-size: 0.8rem;" title="Edit Habit">
                     <i data-lucide="edit-2" style="width: 14px; height: 14px;"></i> Edit
                   </button>
-                  <button class="btn btn-secondary" onclick='deleteStudioHabit("${h.id}", "${escapeHtml(h.title)}")' style="padding: 0.4rem 0.65rem; font-size: 0.8rem; color: var(--accent-rose);" title="Delete Habit">
+                  <button class="btn btn-secondary" onclick='deleteStudioHabit("${h.id}", "${escapeHtml(h.title)}")' style="min-height: 44px; min-width: 44px; padding: 0.45rem 0.65rem; font-size: 0.8rem; color: var(--accent-rose);" title="Delete Habit">
                     <i data-lucide="trash-2" style="width: 14px; height: 14px;"></i>
                   </button>
                 </div>

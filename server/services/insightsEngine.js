@@ -180,7 +180,7 @@ function generateAdvancedInsights(habits = [], logs = []) {
       id: 'biggest_growth',
       title: 'Strongest Habit / Growth',
       icon: 'trending-up',
-      color: '#06B6D4',
+      color: '#10B981',
       statValue: `${mostImproved.title}`,
       statSub: `+${mostImproved.delta}% 30-Day Growth`,
       message: `Had your biggest positive leap over the last 30 days (${mostImproved.prevRate30}% -> ${mostImproved.rate30}%).`
@@ -218,7 +218,7 @@ function generateAdvancedInsights(habits = [], logs = []) {
       id: 'bounce_back_speed',
       title: 'Bounce-Back Speed',
       icon: 'rotate-ccw',
-      color: '#06B6D4',
+      color: '#10B981',
       statValue: `${bestAllTime.avgGap} Days`,
       statSub: 'Recovery Gap',
       message: `After missing a scheduled day, you reliably bounce back within ${bestAllTime.avgGap} days.`
@@ -229,7 +229,7 @@ function generateAdvancedInsights(habits = [], logs = []) {
         id: 'streak_resilience',
         title: 'Streak Resilience',
         icon: 'zap',
-        color: '#EC4899',
+        color: '#F59E0B',
         statValue: `${bestAllTime.longestStreak} Days`,
         statSub: `${bestAllTime.title} Best Run`,
         message: `High resilience: after missing a day, you repeatedly rebuilt all the way to ${bestAllTime.longestStreak} days.`
