@@ -93,6 +93,7 @@ function renderHabitDetail(habit) {
   document.getElementById('statTotalCompletions').textContent = habit.totalCompletions || 0;
 
   renderActivityDots();
+  renderWeekdayDistributionChart();
   renderTop3Streaks(habit);
   lucide.createIcons();
   Utils.initGlobalTooltips();
@@ -208,6 +209,7 @@ function prevMonth(e) {
   }
 
   renderMonthBreakdown('prev');
+  renderWeekdayDistributionChart();
   lucide.createIcons();
   Utils.initGlobalTooltips();
 }
@@ -228,6 +230,7 @@ function nextMonth(e) {
   }
 
   renderMonthBreakdown('next');
+  renderWeekdayDistributionChart();
   lucide.createIcons();
   Utils.initGlobalTooltips();
 }
@@ -262,6 +265,7 @@ function selectPickerMonth(idx) {
   isAllMonthsView = false;
   closeMonthPickerModal();
   renderMonthBreakdown();
+  renderWeekdayDistributionChart();
   lucide.createIcons();
   Utils.initGlobalTooltips();
 }
@@ -473,6 +477,119 @@ function renderTop3Streaks(habit) {
 }
 
 // ------------------------------------------------------------------------------
+// Weekday Activity Chart Throughout the Year
+// ------------------------------------------------------------------------------
+function renderWeekdayDistributionChart() {
+  const container = document.getElementById('weekdayChartContainer');
+  const insightsContainer = document.getElementById('weekdayInsightsRow');
+  const yearBadge = document.getElementById('weekdayChartYearBadge');
+  if (!container || !currentHabit) return;
+
+  const targetYear = detailYear || new Date().getFullYear();
+  if (yearBadge) yearBadge.textContent = `${targetYear} Activity`;
+
+  const logs = currentHabit.logs || [];
+  const yearPrefix = `${targetYear}-`;
+  const yearLogs = logs.filter(d => typeof d === 'string' && d.startsWith(yearPrefix));
+
+  const dayCounts = [0, 0, 0, 0, 0, 0, 0]; // 0: Sun, 1: Mon, ..., 6: Sat
+  const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  const dayShort = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+  yearLogs.forEach(dateStr => {
+    const [y, m, d] = dateStr.split('-').map(Number);
+    const dayOfWeek = new Date(y, m - 1, d).getDay();
+    if (!isNaN(dayOfWeek) && dayOfWeek >= 0 && dayOfWeek <= 6) {
+      dayCounts[dayOfWeek]++;
+    }
+  });
+
+  const totalYearLogs = yearLogs.length;
+  const maxCount = Math.max(...dayCounts, 1);
+  const peakCount = Math.max(...dayCounts);
+  const isAllZero = peakCount === 0;
+
+  const today = new Date();
+  const currentRealDay = today.getFullYear() === targetYear ? today.getDay() : -1;
+  const habitColor = currentHabit.color || '#10B981';
+
+  container.innerHTML = dayShort.map((shortName, idx) => {
+    const count = dayCounts[idx];
+    const isPeak = !isAllZero && count === peakCount;
+    const isToday = idx === currentRealDay;
+    const pctOfTotal = totalYearLogs > 0 ? Math.round((count / totalYearLogs) * 100) : 0;
+    const heightPercent = isAllZero ? 6 : Math.max(8, Math.round((count / maxCount) * 100));
+
+    const barBg = isPeak
+      ? `linear-gradient(180deg, ${habitColor}, rgba(255, 255, 255, 0.2))`
+      : `linear-gradient(180deg, ${habitColor}dd, ${habitColor}33)`;
+
+    return `
+      <div 
+        class="weekday-bar-col ${isPeak ? 'is-peak' : ''} ${isToday ? 'is-today' : ''}" 
+        title="${dayNames[idx]}: ${count} check-ins in ${targetYear} (${pctOfTotal}% of ${targetYear} logs)"
+      >
+        <span class="weekday-bar-count">${count}</span>
+        <div class="weekday-bar-track">
+          <div 
+            class="weekday-bar-fill ${isPeak ? 'is-peak' : ''}" 
+            style="height: ${heightPercent}%; background: ${barBg}; --habit-theme-glow: ${habitColor}66;"
+          ></div>
+        </div>
+        <span class="weekday-bar-label">${shortName}</span>
+        <span class="weekday-bar-pct">${pctOfTotal}%</span>
+      </div>
+    `;
+  }).join('');
+
+  // Calculate insights
+  let peakIdx = -1;
+  dayCounts.forEach((cnt, idx) => {
+    if (cnt === peakCount && peakCount > 0 && peakIdx === -1) peakIdx = idx;
+  });
+
+  const weekdayLogs = dayCounts[1] + dayCounts[2] + dayCounts[3] + dayCounts[4] + dayCounts[5];
+  const weekendLogs = dayCounts[0] + dayCounts[6];
+  const weekdayPct = totalYearLogs > 0 ? Math.round((weekdayLogs / totalYearLogs) * 100) : 0;
+  const weekendPct = totalYearLogs > 0 ? Math.round((weekendLogs / totalYearLogs) * 100) : 0;
+
+  if (insightsContainer) {
+    insightsContainer.innerHTML = `
+      <div class="weekday-insight-pill">
+        <div class="weekday-insight-icon" style="background: rgba(245, 158, 11, 0.15); color: #f59e0b;">
+          <i data-lucide="crown" style="width: 13px; height: 13px;"></i>
+        </div>
+        <div class="weekday-insight-body">
+          <span class="weekday-insight-title">Peak Day</span>
+          <span class="weekday-insight-value">${peakIdx !== -1 ? `${dayNames[peakIdx]} (${peakCount})` : 'No check-ins'}</span>
+        </div>
+      </div>
+
+      <div class="weekday-insight-pill">
+        <div class="weekday-insight-icon" style="background: rgba(16, 185, 129, 0.15); color: #10b981;">
+          <i data-lucide="calendar" style="width: 13px; height: 13px;"></i>
+        </div>
+        <div class="weekday-insight-body">
+          <span class="weekday-insight-title">Split</span>
+          <span class="weekday-insight-value">${weekdayPct}% Wkday / ${weekendPct}% Wkend</span>
+        </div>
+      </div>
+
+      <div class="weekday-insight-pill">
+        <div class="weekday-insight-icon" style="background: rgba(99, 102, 241, 0.15); color: #6366f1;">
+          <i data-lucide="check-circle-2" style="width: 13px; height: 13px;"></i>
+        </div>
+        <div class="weekday-insight-body">
+          <span class="weekday-insight-title">${targetYear} Total</span>
+          <span class="weekday-insight-value">${totalYearLogs} Check-ins</span>
+        </div>
+      </div>
+    `;
+    lucide.createIcons();
+  }
+}
+
+// ------------------------------------------------------------------------------
 // Tile Click & Reactive Persistence Engine
 // ------------------------------------------------------------------------------
 async function toggleDetailDate(dateStr, tileElem, event) {
@@ -546,6 +663,7 @@ async function toggleDetailDate(dateStr, tileElem, event) {
     footerStatVal.innerHTML = `<strong>${count} / ${totalDaysInMonth}</strong> <span class="month-footer-stat-pct">(${pct}%)</span>`;
   }
 
+  renderWeekdayDistributionChart();
   renderTop3Streaks(currentHabit);
   lucide.createIcons();
   Utils.initGlobalTooltips();
@@ -558,6 +676,7 @@ async function toggleDetailDate(dateStr, tileElem, event) {
       if (curStreakEl) curStreakEl.textContent = `${currentHabit.currentStreak}${currentHabit.streakUnit || 'd'}`;
       if (longestStreakEl) longestStreakEl.textContent = `${currentHabit.longestStreak}${currentHabit.streakUnit || 'd'}`;
       if (totalEl) totalEl.textContent = currentHabit.totalCompletions;
+      renderWeekdayDistributionChart();
       renderTop3Streaks(currentHabit);
     }
   } catch (err) {

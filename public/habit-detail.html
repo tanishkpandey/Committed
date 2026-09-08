@@ -9,9 +9,9 @@
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="preconnect" href="https://unpkg.com">
   <link rel="dns-prefetch" href="https://unpkg.com">
-  <link rel="stylesheet" href="css/main.css?v=1788627500">
-  <link rel="stylesheet" href="css/components.css?v=1788627500">
-  <link rel="stylesheet" href="css/animations.css?v=1788627500">
+  <link rel="stylesheet" href="css/main.css?v=1788628200">
+  <link rel="stylesheet" href="css/components.css?v=1788628200">
+  <link rel="stylesheet" href="css/animations.css?v=1788628200">
   <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 
@@ -116,6 +116,26 @@
           <div class="months-breakdown-grid" id="monthBreakdownGrid">
             <!-- Rendered via habitDetail.js -->
           </div>
+        </div>
+      </div>
+
+      <!-- Weekday Distribution Throughout the Year Section -->
+      <div class="habit-card" id="weekdayDistributionCard">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.25rem;">
+          <div style="display: flex; align-items: center; gap: 0.45rem;">
+            <i data-lucide="bar-chart-2" style="width: 16px; height: 16px; color: var(--accent-emerald, #10b981);"></i>
+            <h3 style="font-size: 0.92rem; font-weight: 750;">Weekday Activity</h3>
+          </div>
+          <span class="detail-year-badge" id="weekdayChartYearBadge">2026</span>
+        </div>
+        <p style="font-size: 0.72rem; color: var(--text-muted); margin-bottom: 0.85rem;">Total check-ins logged on each day of the week</p>
+
+        <div class="weekday-bars-container" id="weekdayChartContainer">
+          <!-- Rendered via habitDetail.js -->
+        </div>
+
+        <div class="weekday-insights-row" id="weekdayInsightsRow">
+          <!-- Rendered via habitDetail.js -->
         </div>
       </div>
 
