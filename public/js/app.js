@@ -103,6 +103,15 @@ function renderHabitCards(habits) {
     const gridDays = Utils.generateGridDays(habit.grid_days || 60);
     const logsSet = new Set(habit.logs || []);
 
+    const stats = Utils.calculateHabitStats(logsSet, habit.frequency_days || 7);
+    habit.currentStreak = stats.currentStreak;
+    habit.longestStreak = stats.longestStreak;
+    habit.streakUnit = stats.streakUnit;
+    habit.completionRate = stats.completionRate;
+    habit.totalCompletions = stats.totalCompletions;
+    habit.thisWeekCompleted = stats.thisWeekCompleted;
+    habit.isTargetMetThisWeek = stats.isTargetMetThisWeek;
+
     const tilesHtml = gridDays.map(day => {
       if (day.isFuture) {
         return `<div class="grid-tile ${tileShape}" style="opacity: 0.12; pointer-events: none;"></div>`;
@@ -313,6 +322,14 @@ async function handleTileClick(habitId, dateStr, tileElem, event) {
     if (res.success) {
       if (res.habit) {
         Object.assign(habit, res.habit);
+        const updatedLogsSet = new Set(habit.logs || []);
+        const freshStats = Utils.calculateHabitStats(updatedLogsSet, habit.frequency_days || 7);
+        habit.completionRate = freshStats.completionRate;
+        habit.currentStreak = freshStats.currentStreak;
+        habit.longestStreak = freshStats.longestStreak;
+        habit.streakUnit = freshStats.streakUnit;
+        habit.totalCompletions = freshStats.totalCompletions;
+
         // Sync DOM with server values
         if (streakElem) streakElem.querySelector('.streak-val').textContent = `${habit.currentStreak}${habit.streakUnit || 'd'}`;
         if (bestElem) bestElem.textContent = `${habit.longestStreak}${habit.streakUnit || 'd'}`;

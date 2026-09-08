@@ -430,16 +430,18 @@ const Utils = {
     }
     const isTargetMetThisWeek = thisWeekCompleted >= freq;
 
-    // 3. 30-Day Rate
-    const last30 = [];
-    for (let i = 0; i < 30; i++) {
-      const d = new Date(today);
-      d.setDate(today.getDate() - i);
-      last30.push(this.formatYMD(d));
+    // 3. Current Month Rate (days logged in current month / total days in current month)
+    const currentYear = today.getFullYear();
+    const currentMonth = today.getMonth();
+    const totalDaysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+    const monthPrefix = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}`;
+
+    let currentMonthCompleted = 0;
+    for (let dayNum = 1; dayNum <= totalDaysInMonth; dayNum++) {
+      const dateStr = `${monthPrefix}-${String(dayNum).padStart(2, '0')}`;
+      if (datesSet.has(dateStr)) currentMonthCompleted++;
     }
-    const last30Completed = last30.filter(d => datesSet.has(d)).length;
-    const expected30Target = Math.max(1, Math.round((freq / 7) * 30));
-    const completionRate = Math.min(100, Math.round((last30Completed / expected30Target) * 100));
+    const completionRate = totalDaysInMonth > 0 ? Math.round((currentMonthCompleted / totalDaysInMonth) * 100) : 0;
 
     return {
       currentStreak,
