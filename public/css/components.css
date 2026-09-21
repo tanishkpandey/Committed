@@ -3847,6 +3847,69 @@
   }
 }
 
+/* Ambient Header Network Status Pill */
+.network-ambient-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.28rem 0.65rem;
+  border-radius: var(--radius-full, 9999px);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: var(--text-muted);
+  transition: all 0.3s ease;
+  user-select: none;
+  cursor: pointer;
+}
+
+.network-ambient-pill .ambient-dot {
+  width: 6.5px;
+  height: 6.5px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 8px #10b981;
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+}
+
+.network-ambient-pill.status-online {
+  color: #10b981;
+  border-color: rgba(16, 185, 129, 0.25);
+  background: rgba(16, 185, 129, 0.08);
+}
+
+.network-ambient-pill.status-offline {
+  color: #f59e0b;
+  border-color: rgba(245, 158, 11, 0.35);
+  background: rgba(245, 158, 11, 0.12);
+}
+
+.network-ambient-pill.status-offline .ambient-dot {
+  background: #f59e0b;
+  box-shadow: 0 0 8px #f59e0b;
+  animation: pulse-amber 1.8s infinite;
+}
+
+.network-ambient-pill.status-syncing {
+  color: #06b6d4;
+  border-color: rgba(6, 182, 212, 0.35);
+  background: rgba(6, 182, 212, 0.12);
+}
+
+.network-ambient-pill.status-syncing .ambient-dot {
+  background: #06b6d4;
+  box-shadow: 0 0 8px #06b6d4;
+  animation: pulse-amber 0.8s infinite;
+}
+
+@keyframes pulse-amber {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.35; transform: scale(0.8); }
+}
+
 /* ==============================================================================
    Lifetime Accumulation Structured Grid (Crisp & Consistent with Insights)
    ============================================================================== */

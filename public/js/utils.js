@@ -467,8 +467,47 @@ const NetworkMonitor = {
 
   init() {
     this._createBannerDOM();
+    this._createHeaderBadge();
     this._bindEvents();
     this.checkStatus();
+  },
+
+  _createHeaderBadge() {
+    if (document.getElementById('networkAmbientPill')) return;
+    const headerActions = document.querySelector('.header-actions') || document.querySelector('.header-bar');
+    if (!headerActions) return;
+
+    const pill = document.createElement('div');
+    pill.id = 'networkAmbientPill';
+    pill.className = 'network-ambient-pill status-online';
+    pill.title = 'Network: Online (Click for details)';
+    pill.innerHTML = `
+      <span class="ambient-dot"></span>
+      <span class="ambient-label" id="networkAmbientLabel">Online</span>
+    `;
+    pill.addEventListener('click', () => {
+      this._dismissed = false;
+      if (this.isOffline) {
+        this.showOffline();
+      } else {
+        this.showOnlineRecovered('Connected to Supabase. All systems operational.');
+      }
+    });
+
+    if (headerActions.classList.contains('header-actions')) {
+      headerActions.insertBefore(pill, headerActions.firstChild);
+    } else {
+      headerActions.appendChild(pill);
+    }
+  },
+
+  _updateAmbientPill(status, labelText) {
+    const pill = document.getElementById('networkAmbientPill');
+    const label = document.getElementById('networkAmbientLabel');
+    if (!pill || !label) return;
+
+    pill.className = `network-ambient-pill status-${status}`;
+    label.textContent = labelText;
   },
 
   _createBannerDOM() {
@@ -526,9 +565,11 @@ const NetworkMonitor = {
   },
 
   checkStatus() {
+    this._createHeaderBadge();
     if (!navigator.onLine) {
       this.showOffline();
     } else {
+      this._updateAmbientPill('online', 'Online');
       this.checkConnectionQuality();
     }
   },
@@ -541,7 +582,6 @@ const NetworkMonitor = {
 
     if ('connection' in navigator) {
       const conn = navigator.connection;
-      // If 2g, slow-2g or high latency or very low bandwidth
       if (conn.effectiveType === 'slow-2g' || conn.effectiveType === '2g' || conn.rtt > 1200 || (conn.downlink > 0 && conn.downlink < 0.4)) {
         this.showSlowNetwork();
       }
@@ -554,6 +594,8 @@ const NetworkMonitor = {
     const subText = queueCount > 0 
       ? `Offline Mode • ${queueCount} change${queueCount === 1 ? '' : 's'} queued to sync automatically`
       : 'Offline Mode • All habits and actions work locally and will sync when reconnected';
+
+    this._updateAmbientPill('offline', queueCount > 0 ? `Offline (${queueCount})` : 'Offline');
 
     this._updateBanner({
       type: 'offline',
@@ -571,6 +613,7 @@ const NetworkMonitor = {
   },
 
   showSyncing(count) {
+    this._updateAmbientPill('syncing', 'Syncing...');
     this._updateBanner({
       type: 'syncing',
       icon: 'refresh-cw',
@@ -597,6 +640,12 @@ const NetworkMonitor = {
     this.isOffline = false;
     this.isSlow = false;
     this._dismissed = false;
+
+    this._updateAmbientPill('online', 'Synced ✓');
+    setTimeout(() => {
+      if (!this.isOffline) this._updateAmbientPill('online', 'Online');
+    }, 2500);
+
     this._updateBanner({
       type: 'online',
       icon: 'wifi',
