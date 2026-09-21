@@ -76,24 +76,35 @@ exports.getGlobalAnalytics = async (req, res) => {
       return PALETTE[index % PALETTE.length];
     };
 
-    // 3. Habit Distribution & Balance (Last 30 Days Breakdown)
-    const cutoff30 = new Date(today);
-    cutoff30.setDate(today.getDate() - 30);
-    const cutoff30Str = toYMD(cutoff30);
+    // 3. Habit Distribution & Consistency (This Month Logged % out of total days in month)
+    const curYear = today.getFullYear();
+    const curMonth = today.getMonth();
+    const totalDaysInMonth = new Date(curYear, curMonth + 1, 0).getDate();
+    const monthPrefix = `${curYear}-${String(curMonth + 1).padStart(2, '0')}`;
+    const monthName = today.toLocaleDateString('en-US', { month: 'short' });
 
-    const logsLast30 = logs.filter(l => l.completed_date >= cutoff30Str && activeHabitIds.has(l.habit_id));
-    const total30Logs = Math.max(logsLast30.length, 1);
+    const logsThisMonth = logs.filter(l => l.completed_date && l.completed_date.startsWith(monthPrefix) && activeHabitIds.has(l.habit_id));
+    const totalMonthLogs = Math.max(logsThisMonth.length, 1);
 
     const habitDistribution = activeHabits.map((h, idx) => {
-      const count = logsLast30.filter(l => l.habit_id === h.id).length;
-      const pct = Math.round((count / total30Logs) * 100);
+      const habitLoggedDates = new Set(
+        logs.filter(l => l.completed_date && l.completed_date.startsWith(monthPrefix) && l.habit_id === h.id)
+            .map(l => l.completed_date)
+      );
+      const count = habitLoggedDates.size;
+      const fullMonthPct = totalDaysInMonth > 0 ? Math.min(100, Math.round((count / totalDaysInMonth) * 100)) : 0;
+      const sharePct = Math.round((count / totalMonthLogs) * 100);
       const colorHex = getHabitColor(h, idx);
       return {
         id: h.id,
         title: h.title,
         color: colorHex,
         count,
-        percentage: pct
+        percentage: fullMonthPct,
+        fullMonthPercentage: fullMonthPct,
+        daysInMonth: totalDaysInMonth,
+        monthName,
+        sharePercentage: sharePct
       };
     }).sort((a, b) => b.count - a.count);
 

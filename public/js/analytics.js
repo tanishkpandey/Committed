@@ -122,7 +122,7 @@ function renderHabitDistribution(dist) {
   if (!container || !dist) return;
 
   if (dist.length === 0) {
-    container.innerHTML = '<div style="color: var(--text-muted); font-size: 0.78rem; padding: 1.5rem; text-align: left;">Logging habits over 30 days will populate your execution share.</div>';
+    container.innerHTML = '<div style="color: var(--text-muted); font-size: 0.78rem; padding: 1.5rem; text-align: left;">Logging habits this month will populate your habit consistency radar.</div>';
     return;
   }
 
@@ -286,7 +286,7 @@ function renderRadarHabitDistribution(activeDist, inactiveDist, container) {
               <div class="radar-summary-bar-track">
                 <div class="radar-summary-bar-fill" style="width: ${item.percentage}%;"></div>
               </div>
-              <div class="radar-summary-sub">${item.count} check-in${item.count === 1 ? '' : 's'} (last 30d)</div>
+              <div class="radar-summary-sub">${item.count} / ${item.daysInMonth || 30} days logged (this month)</div>
             </div>
           `).join('')}
         </div>
@@ -307,7 +307,7 @@ function renderRadarHabitDistribution(activeDist, inactiveDist, container) {
                     <span class="neon-glow-dot" style="background: var(--text-muted); opacity: 0.6;"></span>
                     <span>${escapeHtml(item.title)}</span>
                   </div>
-                  <span style="font-size: 0.7rem; color: var(--text-muted);">0 check-ins (last 30d)</span>
+                  <span style="font-size: 0.7rem; color: var(--text-muted);">0 check-ins (this month)</span>
                 </div>
               `).join('')}
             </div>
@@ -379,7 +379,7 @@ function renderDonutHabitDistribution(activeDist, inactiveDist, container) {
               <div class="neon-bar-track">
                 <div class="neon-bar-fill" style="width: ${item.percentage}%; background: ${item.color}; box-shadow: 0 0 8px ${item.color};"></div>
               </div>
-              <div class="neon-sub-logs">${item.count} check-in${item.count === 1 ? '' : 's'}</div>
+              <div class="neon-sub-logs">${item.count} / ${item.daysInMonth || 30} days logged (this month)</div>
             </div>
           `).join('')}
         </div>
@@ -400,7 +400,7 @@ function renderDonutHabitDistribution(activeDist, inactiveDist, container) {
                     <span class="neon-glow-dot" style="background: ${item.color}; opacity: 0.6;"></span>
                     <span>${item.title}</span>
                   </div>
-                  <span style="font-size: 0.7rem; color: var(--text-muted);">0 check-ins (last 30d)</span>
+                  <span style="font-size: 0.7rem; color: var(--text-muted);">0 check-ins (this month)</span>
                 </div>
               `).join('')}
             </div>
