@@ -12,6 +12,7 @@ let categoriesList = [];
 
 document.addEventListener('DOMContentLoaded', () => {
   initSettings();
+  initPwaSettings();
   loadCategories();
   renderCategoryPalette();
 });
@@ -28,6 +29,44 @@ function initSettings() {
   document.getElementById('confettiToggle').checked = localStorage.getItem('habitkit_confetti') !== 'false';
 
   lucide.createIcons();
+}
+
+function initPwaSettings() {
+  const installBtn = document.getElementById('pwaInstallBtn');
+  const desc = document.getElementById('pwaCardDesc');
+  const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+
+  if (isStandalone) {
+    if (desc) desc.textContent = 'Running as installed PWA. All habits work offline & sync automatically.';
+    if (installBtn) installBtn.style.display = 'none';
+  } else if (window.deferredPrompt) {
+    if (installBtn) installBtn.style.display = 'inline-flex';
+    if (desc) desc.textContent = 'Install Committed to your home screen or dock for instant offline access.';
+  } else {
+    if (desc) desc.textContent = 'Offline caching active. Install from your browser menu to use as native app.';
+  }
+
+  window.addEventListener('committed:pwa-installable', () => {
+    if (installBtn) installBtn.style.display = 'inline-flex';
+    if (desc) desc.textContent = 'Install Committed to your home screen or dock for instant offline access.';
+    if (window.lucide) lucide.createIcons();
+  });
+}
+
+function handlePwaInstall() {
+  if (window.deferredPrompt) {
+    window.deferredPrompt.prompt();
+    window.deferredPrompt.userChoice.then((choice) => {
+      if (choice.outcome === 'accepted') {
+        console.log('[PWA] App installed');
+      }
+      window.deferredPrompt = null;
+      const installBtn = document.getElementById('pwaInstallBtn');
+      if (installBtn) installBtn.style.display = 'none';
+    });
+  } else {
+    alert('To install on iPhone/iPad: Tap Share -> "Add to Home Screen". On Android/Chrome: Tap ⋮ -> "Install app".');
+  }
 }
 
 async function loadCategories() {

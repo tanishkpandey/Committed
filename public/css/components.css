@@ -3824,6 +3824,22 @@
   color: #10b981;
 }
 
+.network-status-banner.type-syncing {
+  border-color: rgba(6, 182, 212, 0.5);
+  box-shadow: 0 16px 36px -4px rgba(6, 182, 212, 0.3), 0 0 20px rgba(6, 182, 212, 0.15);
+}
+
+.network-status-banner.type-syncing .network-icon-wrap {
+  background: rgba(6, 182, 212, 0.18);
+  color: #06b6d4;
+  box-shadow: 0 0 12px rgba(6, 182, 212, 0.3);
+  animation: spin 1.2s linear infinite;
+}
+
+.network-status-banner.type-syncing .network-banner-title {
+  color: #06b6d4;
+}
+
 @media (max-width: 480px) {
   .network-status-banner {
     top: 0.85rem;

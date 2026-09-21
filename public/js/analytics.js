@@ -3,6 +3,10 @@
 document.addEventListener('DOMContentLoaded', () => {
   initTheme();
   loadAnalytics();
+
+  window.addEventListener('committed:sync-complete', () => {
+    loadAnalytics();
+  });
 });
 
 function initTheme() {

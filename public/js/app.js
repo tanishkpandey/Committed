@@ -10,6 +10,11 @@ document.addEventListener('DOMContentLoaded', () => {
   loadDashboard();
   setupFilterChips();
   setupEventListeners();
+
+  window.addEventListener('committed:sync-complete', () => {
+    console.log('[Dashboard] Auto-refreshing habits and progression post-sync');
+    loadDashboard();
+  });
 });
 
 function initTheme() {

@@ -1,0 +1,50 @@
+{
+  "name": "Committed - Habit Tracker",
+  "short_name": "Committed",
+  "description": "Minimalist habit tracker with GitHub-style contribution heatmaps, progression XP, and consistency analytics.",
+  "start_url": "/",
+  "id": "/",
+  "display": "standalone",
+  "background_color": "#0B0F17",
+  "theme_color": "#0B0F17",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "categories": ["productivity", "lifestyle", "health"],
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/favicon.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/img/logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Progress & XP",
+      "url": "/progress",
+      "description": "View streaks and level progression"
+    },
+    {
+      "name": "Insights",
+      "url": "/analytics",
+      "description": "View consistency and habit distribution"
+    },
+    {
+      "name": "Manage Habits",
+      "url": "/manage",
+      "description": "Add or customize habits"
+    }
+  ]
+}

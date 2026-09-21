@@ -550,11 +550,32 @@ const NetworkMonitor = {
 
   showOffline() {
     this.isOffline = true;
+    const queueCount = window.OfflineStore ? OfflineStore.getSyncQueue().length : 0;
+    const subText = queueCount > 0 
+      ? `Offline Mode • ${queueCount} change${queueCount === 1 ? '' : 's'} queued to sync automatically`
+      : 'Offline Mode • All habits and actions work locally and will sync when reconnected';
+
     this._updateBanner({
       type: 'offline',
       icon: 'wifi-off',
       title: 'You are Offline',
-      sub: 'Network disconnected. Please connect to internet to sync your habits.',
+      sub: subText,
+      persistent: true
+    });
+  },
+
+  updateSyncBadge(count) {
+    if (this.isOffline) {
+      this.showOffline();
+    }
+  },
+
+  showSyncing(count) {
+    this._updateBanner({
+      type: 'syncing',
+      icon: 'refresh-cw',
+      title: 'Syncing Changes...',
+      sub: `Syncing ${count} offline mutation${count === 1 ? '' : 's'} with Supabase`,
       persistent: true
     });
   },
@@ -572,7 +593,7 @@ const NetworkMonitor = {
     });
   },
 
-  showOnlineRecovered() {
+  showOnlineRecovered(customMsg) {
     this.isOffline = false;
     this.isSlow = false;
     this._dismissed = false;
@@ -580,10 +601,14 @@ const NetworkMonitor = {
       type: 'online',
       icon: 'wifi',
       title: 'Back Online',
-      sub: 'Connected to network. Syncing data...',
+      sub: customMsg || 'Connected to network. Syncing data with Supabase...',
       persistent: false,
-      autoHideMs: 3000
+      autoHideMs: 3500
     });
+
+    if (window.OfflineStore && typeof OfflineStore.processSyncQueue === 'function') {
+      OfflineStore.processSyncQueue();
+    }
   },
 
   _updateBanner({ type, icon, title, sub, persistent, autoHideMs }) {
@@ -617,6 +642,27 @@ const NetworkMonitor = {
     }
   }
 };
+
+// Register PWA Service Worker
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js')
+      .then((reg) => {
+        console.log('[PWA] Service Worker active:', reg.scope);
+      })
+      .catch((err) => {
+        console.warn('[PWA] Service Worker registration failed:', err);
+      });
+  });
+}
+
+// Global PWA Install Prompt Listener
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  window.deferredPrompt = e;
+  window.dispatchEvent(new CustomEvent('committed:pwa-installable'));
+  console.log('[PWA] App is installable');
+});
 
 // Auto-initialize NetworkMonitor on DOM ready
 if (document.readyState === 'loading') {

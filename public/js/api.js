@@ -1,4 +1,4 @@
-// Committed Intelligent REST API Client (Supabase Direct)
+// Committed Intelligent REST API Client with OfflineStore Integration
 const API = {
   baseUrl: '/api',
 
@@ -43,40 +43,146 @@ const API = {
     const url = category && category !== 'All' 
       ? `${this.baseUrl}/habits?category=${encodeURIComponent(category)}`
       : `${this.baseUrl}/habits`;
-    return this._request(url);
+
+    if (!navigator.onLine) {
+      const cached = (window.OfflineStore && OfflineStore.getHabits()) || [];
+      const filtered = category && category !== 'All' 
+        ? cached.filter(h => h.category === category)
+        : cached;
+      return { success: true, habits: filtered, offline: true };
+    }
+
+    try {
+      const res = await this._request(url);
+      if (res && res.success && res.habits && window.OfflineStore) {
+        if (!category || category === 'All') {
+          OfflineStore.saveHabits(res.habits);
+        }
+      }
+      return res;
+    } catch (err) {
+      if (window.OfflineStore) {
+        console.warn('[API] getHabits network failed, serving from OfflineStore');
+        const cached = OfflineStore.getHabits();
+        const filtered = category && category !== 'All' 
+          ? cached.filter(h => h.category === category)
+          : cached;
+        return { success: true, habits: filtered, offline: true };
+      }
+      throw err;
+    }
   },
 
   async getHabitById(id) {
-    return this._request(`${this.baseUrl}/habits/${id}`);
+    if (!navigator.onLine && window.OfflineStore) {
+      const habit = OfflineStore.getHabitById(id);
+      if (habit) return { success: true, habit, offline: true };
+    }
+
+    try {
+      const res = await this._request(`${this.baseUrl}/habits/${id}`);
+      return res;
+    } catch (err) {
+      if (window.OfflineStore) {
+        const habit = OfflineStore.getHabitById(id);
+        if (habit) return { success: true, habit, offline: true };
+      }
+      throw err;
+    }
   },
 
   async createHabit(habitData) {
-    return this._request(`${this.baseUrl}/habits`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(habitData)
-    });
+    if (!navigator.onLine && window.OfflineStore) {
+      return OfflineStore.createHabit(habitData);
+    }
+
+    try {
+      const res = await this._request(`${this.baseUrl}/habits`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(habitData)
+      });
+      if (res && res.success && res.habit && window.OfflineStore) {
+        const habits = OfflineStore.getHabits();
+        habits.unshift(res.habit);
+        OfflineStore.saveHabits(habits);
+      }
+      return res;
+    } catch (err) {
+      if (window.OfflineStore) {
+        return OfflineStore.createHabit(habitData);
+      }
+      throw err;
+    }
   },
 
   async updateHabit(id, updates) {
-    return this._request(`${this.baseUrl}/habits/${id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(updates)
-    });
+    if (!navigator.onLine && window.OfflineStore) {
+      return OfflineStore.updateHabit(id, updates);
+    }
+
+    try {
+      const res = await this._request(`${this.baseUrl}/habits/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updates)
+      });
+      if (res && res.success && res.habit && window.OfflineStore) {
+        OfflineStore.updateHabit(id, res.habit);
+      }
+      return res;
+    } catch (err) {
+      if (window.OfflineStore) {
+        return OfflineStore.updateHabit(id, updates);
+      }
+      throw err;
+    }
   },
 
   async deleteHabit(id) {
-    return this._request(`${this.baseUrl}/habits/${id}`, {
-      method: 'DELETE'
-    });
+    if (!navigator.onLine && window.OfflineStore) {
+      return OfflineStore.deleteHabit(id);
+    }
+
+    try {
+      const res = await this._request(`${this.baseUrl}/habits/${id}`, {
+        method: 'DELETE'
+      });
+      if (res && res.success && window.OfflineStore) {
+        OfflineStore.deleteHabit(id);
+      }
+      return res;
+    } catch (err) {
+      if (window.OfflineStore) {
+        return OfflineStore.deleteHabit(id);
+      }
+      throw err;
+    }
   },
 
   async getCategories() {
-    return this._request(`${this.baseUrl}/categories`);
+    if (!navigator.onLine && window.OfflineStore) {
+      return { success: true, categories: OfflineStore.getCategories(), offline: true };
+    }
+
+    try {
+      const res = await this._request(`${this.baseUrl}/categories`);
+      if (res && res.success && res.categories && window.OfflineStore) {
+        OfflineStore.saveCategories(res.categories);
+      }
+      return res;
+    } catch (err) {
+      if (window.OfflineStore) {
+        return { success: true, categories: OfflineStore.getCategories(), offline: true };
+      }
+      throw err;
+    }
   },
 
   async createCategory(categoryData) {
+    if (!navigator.onLine && window.OfflineStore) {
+      return OfflineStore.createCategory(categoryData);
+    }
     return this._request(`${this.baseUrl}/categories`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -85,6 +191,9 @@ const API = {
   },
 
   async updateCategory(id, updates) {
+    if (!navigator.onLine && window.OfflineStore) {
+      return OfflineStore.updateCategory(id, updates);
+    }
     return this._request(`${this.baseUrl}/categories/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
@@ -93,33 +202,98 @@ const API = {
   },
 
   async deleteCategory(id) {
+    if (!navigator.onLine && window.OfflineStore) {
+      return OfflineStore.deleteCategory(id);
+    }
     return this._request(`${this.baseUrl}/categories/${id}`, {
       method: 'DELETE'
     });
   },
 
   async toggleLog(habitId, date) {
-    return this._request(`${this.baseUrl}/logs/toggle`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ habit_id: habitId, date })
-    });
+    if (!navigator.onLine && window.OfflineStore) {
+      return OfflineStore.toggleLog(habitId, date);
+    }
+
+    try {
+      const res = await this._request(`${this.baseUrl}/logs/toggle`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ habit_id: habitId, date })
+      });
+      if (res && res.success && res.habit && window.OfflineStore) {
+        const habits = OfflineStore.getHabits();
+        const idx = habits.findIndex(h => String(h.id) === String(habitId));
+        if (idx !== -1) {
+          habits[idx] = Object.assign(habits[idx], res.habit);
+          OfflineStore.saveHabits(habits);
+        }
+      }
+      return res;
+    } catch (err) {
+      if (window.OfflineStore) {
+        return OfflineStore.toggleLog(habitId, date);
+      }
+      throw err;
+    }
   },
 
   async getProgression() {
-    return this._request(`${this.baseUrl}/progression`);
+    if (!navigator.onLine && window.OfflineStore) {
+      const cached = OfflineStore.getProgression();
+      if (cached) return { success: true, ...cached, offline: true };
+    }
+
+    try {
+      const res = await this._request(`${this.baseUrl}/progression`);
+      if (res && res.success && window.OfflineStore) {
+        OfflineStore.saveProgression(res);
+      }
+      return res;
+    } catch (err) {
+      if (window.OfflineStore) {
+        const cached = OfflineStore.getProgression();
+        if (cached) return { success: true, ...cached, offline: true };
+      }
+      throw err;
+    }
   },
 
   async getXPHistory() {
-    return this._request(`${this.baseUrl}/progression/history`);
+    try {
+      return await this._request(`${this.baseUrl}/progression/history`);
+    } catch (err) {
+      return { success: true, history: [], offline: true };
+    }
   },
 
   async getAchievements() {
-    return this._request(`${this.baseUrl}/progression/achievements`);
+    try {
+      return await this._request(`${this.baseUrl}/progression/achievements`);
+    } catch (err) {
+      return { success: true, achievements: [], offline: true };
+    }
   },
 
   async getAnalytics() {
-    return this._request(`${this.baseUrl}/analytics`);
+    if (!navigator.onLine && window.OfflineStore) {
+      const cached = OfflineStore.getAnalytics();
+      if (cached) return { success: true, analytics: cached, offline: true };
+    }
+
+    try {
+      const res = await this._request(`${this.baseUrl}/analytics`);
+      if (res && res.success && res.analytics && window.OfflineStore) {
+        OfflineStore.saveAnalytics(res.analytics);
+      }
+      return res;
+    } catch (err) {
+      if (window.OfflineStore) {
+        const cached = OfflineStore.getAnalytics();
+        if (cached) return { success: true, analytics: cached, offline: true };
+      }
+      throw err;
+    }
   },
 
   async exportBackup() {

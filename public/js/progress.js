@@ -6,6 +6,10 @@ let currentModalCategory = 'all';
 document.addEventListener('DOMContentLoaded', () => {
   initTheme();
   loadProgressData();
+
+  window.addEventListener('committed:sync-complete', () => {
+    loadProgressData();
+  });
 });
 
 function initTheme() {
