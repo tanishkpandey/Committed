@@ -33,14 +33,6 @@
       <a href="/" class="logo-group">
         <span class="app-title">Committed</span>
       </a>
-
-      <div class="header-actions">
-        <button class="btn btn-primary" id="newHabitBtn" onclick="openHabitModal()" title="New Habit"
-          aria-label="New Habit">
-          <span class="btn-icon-bubble"><i data-lucide="plus" style="width: 14px; height: 14px;"></i></span>
-          <span class="btn-text">New Habit</span>
-        </button>
-      </div>
     </header>
 
     <!-- Today Screen Top Header: Date, Big Progress Text, Level Chip -->
@@ -49,11 +41,12 @@
         <span class="today-date-label" id="todayDateLabel">Today</span>
         <a href="/progress.html" class="today-level-chip" id="todayLevelChip" title="View Progress">
           <i data-lucide="zap" style="width: 12px; height: 12px;"></i>
-          <span id="todayLevelText">Lv 1</span>
+          <span id="todayLevelText">Lv --</span>
         </a>
       </div>
       <h1 class="today-progress-headline" id="todayProgressHeadline">
-        <span class="skeleton-shimmer" style="width: 170px; height: 32px; border-radius: var(--radius-sm); display: inline-block;"></span>
+        <span class="skeleton-shimmer"
+          style="width: 170px; height: 32px; border-radius: var(--radius-sm); display: inline-block;"></span>
       </h1>
     </section>
 
@@ -70,13 +63,27 @@
             </div>
           </div>
           <div class="today-week-strip" style="pointer-events: none; opacity: 0.7;">
-            <div class="today-strip-day"><span class="today-strip-label">M</span><div class="skeleton-shimmer" style="width: 18px; height: 18px; border-radius: 4px;"></div></div>
-            <div class="today-strip-day"><span class="today-strip-label">T</span><div class="skeleton-shimmer" style="width: 18px; height: 18px; border-radius: 4px;"></div></div>
-            <div class="today-strip-day"><span class="today-strip-label">W</span><div class="skeleton-shimmer" style="width: 18px; height: 18px; border-radius: 4px;"></div></div>
-            <div class="today-strip-day"><span class="today-strip-label">T</span><div class="skeleton-shimmer" style="width: 18px; height: 18px; border-radius: 4px;"></div></div>
-            <div class="today-strip-day"><span class="today-strip-label">F</span><div class="skeleton-shimmer" style="width: 18px; height: 18px; border-radius: 4px;"></div></div>
-            <div class="today-strip-day"><span class="today-strip-label">S</span><div class="skeleton-shimmer" style="width: 18px; height: 18px; border-radius: 4px;"></div></div>
-            <div class="today-strip-day"><span class="today-strip-label">S</span><div class="skeleton-shimmer" style="width: 18px; height: 18px; border-radius: 4px;"></div></div>
+            <div class="today-strip-day"><span class="today-strip-label">M</span>
+              <div class="skeleton-shimmer" style="width: 18px; height: 18px; border-radius: 4px;"></div>
+            </div>
+            <div class="today-strip-day"><span class="today-strip-label">T</span>
+              <div class="skeleton-shimmer" style="width: 18px; height: 18px; border-radius: 4px;"></div>
+            </div>
+            <div class="today-strip-day"><span class="today-strip-label">W</span>
+              <div class="skeleton-shimmer" style="width: 18px; height: 18px; border-radius: 4px;"></div>
+            </div>
+            <div class="today-strip-day"><span class="today-strip-label">T</span>
+              <div class="skeleton-shimmer" style="width: 18px; height: 18px; border-radius: 4px;"></div>
+            </div>
+            <div class="today-strip-day"><span class="today-strip-label">F</span>
+              <div class="skeleton-shimmer" style="width: 18px; height: 18px; border-radius: 4px;"></div>
+            </div>
+            <div class="today-strip-day"><span class="today-strip-label">S</span>
+              <div class="skeleton-shimmer" style="width: 18px; height: 18px; border-radius: 4px;"></div>
+            </div>
+            <div class="today-strip-day"><span class="today-strip-label">S</span>
+              <div class="skeleton-shimmer" style="width: 18px; height: 18px; border-radius: 4px;"></div>
+            </div>
           </div>
         </div>
         <!-- Skeleton Row 2 -->
@@ -89,13 +96,27 @@
             </div>
           </div>
           <div class="today-week-strip" style="pointer-events: none; opacity: 0.7;">
-            <div class="today-strip-day"><span class="today-strip-label">M</span><div class="skeleton-shimmer" style="width: 18px; height: 18px; border-radius: 4px;"></div></div>
-            <div class="today-strip-day"><span class="today-strip-label">T</span><div class="skeleton-shimmer" style="width: 18px; height: 18px; border-radius: 4px;"></div></div>
-            <div class="today-strip-day"><span class="today-strip-label">W</span><div class="skeleton-shimmer" style="width: 18px; height: 18px; border-radius: 4px;"></div></div>
-            <div class="today-strip-day"><span class="today-strip-label">T</span><div class="skeleton-shimmer" style="width: 18px; height: 18px; border-radius: 4px;"></div></div>
-            <div class="today-strip-day"><span class="today-strip-label">F</span><div class="skeleton-shimmer" style="width: 18px; height: 18px; border-radius: 4px;"></div></div>
-            <div class="today-strip-day"><span class="today-strip-label">S</span><div class="skeleton-shimmer" style="width: 18px; height: 18px; border-radius: 4px;"></div></div>
-            <div class="today-strip-day"><span class="today-strip-label">S</span><div class="skeleton-shimmer" style="width: 18px; height: 18px; border-radius: 4px;"></div></div>
+            <div class="today-strip-day"><span class="today-strip-label">M</span>
+              <div class="skeleton-shimmer" style="width: 18px; height: 18px; border-radius: 4px;"></div>
+            </div>
+            <div class="today-strip-day"><span class="today-strip-label">T</span>
+              <div class="skeleton-shimmer" style="width: 18px; height: 18px; border-radius: 4px;"></div>
+            </div>
+            <div class="today-strip-day"><span class="today-strip-label">W</span>
+              <div class="skeleton-shimmer" style="width: 18px; height: 18px; border-radius: 4px;"></div>
+            </div>
+            <div class="today-strip-day"><span class="today-strip-label">T</span>
+              <div class="skeleton-shimmer" style="width: 18px; height: 18px; border-radius: 4px;"></div>
+            </div>
+            <div class="today-strip-day"><span class="today-strip-label">F</span>
+              <div class="skeleton-shimmer" style="width: 18px; height: 18px; border-radius: 4px;"></div>
+            </div>
+            <div class="today-strip-day"><span class="today-strip-label">S</span>
+              <div class="skeleton-shimmer" style="width: 18px; height: 18px; border-radius: 4px;"></div>
+            </div>
+            <div class="today-strip-day"><span class="today-strip-label">S</span>
+              <div class="skeleton-shimmer" style="width: 18px; height: 18px; border-radius: 4px;"></div>
+            </div>
           </div>
         </div>
         <!-- Skeleton Row 3 -->
@@ -108,13 +129,27 @@
             </div>
           </div>
           <div class="today-week-strip" style="pointer-events: none; opacity: 0.7;">
-            <div class="today-strip-day"><span class="today-strip-label">M</span><div class="skeleton-shimmer" style="width: 18px; height: 18px; border-radius: 4px;"></div></div>
-            <div class="today-strip-day"><span class="today-strip-label">T</span><div class="skeleton-shimmer" style="width: 18px; height: 18px; border-radius: 4px;"></div></div>
-            <div class="today-strip-day"><span class="today-strip-label">W</span><div class="skeleton-shimmer" style="width: 18px; height: 18px; border-radius: 4px;"></div></div>
-            <div class="today-strip-day"><span class="today-strip-label">T</span><div class="skeleton-shimmer" style="width: 18px; height: 18px; border-radius: 4px;"></div></div>
-            <div class="today-strip-day"><span class="today-strip-label">F</span><div class="skeleton-shimmer" style="width: 18px; height: 18px; border-radius: 4px;"></div></div>
-            <div class="today-strip-day"><span class="today-strip-label">S</span><div class="skeleton-shimmer" style="width: 18px; height: 18px; border-radius: 4px;"></div></div>
-            <div class="today-strip-day"><span class="today-strip-label">S</span><div class="skeleton-shimmer" style="width: 18px; height: 18px; border-radius: 4px;"></div></div>
+            <div class="today-strip-day"><span class="today-strip-label">M</span>
+              <div class="skeleton-shimmer" style="width: 18px; height: 18px; border-radius: 4px;"></div>
+            </div>
+            <div class="today-strip-day"><span class="today-strip-label">T</span>
+              <div class="skeleton-shimmer" style="width: 18px; height: 18px; border-radius: 4px;"></div>
+            </div>
+            <div class="today-strip-day"><span class="today-strip-label">W</span>
+              <div class="skeleton-shimmer" style="width: 18px; height: 18px; border-radius: 4px;"></div>
+            </div>
+            <div class="today-strip-day"><span class="today-strip-label">T</span>
+              <div class="skeleton-shimmer" style="width: 18px; height: 18px; border-radius: 4px;"></div>
+            </div>
+            <div class="today-strip-day"><span class="today-strip-label">F</span>
+              <div class="skeleton-shimmer" style="width: 18px; height: 18px; border-radius: 4px;"></div>
+            </div>
+            <div class="today-strip-day"><span class="today-strip-label">S</span>
+              <div class="skeleton-shimmer" style="width: 18px; height: 18px; border-radius: 4px;"></div>
+            </div>
+            <div class="today-strip-day"><span class="today-strip-label">S</span>
+              <div class="skeleton-shimmer" style="width: 18px; height: 18px; border-radius: 4px;"></div>
+            </div>
           </div>
         </div>
       </div>
@@ -125,24 +160,128 @@
       <!-- Rendered dynamically via today.js -->
     </aside>
 
-    <!-- Combined Heatmap Card: "Your last 16 weeks", all habits merged with month labels -->
+    <!-- Combined Heatmap Card: "Your last 12 weeks", all habits merged with month labels -->
     <section id="todayHeatmapContainer">
       <div class="today-heatmap-card" style="pointer-events: none;">
         <div class="today-heatmap-header">
-          <div class="skeleton-shimmer" style="width: 130px; height: 18px; border-radius: var(--radius-xs);"></div>
-          <div class="skeleton-shimmer" style="width: 90px; height: 14px; border-radius: 4px;"></div>
+          <div class="skeleton-shimmer" style="width: 125px; height: 16px; border-radius: var(--radius-xs);"></div>
+          <div class="skeleton-shimmer" style="width: 85px; height: 12px; border-radius: 4px;"></div>
         </div>
-        <div class="today-heatmap-scroll" style="margin-top: 0.85rem; opacity: 0.6;">
-          <div class="today-heatmap-matrix" style="display: flex; gap: 4px;">
-            <div class="today-heatmap-week-col" style="display: flex; flex-direction: column; gap: 3px;"><div class="skeleton-shimmer" style="width: 14px; height: 14px; border-radius: 3px;"></div><div class="skeleton-shimmer" style="width: 14px; height: 14px; border-radius: 3px;"></div><div class="skeleton-shimmer" style="width: 14px; height: 14px; border-radius: 3px;"></div><div class="skeleton-shimmer" style="width: 14px; height: 14px; border-radius: 3px;"></div><div class="skeleton-shimmer" style="width: 14px; height: 14px; border-radius: 3px;"></div><div class="skeleton-shimmer" style="width: 14px; height: 14px; border-radius: 3px;"></div><div class="skeleton-shimmer" style="width: 14px; height: 14px; border-radius: 3px;"></div></div>
-            <div class="today-heatmap-week-col" style="display: flex; flex-direction: column; gap: 3px;"><div class="skeleton-shimmer" style="width: 14px; height: 14px; border-radius: 3px;"></div><div class="skeleton-shimmer" style="width: 14px; height: 14px; border-radius: 3px;"></div><div class="skeleton-shimmer" style="width: 14px; height: 14px; border-radius: 3px;"></div><div class="skeleton-shimmer" style="width: 14px; height: 14px; border-radius: 3px;"></div><div class="skeleton-shimmer" style="width: 14px; height: 14px; border-radius: 3px;"></div><div class="skeleton-shimmer" style="width: 14px; height: 14px; border-radius: 3px;"></div><div class="skeleton-shimmer" style="width: 14px; height: 14px; border-radius: 3px;"></div></div>
-            <div class="today-heatmap-week-col" style="display: flex; flex-direction: column; gap: 3px;"><div class="skeleton-shimmer" style="width: 14px; height: 14px; border-radius: 3px;"></div><div class="skeleton-shimmer" style="width: 14px; height: 14px; border-radius: 3px;"></div><div class="skeleton-shimmer" style="width: 14px; height: 14px; border-radius: 3px;"></div><div class="skeleton-shimmer" style="width: 14px; height: 14px; border-radius: 3px;"></div><div class="skeleton-shimmer" style="width: 14px; height: 14px; border-radius: 3px;"></div><div class="skeleton-shimmer" style="width: 14px; height: 14px; border-radius: 3px;"></div><div class="skeleton-shimmer" style="width: 14px; height: 14px; border-radius: 3px;"></div></div>
-            <div class="today-heatmap-week-col" style="display: flex; flex-direction: column; gap: 3px;"><div class="skeleton-shimmer" style="width: 14px; height: 14px; border-radius: 3px;"></div><div class="skeleton-shimmer" style="width: 14px; height: 14px; border-radius: 3px;"></div><div class="skeleton-shimmer" style="width: 14px; height: 14px; border-radius: 3px;"></div><div class="skeleton-shimmer" style="width: 14px; height: 14px; border-radius: 3px;"></div><div class="skeleton-shimmer" style="width: 14px; height: 14px; border-radius: 3px;"></div><div class="skeleton-shimmer" style="width: 14px; height: 14px; border-radius: 3px;"></div><div class="skeleton-shimmer" style="width: 14px; height: 14px; border-radius: 3px;"></div></div>
-            <div class="today-heatmap-week-col" style="display: flex; flex-direction: column; gap: 3px;"><div class="skeleton-shimmer" style="width: 14px; height: 14px; border-radius: 3px;"></div><div class="skeleton-shimmer" style="width: 14px; height: 14px; border-radius: 3px;"></div><div class="skeleton-shimmer" style="width: 14px; height: 14px; border-radius: 3px;"></div><div class="skeleton-shimmer" style="width: 14px; height: 14px; border-radius: 3px;"></div><div class="skeleton-shimmer" style="width: 14px; height: 14px; border-radius: 3px;"></div><div class="skeleton-shimmer" style="width: 14px; height: 14px; border-radius: 3px;"></div><div class="skeleton-shimmer" style="width: 14px; height: 14px; border-radius: 3px;"></div></div>
-            <div class="today-heatmap-week-col" style="display: flex; flex-direction: column; gap: 3px;"><div class="skeleton-shimmer" style="width: 14px; height: 14px; border-radius: 3px;"></div><div class="skeleton-shimmer" style="width: 14px; height: 14px; border-radius: 3px;"></div><div class="skeleton-shimmer" style="width: 14px; height: 14px; border-radius: 3px;"></div><div class="skeleton-shimmer" style="width: 14px; height: 14px; border-radius: 3px;"></div><div class="skeleton-shimmer" style="width: 14px; height: 14px; border-radius: 3px;"></div><div class="skeleton-shimmer" style="width: 14px; height: 14px; border-radius: 3px;"></div><div class="skeleton-shimmer" style="width: 14px; height: 14px; border-radius: 3px;"></div></div>
-            <div class="today-heatmap-week-col" style="display: flex; flex-direction: column; gap: 3px;"><div class="skeleton-shimmer" style="width: 14px; height: 14px; border-radius: 3px;"></div><div class="skeleton-shimmer" style="width: 14px; height: 14px; border-radius: 3px;"></div><div class="skeleton-shimmer" style="width: 14px; height: 14px; border-radius: 3px;"></div><div class="skeleton-shimmer" style="width: 14px; height: 14px; border-radius: 3px;"></div><div class="skeleton-shimmer" style="width: 14px; height: 14px; border-radius: 3px;"></div><div class="skeleton-shimmer" style="width: 14px; height: 14px; border-radius: 3px;"></div><div class="skeleton-shimmer" style="width: 14px; height: 14px; border-radius: 3px;"></div></div>
-            <div class="today-heatmap-week-col" style="display: flex; flex-direction: column; gap: 3px;"><div class="skeleton-shimmer" style="width: 14px; height: 14px; border-radius: 3px;"></div><div class="skeleton-shimmer" style="width: 14px; height: 14px; border-radius: 3px;"></div><div class="skeleton-shimmer" style="width: 14px; height: 14px; border-radius: 3px;"></div><div class="skeleton-shimmer" style="width: 14px; height: 14px; border-radius: 3px;"></div><div class="skeleton-shimmer" style="width: 14px; height: 14px; border-radius: 3px;"></div><div class="skeleton-shimmer" style="width: 14px; height: 14px; border-radius: 3px;"></div><div class="skeleton-shimmer" style="width: 14px; height: 14px; border-radius: 3px;"></div></div>
+        <div class="today-heatmap-grid-scroll" style="margin-top: 0.65rem; opacity: 0.6;">
+          <div class="today-heatmap-matrix" style="display: flex; gap: 2.5px;">
+            <div class="today-heatmap-week-col" style="display: flex; flex-direction: column; gap: 2.5px;">
+              <div class="skeleton-shimmer" style="width: 12px; height: 12px; border-radius: 2px;"></div>
+              <div class="skeleton-shimmer" style="width: 12px; height: 12px; border-radius: 2px;"></div>
+              <div class="skeleton-shimmer" style="width: 12px; height: 12px; border-radius: 2px;"></div>
+              <div class="skeleton-shimmer" style="width: 12px; height: 12px; border-radius: 2px;"></div>
+              <div class="skeleton-shimmer" style="width: 12px; height: 12px; border-radius: 2px;"></div>
+              <div class="skeleton-shimmer" style="width: 12px; height: 12px; border-radius: 2px;"></div>
+              <div class="skeleton-shimmer" style="width: 12px; height: 12px; border-radius: 2px;"></div>
+            </div>
+            <div class="today-heatmap-week-col" style="display: flex; flex-direction: column; gap: 2.5px;">
+              <div class="skeleton-shimmer" style="width: 12px; height: 12px; border-radius: 2px;"></div>
+              <div class="skeleton-shimmer" style="width: 12px; height: 12px; border-radius: 2px;"></div>
+              <div class="skeleton-shimmer" style="width: 12px; height: 12px; border-radius: 2px;"></div>
+              <div class="skeleton-shimmer" style="width: 12px; height: 12px; border-radius: 2px;"></div>
+              <div class="skeleton-shimmer" style="width: 12px; height: 12px; border-radius: 2px;"></div>
+              <div class="skeleton-shimmer" style="width: 12px; height: 12px; border-radius: 2px;"></div>
+              <div class="skeleton-shimmer" style="width: 12px; height: 12px; border-radius: 2px;"></div>
+            </div>
+            <div class="today-heatmap-week-col" style="display: flex; flex-direction: column; gap: 2.5px;">
+              <div class="skeleton-shimmer" style="width: 12px; height: 12px; border-radius: 2px;"></div>
+              <div class="skeleton-shimmer" style="width: 12px; height: 12px; border-radius: 2px;"></div>
+              <div class="skeleton-shimmer" style="width: 12px; height: 12px; border-radius: 2px;"></div>
+              <div class="skeleton-shimmer" style="width: 12px; height: 12px; border-radius: 2px;"></div>
+              <div class="skeleton-shimmer" style="width: 12px; height: 12px; border-radius: 2px;"></div>
+              <div class="skeleton-shimmer" style="width: 12px; height: 12px; border-radius: 2px;"></div>
+              <div class="skeleton-shimmer" style="width: 12px; height: 12px; border-radius: 2px;"></div>
+            </div>
+            <div class="today-heatmap-week-col" style="display: flex; flex-direction: column; gap: 2.5px;">
+              <div class="skeleton-shimmer" style="width: 12px; height: 12px; border-radius: 2px;"></div>
+              <div class="skeleton-shimmer" style="width: 12px; height: 12px; border-radius: 2px;"></div>
+              <div class="skeleton-shimmer" style="width: 12px; height: 12px; border-radius: 2px;"></div>
+              <div class="skeleton-shimmer" style="width: 12px; height: 12px; border-radius: 2px;"></div>
+              <div class="skeleton-shimmer" style="width: 12px; height: 12px; border-radius: 2px;"></div>
+              <div class="skeleton-shimmer" style="width: 12px; height: 12px; border-radius: 2px;"></div>
+              <div class="skeleton-shimmer" style="width: 12px; height: 12px; border-radius: 2px;"></div>
+            </div>
+            <div class="today-heatmap-week-col" style="display: flex; flex-direction: column; gap: 2.5px;">
+              <div class="skeleton-shimmer" style="width: 12px; height: 12px; border-radius: 2px;"></div>
+              <div class="skeleton-shimmer" style="width: 12px; height: 12px; border-radius: 2px;"></div>
+              <div class="skeleton-shimmer" style="width: 12px; height: 12px; border-radius: 2px;"></div>
+              <div class="skeleton-shimmer" style="width: 12px; height: 12px; border-radius: 2px;"></div>
+              <div class="skeleton-shimmer" style="width: 12px; height: 12px; border-radius: 2px;"></div>
+              <div class="skeleton-shimmer" style="width: 12px; height: 12px; border-radius: 2px;"></div>
+              <div class="skeleton-shimmer" style="width: 12px; height: 12px; border-radius: 2px;"></div>
+            </div>
+            <div class="today-heatmap-week-col" style="display: flex; flex-direction: column; gap: 2.5px;">
+              <div class="skeleton-shimmer" style="width: 12px; height: 12px; border-radius: 2px;"></div>
+              <div class="skeleton-shimmer" style="width: 12px; height: 12px; border-radius: 2px;"></div>
+              <div class="skeleton-shimmer" style="width: 12px; height: 12px; border-radius: 2px;"></div>
+              <div class="skeleton-shimmer" style="width: 12px; height: 12px; border-radius: 2px;"></div>
+              <div class="skeleton-shimmer" style="width: 12px; height: 12px; border-radius: 2px;"></div>
+              <div class="skeleton-shimmer" style="width: 12px; height: 12px; border-radius: 2px;"></div>
+              <div class="skeleton-shimmer" style="width: 12px; height: 12px; border-radius: 2px;"></div>
+            </div>
+            <div class="today-heatmap-week-col" style="display: flex; flex-direction: column; gap: 2.5px;">
+              <div class="skeleton-shimmer" style="width: 12px; height: 12px; border-radius: 2px;"></div>
+              <div class="skeleton-shimmer" style="width: 12px; height: 12px; border-radius: 2px;"></div>
+              <div class="skeleton-shimmer" style="width: 12px; height: 12px; border-radius: 2px;"></div>
+              <div class="skeleton-shimmer" style="width: 12px; height: 12px; border-radius: 2px;"></div>
+              <div class="skeleton-shimmer" style="width: 12px; height: 12px; border-radius: 2px;"></div>
+              <div class="skeleton-shimmer" style="width: 12px; height: 12px; border-radius: 2px;"></div>
+              <div class="skeleton-shimmer" style="width: 12px; height: 12px; border-radius: 2px;"></div>
+            </div>
+            <div class="today-heatmap-week-col" style="display: flex; flex-direction: column; gap: 2.5px;">
+              <div class="skeleton-shimmer" style="width: 12px; height: 12px; border-radius: 2px;"></div>
+              <div class="skeleton-shimmer" style="width: 12px; height: 12px; border-radius: 2px;"></div>
+              <div class="skeleton-shimmer" style="width: 12px; height: 12px; border-radius: 2px;"></div>
+              <div class="skeleton-shimmer" style="width: 12px; height: 12px; border-radius: 2px;"></div>
+              <div class="skeleton-shimmer" style="width: 12px; height: 12px; border-radius: 2px;"></div>
+              <div class="skeleton-shimmer" style="width: 12px; height: 12px; border-radius: 2px;"></div>
+              <div class="skeleton-shimmer" style="width: 12px; height: 12px; border-radius: 2px;"></div>
+            </div>
+            <div class="today-heatmap-week-col" style="display: flex; flex-direction: column; gap: 2.5px;">
+              <div class="skeleton-shimmer" style="width: 12px; height: 12px; border-radius: 2px;"></div>
+              <div class="skeleton-shimmer" style="width: 12px; height: 12px; border-radius: 2px;"></div>
+              <div class="skeleton-shimmer" style="width: 12px; height: 12px; border-radius: 2px;"></div>
+              <div class="skeleton-shimmer" style="width: 12px; height: 12px; border-radius: 2px;"></div>
+              <div class="skeleton-shimmer" style="width: 12px; height: 12px; border-radius: 2px;"></div>
+              <div class="skeleton-shimmer" style="width: 12px; height: 12px; border-radius: 2px;"></div>
+              <div class="skeleton-shimmer" style="width: 12px; height: 12px; border-radius: 2px;"></div>
+            </div>
+            <div class="today-heatmap-week-col" style="display: flex; flex-direction: column; gap: 2.5px;">
+              <div class="skeleton-shimmer" style="width: 12px; height: 12px; border-radius: 2px;"></div>
+              <div class="skeleton-shimmer" style="width: 12px; height: 12px; border-radius: 2px;"></div>
+              <div class="skeleton-shimmer" style="width: 12px; height: 12px; border-radius: 2px;"></div>
+              <div class="skeleton-shimmer" style="width: 12px; height: 12px; border-radius: 2px;"></div>
+              <div class="skeleton-shimmer" style="width: 12px; height: 12px; border-radius: 2px;"></div>
+              <div class="skeleton-shimmer" style="width: 12px; height: 12px; border-radius: 2px;"></div>
+              <div class="skeleton-shimmer" style="width: 12px; height: 12px; border-radius: 2px;"></div>
+            </div>
+            <div class="today-heatmap-week-col" style="display: flex; flex-direction: column; gap: 2.5px;">
+              <div class="skeleton-shimmer" style="width: 12px; height: 12px; border-radius: 2px;"></div>
+              <div class="skeleton-shimmer" style="width: 12px; height: 12px; border-radius: 2px;"></div>
+              <div class="skeleton-shimmer" style="width: 12px; height: 12px; border-radius: 2px;"></div>
+              <div class="skeleton-shimmer" style="width: 12px; height: 12px; border-radius: 2px;"></div>
+              <div class="skeleton-shimmer" style="width: 12px; height: 12px; border-radius: 2px;"></div>
+              <div class="skeleton-shimmer" style="width: 12px; height: 12px; border-radius: 2px;"></div>
+              <div class="skeleton-shimmer" style="width: 12px; height: 12px; border-radius: 2px;"></div>
+            </div>
+            <div class="today-heatmap-week-col" style="display: flex; flex-direction: column; gap: 2.5px;">
+              <div class="skeleton-shimmer" style="width: 12px; height: 12px; border-radius: 2px;"></div>
+              <div class="skeleton-shimmer" style="width: 12px; height: 12px; border-radius: 2px;"></div>
+              <div class="skeleton-shimmer" style="width: 12px; height: 12px; border-radius: 2px;"></div>
+              <div class="skeleton-shimmer" style="width: 12px; height: 12px; border-radius: 2px;"></div>
+              <div class="skeleton-shimmer" style="width: 12px; height: 12px; border-radius: 2px;"></div>
+              <div class="skeleton-shimmer" style="width: 12px; height: 12px; border-radius: 2px;"></div>
+              <div class="skeleton-shimmer" style="width: 12px; height: 12px; border-radius: 2px;"></div>
+            </div>
           </div>
+        </div>
+        <div class="today-heatmap-footer" style="margin-top: 0.55rem; padding-top: 0.45rem; border-top: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center;">
+          <div class="skeleton-shimmer" style="width: 170px; height: 12px; border-radius: 3px;"></div>
+          <div class="skeleton-shimmer" style="width: 100px; height: 12px; border-radius: 3px;"></div>
         </div>
       </div>
     </section>

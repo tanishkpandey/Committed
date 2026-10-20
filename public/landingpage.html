@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="theme-color" content="#07090e">
+  <meta name="theme-color" content="#0a0c10">
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
@@ -13,7 +13,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;850&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/landingpage.css?v=1788650000">
+  <link rel="stylesheet" href="css/main.css?v=1788670000">
+  <link rel="stylesheet" href="css/components.css?v=1788670000">
+  <link rel="stylesheet" href="css/landingpage.css?v=1788670000">
 </head>
 
 <body class="lp-body">
@@ -22,60 +24,79 @@
 
   <div class="lp-container">
 
-    <!-- Header Navigation -->
-    <header class="lp-header">
-      <a href="/" class="lp-logo-link">
-        <div class="lp-logo-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="10" />
-            <circle cx="12" cy="12" r="6" />
-            <circle cx="12" cy="12" r="2" />
-          </svg>
-        </div>
-        <span class="lp-logo-title">Committed</span>
-      </a>
+    <!-- Floating Glass Header -->
+    <div class="lp-nav-wrapper">
+      <header class="lp-header">
+        <a href="/" class="lp-logo-link">
+          <div class="lp-logo-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10" />
+              <circle cx="12" cy="12" r="6" />
+              <circle cx="12" cy="12" r="2" />
+            </svg>
+          </div>
+          <span class="lp-logo-title">Committed</span>
+        </a>
 
-      <a href="/" class="btn-open-app btn-open-app-sm">Open app</a>
-    </header>
+        <nav class="lp-nav-links">
+          <a href="#why" class="lp-nav-item">Why It Works</a>
+          <a href="#how" class="lp-nav-item">How It Works</a>
+          <a href="#app" class="lp-nav-item">The App</a>
+          <a href="#stats" class="lp-nav-item">Stats</a>
+          <a href="#rewards" class="lp-nav-item">Rewards</a>
+        </nav>
+
+        <a href="/" class="btn-open-app btn-open-app-sm"><span>Open app</span><span class="btn-trailing-icon"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg></span></a>
+      </header>
+    </div>
 
     <!-- Hero Section -->
     <section class="lp-hero">
       <div class="lp-pill-badge">
-        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
         </svg>
-        <span>Build daily momentum</span>
+        <span>Committed • Daily Habit Tracker</span>
       </div>
 
-      <!-- One plain line about building habits that stick -->
+      <!-- Verified Anchor Headline -->
       <h1 class="lp-hero-headline">Build habits that stick, one day at a time.</h1>
 
       <p class="lp-hero-subhead">
-        Small daily actions turn into long streaks. See your effort grow on a clean visual board.
+        A clean, visual daily habit tracker with zero clutter. Check in with one tap, watch your progress light up in color, and build streaks that last.
       </p>
 
       <div class="lp-hero-cta">
-        <a href="/" class="btn-open-app btn-open-app-lg">Open app</a>
+        <a href="/" class="btn-open-app btn-open-app-lg"><span>Open app</span><span class="btn-trailing-icon"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg></span></a>
+        <div class="lp-hero-guarantee">
+          <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12" />
+          </svg>
+          <span>100% Free • Works on web & mobile • Instant setup</span>
+        </div>
       </div>
 
-      <!-- Heatmap Picture (Drawn with SVG & Sample Data) -->
-      <div class="lp-heatmap-card">
+      <!-- Hero Centerpiece Showcase Card (Contextualized Consistency Wall) -->
+      <div class="lp-heatmap-showcase-card">
         <div class="lp-heatmap-header">
           <div class="lp-heatmap-title-group">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
               <rect width="18" height="18" x="3" y="4" rx="2" ry="2" />
               <line x1="16" x2="16" y1="2" y2="6" />
               <line x1="8" x2="8" y1="2" y2="6" />
               <line x1="3" x2="21" y1="10" y2="10" />
             </svg>
-            <span class="lp-heatmap-title">Daily Activity • Last 20 Weeks</span>
+            <div>
+              <span class="lp-heatmap-title">Daily Deep Work & Fitness • 20-Week Consistency Wall</span>
+              <span class="lp-heatmap-subtitle">Real contribution matrix visualizing rolling daily completions</span>
+            </div>
           </div>
 
           <div class="lp-heatmap-stats-pill">
             <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z" />
             </svg>
-            <span>42-day streak</span>
+            <span>42-day active streak</span>
           </div>
         </div>
 
@@ -83,122 +104,158 @@
           <svg id="lpHeroHeatmapSvg" class="lp-heatmap-svg"></svg>
         </div>
 
-        <div class="lp-heatmap-legend">
-          <span>Less</span>
-          <span class="lp-legend-box" style="background: #151a24;"></span>
-          <span class="lp-legend-box" style="background: #064e3b;"></span>
-          <span class="lp-legend-box" style="background: #047857;"></span>
-          <span class="lp-legend-box" style="background: #059669;"></span>
-          <span class="lp-legend-box" style="background: #10b981;"></span>
-          <span>More</span>
+        <div class="lp-heatmap-footer">
+          <div class="lp-heatmap-legend">
+            <span>Less</span>
+            <span class="lp-legend-box" style="background: #141a27;"></span>
+            <span class="lp-legend-box" style="background: #064e3b;"></span>
+            <span class="lp-legend-box" style="background: #047857;"></span>
+            <span class="lp-legend-box" style="background: #059669;"></span>
+            <span class="lp-legend-box" style="background: #10b981;"></span>
+            <span>More</span>
+          </div>
+          <div class="lp-hardware-meta-stats">
+            <span>Total completions: <strong class="lp-meta-stat-highlight">184</strong></span>
+            <span>Consistency: <strong class="lp-meta-stat-highlight">91.4%</strong></span>
+          </div>
         </div>
       </div>
     </section>
 
-    <!-- The Problem Section (3 short points on why habits fade) -->
-    <section class="lp-section">
+    <!-- The Problem Section (Why do good habits fade?) -->
+    <section id="why" class="lp-section">
       <div class="lp-section-header">
         <div class="lp-section-tag">The problem</div>
         <h2 class="lp-section-title">Why do good habits fade?</h2>
-        <p class="lp-section-subhead">Most habit apps fail for the same three simple reasons.</p>
+        <p class="lp-section-subhead">Most habit tracking fails because conventional tools ignore human psychology.</p>
       </div>
 
       <div class="lp-problem-grid">
-        <!-- Point 1 -->
+        <!-- Point 1: Out of sight -->
         <div class="lp-problem-card">
           <div class="lp-problem-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24" />
               <path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68" />
               <path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61" />
               <line x1="2" x2="22" y1="2" y2="22" />
             </svg>
           </div>
-          <div class="lp-problem-card-title">Out of sight</div>
+          <div class="lp-problem-card-title">Out of sight, out of mind</div>
           <p class="lp-problem-card-desc">
-            When you can't see your daily effort, it is easy to skip today. Then tomorrow. Then you stop.
+            When your daily effort isn't immediately visible, skipping one Tuesday feels harmless. Then Wednesday slips. Committed turns progress into living emerald contribution walls you actually want to protect.
           </p>
         </div>
 
-        <!-- Point 2 -->
+        <!-- Point 2: All or nothing -->
         <div class="lp-problem-card">
           <div class="lp-problem-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="12" cy="12" r="10" />
               <line x1="15" x2="9" y1="9" y2="15" />
               <line x1="9" x2="15" y1="9" y2="15" />
             </svg>
           </div>
-          <div class="lp-problem-card-title">All or nothing</div>
+          <div class="lp-problem-card-title">The all or nothing trap</div>
           <p class="lp-problem-card-desc">
-            Missing one day makes people feel like they failed, so they give up on the whole habit.
+            Missing a single day makes people feel defeated, causing them to abandon the entire routine. Committed focuses on long-term consistency rates and rolling averages, so one rough day never erases your momentum.
           </p>
         </div>
 
-        <!-- Point 3 -->
+        <!-- Point 3: Checklist fatigue -->
         <div class="lp-problem-card">
           <div class="lp-problem-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="12" cy="12" r="10" />
               <path d="M8 12h8" />
             </svg>
           </div>
           <div class="lp-problem-card-title">No sense of reward</div>
           <p class="lp-problem-card-desc">
-            Plain checklists feel like chores. Without visible progress, habits feel empty and slow.
+            Boring checklists feel like unpaid chores. Without positive feedback, willpower dries up fast. Committed pairs tactile 1-tap check-ins with RPG leveling, XP bonuses, and rare badges that make showing up fun.
           </p>
         </div>
       </div>
     </section>
 
-    <!-- How It Works Section (3 steps) -->
-    <section class="lp-section">
+    <!-- How It Works Section (Three steps to steady progress) -->
+    <section id="how" class="lp-section">
       <div class="lp-section-header">
         <div class="lp-section-tag">How it works</div>
         <h2 class="lp-section-title">Three steps to steady progress</h2>
-        <p class="lp-section-subhead">No complicated setups. Just a simple daily rhythm.</p>
+        <p class="lp-section-subhead">No complicated setups or bloated dashboards. Just a satisfying daily ritual.</p>
       </div>
 
       <div class="lp-steps-grid">
         <!-- Step 1 -->
         <div class="lp-step-card">
-          <div class="lp-step-number">STEP 01</div>
+          <div class="lp-step-top">
+            <div class="lp-step-number">STEP 01</div>
+            <span class="lp-step-badge">Quick Setup</span>
+          </div>
           <div class="lp-step-title">Add your habits</div>
           <p class="lp-step-desc">
-            Pick what matters to you — reading, working out, or coding. Set daily or flexible weekly goals.
+            Pick what matters to you — reading, working out, or coding. Set daily or flexible weekly goals that fit your real schedule.
           </p>
+          <div class="lp-step-visual-tags">
+            <span class="lp-tag-pill">💻 Deep Work</span>
+            <span class="lp-tag-pill">🏃 5K Run</span>
+            <span class="lp-tag-pill">📚 Read 20m</span>
+          </div>
         </div>
 
         <!-- Step 2 -->
         <div class="lp-step-card">
-          <div class="lp-step-number">STEP 02</div>
+          <div class="lp-step-top">
+            <div class="lp-step-number">STEP 02</div>
+            <span class="lp-step-badge">5-Sec Ritual</span>
+          </div>
           <div class="lp-step-title">Check in on Today</div>
           <p class="lp-step-desc">
-            Open the app and tap once when you finish a habit. It takes five seconds each day.
+            Open the app and tap once when you finish a habit. A satisfying 5-second ritual each day that keeps you accountable.
           </p>
+          <div class="lp-step-visual-check">
+            <div class="lp-step-check-circle">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <span class="lp-step-check-label">1-Tap Completion • +10 XP</span>
+          </div>
         </div>
 
         <!-- Step 3 -->
         <div class="lp-step-card">
-          <div class="lp-step-number">STEP 03</div>
+          <div class="lp-step-top">
+            <div class="lp-step-number">STEP 03</div>
+            <span class="lp-step-badge">Compound Growth</span>
+          </div>
           <div class="lp-step-title">Watch your streak grow</div>
           <p class="lp-step-desc">
-            Earn XP, build unbroken streaks, level up your profile, and unlock milestones along the way.
+            Earn XP, build unbroken streaks, level up your profile, and unlock milestones as your habits turn into permanent routines.
           </p>
+          <div class="lp-step-visual-streak">
+            <span class="lp-step-streak-pill">🔥 42-day streak</span>
+            <span class="lp-step-level-pill">⚡ Lv 8 Builder</span>
+          </div>
         </div>
       </div>
     </section>
 
-    <!-- Screenshots Section (Today, Habits, Progress) -->
-    <section class="lp-section">
+    <!-- Screenshots Section: Real App Components Showcase -->
+    <section id="app" class="lp-section">
       <div class="lp-section-header">
         <div class="lp-section-tag">Screenshots</div>
         <h2 class="lp-section-title">A focused look at the app</h2>
-        <p class="lp-section-subhead">Designed for quick check-ins and clear visual feedback.</p>
+        <p class="lp-section-subhead">The exact, authentic components that power your daily habit cockpit.</p>
+      </div>
+
+      <!-- Interactive Helper Banner -->
+      <div class="lp-interactive-hint">
+        <span class="lp-hint-pulse"></span>
+        <span>Interactive Live Preview: Tap the unchecked habit circle below to test a live check-in</span>
       </div>
 
       <div class="lp-screens-grid">
-        <!-- Screen 1: Today -->
+        <!-- Screen 1: Today Screen Component (INTERACTIVE LIVE PREVIEW) -->
         <div class="lp-screen-frame">
           <div class="lp-screen-header-bar">
             <div class="lp-screen-dots">
@@ -209,32 +266,103 @@
             <span class="lp-screen-tag">Today Screen</span>
           </div>
 
-          <!-- Grey Placeholder Box -->
+          <!-- Authentic Today Component in Placeholder -->
           <div class="lp-screen-placeholder">
-            <div class="lp-placeholder-mock-content">
-              <div class="lp-placeholder-icon-wrap">
-                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <rect width="18" height="18" x="3" y="4" rx="2" ry="2" />
-                  <line x1="16" x2="16" y1="2" y2="6" />
-                  <line x1="8" x2="8" y1="2" y2="6" />
-                  <line x1="3" x2="21" y1="10" y2="10" />
-                  <path d="m9 16 2 2 4-4" />
-                </svg>
+            <div class="today-habits-card" style="margin: 0; padding: 0.85rem; background: rgba(19, 23, 34, 0.95); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; width: 100%; position: relative;">
+              
+              <div class="today-hero-header" style="margin-bottom: 0.65rem;">
+                <div class="today-date-row" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.2rem;">
+                  <span class="today-date-label" style="font-size: 0.74rem; color: var(--lp-text-muted); font-weight: 600;">Today • Thursday</span>
+                  <span class="today-level-chip" style="font-size: 0.68rem; background: rgba(16, 185, 129, 0.15); color: #34d399; padding: 0.12rem 0.5rem; border-radius: 9999px; font-weight: 750;">
+                    ⚡ Lv 8
+                  </span>
+                </div>
+                <div id="demoProgressHeadline" class="today-progress-headline" style="font-size: 1rem; font-weight: 800; color: #ffffff; transition: color 0.3s ease;">
+                  2 of 3 completed today
+                </div>
               </div>
-              <div class="lp-placeholder-title">Today Screen Preview</div>
-              <div class="lp-placeholder-meta">Daily checklist • 7-day strip • Instant tap</div>
+
+              <!-- Habit Row 1 (Completed) -->
+              <div class="today-habit-row" style="display: flex; align-items: center; justify-content: space-between; padding: 0.45rem 0.6rem; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 9px; margin-bottom: 0.45rem;">
+                <div class="today-row-left" style="display: flex; align-items: center; gap: 0.6rem;">
+                  <div class="today-check-circle" style="width: 26px; height: 26px; border-radius: 50%; background: #10b981; border: none; display: flex; align-items: center; justify-content: center; color: #fff;">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                  </div>
+                  <div>
+                    <div class="today-habit-name" style="font-size: 0.82rem; font-weight: 750; color: #ffffff;">Morning Workout</div>
+                    <span class="today-streak-pill" style="font-size: 0.65rem; color: #fbbf24; font-weight: 750;">🔥 14 days</span>
+                  </div>
+                </div>
+                <div class="today-week-strip" style="display: flex; gap: 2.5px;">
+                  <div class="today-strip-day" style="display: flex; flex-direction: column; align-items: center; gap: 2px;"><span style="font-size: 0.52rem; color: var(--lp-text-muted);">M</span><div style="width: 11px; height: 11px; border-radius: 2px; background: #10b981;"></div></div>
+                  <div class="today-strip-day" style="display: flex; flex-direction: column; align-items: center; gap: 2px;"><span style="font-size: 0.52rem; color: var(--lp-text-muted);">T</span><div style="width: 11px; height: 11px; border-radius: 2px; background: #10b981;"></div></div>
+                  <div class="today-strip-day" style="display: flex; flex-direction: column; align-items: center; gap: 2px;"><span style="font-size: 0.52rem; color: var(--lp-text-muted);">W</span><div style="width: 11px; height: 11px; border-radius: 2px; background: #10b981;"></div></div>
+                  <div class="today-strip-day" style="display: flex; flex-direction: column; align-items: center; gap: 2px;"><span style="font-size: 0.52rem; color: #10b981; font-weight: 800;">T</span><div style="width: 11px; height: 11px; border-radius: 2px; background: #10b981; box-shadow: 0 0 4px #10b981;"></div></div>
+                  <div class="today-strip-day" style="display: flex; flex-direction: column; align-items: center; gap: 2px;"><span style="font-size: 0.52rem; color: var(--lp-text-muted);">F</span><div style="width: 11px; height: 11px; border-radius: 2px; background: rgba(255,255,255,0.08);"></div></div>
+                  <div class="today-strip-day" style="display: flex; flex-direction: column; align-items: center; gap: 2px;"><span style="font-size: 0.52rem; color: var(--lp-text-muted);">S</span><div style="width: 11px; height: 11px; border-radius: 2px; background: rgba(255,255,255,0.08);"></div></div>
+                  <div class="today-strip-day" style="display: flex; flex-direction: column; align-items: center; gap: 2px;"><span style="font-size: 0.52rem; color: var(--lp-text-muted);">S</span><div style="width: 11px; height: 11px; border-radius: 2px; background: rgba(255,255,255,0.08);"></div></div>
+                </div>
+              </div>
+
+              <!-- Habit Row 2 (Completed) -->
+              <div class="today-habit-row" style="display: flex; align-items: center; justify-content: space-between; padding: 0.45rem 0.6rem; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 9px; margin-bottom: 0.45rem;">
+                <div class="today-row-left" style="display: flex; align-items: center; gap: 0.6rem;">
+                  <div class="today-check-circle" style="width: 26px; height: 26px; border-radius: 50%; background: #10b981; border: none; display: flex; align-items: center; justify-content: center; color: #fff;">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                  </div>
+                  <div>
+                    <div class="today-habit-name" style="font-size: 0.82rem; font-weight: 750; color: #ffffff;">Read 20 pages</div>
+                    <span class="today-streak-pill" style="font-size: 0.65rem; color: #fbbf24; font-weight: 750;">🔥 28 days</span>
+                  </div>
+                </div>
+                <div class="today-week-strip" style="display: flex; gap: 2.5px;">
+                  <div class="today-strip-day" style="display: flex; flex-direction: column; align-items: center; gap: 2px;"><span style="font-size: 0.52rem; color: var(--lp-text-muted);">M</span><div style="width: 11px; height: 11px; border-radius: 2px; background: #10b981;"></div></div>
+                  <div class="today-strip-day" style="display: flex; flex-direction: column; align-items: center; gap: 2px;"><span style="font-size: 0.52rem; color: var(--lp-text-muted);">T</span><div style="width: 11px; height: 11px; border-radius: 2px; background: #10b981;"></div></div>
+                  <div class="today-strip-day" style="display: flex; flex-direction: column; align-items: center; gap: 2px;"><span style="font-size: 0.52rem; color: var(--lp-text-muted);">W</span><div style="width: 11px; height: 11px; border-radius: 2px; background: #10b981;"></div></div>
+                  <div class="today-strip-day" style="display: flex; flex-direction: column; align-items: center; gap: 2px;"><span style="font-size: 0.52rem; color: #10b981; font-weight: 800;">T</span><div style="width: 11px; height: 11px; border-radius: 2px; background: #10b981; box-shadow: 0 0 4px #10b981;"></div></div>
+                  <div class="today-strip-day" style="display: flex; flex-direction: column; align-items: center; gap: 2px;"><span style="font-size: 0.52rem; color: var(--lp-text-muted);">F</span><div style="width: 11px; height: 11px; border-radius: 2px; background: rgba(255,255,255,0.08);"></div></div>
+                  <div class="today-strip-day" style="display: flex; flex-direction: column; align-items: center; gap: 2px;"><span style="font-size: 0.52rem; color: var(--lp-text-muted);">S</span><div style="width: 11px; height: 11px; border-radius: 2px; background: rgba(255,255,255,0.08);"></div></div>
+                  <div class="today-strip-day" style="display: flex; flex-direction: column; align-items: center; gap: 2px;"><span style="font-size: 0.52rem; color: var(--lp-text-muted);">S</span><div style="width: 11px; height: 11px; border-radius: 2px; background: rgba(255,255,255,0.08);"></div></div>
+                </div>
+              </div>
+
+              <!-- Habit Row 3 (Interactive Target) -->
+              <div id="demoHabitRow3" class="today-habit-row demo-interactive-row" style="display: flex; align-items: center; justify-content: space-between; padding: 0.45rem 0.6rem; background: rgba(255, 255, 255, 0.03); border: 1px dashed rgba(16, 185, 129, 0.4); border-radius: 9px; cursor: pointer; transition: all 0.25s ease;">
+                <div class="today-row-left" style="display: flex; align-items: center; gap: 0.6rem;">
+                  <button id="demoCheckBtn" class="today-check-circle demo-interactive-btn" style="width: 26px; height: 26px; border-radius: 50%; background: transparent; border: 2px solid #10b981; display: flex; align-items: center; justify-content: center; color: transparent; cursor: pointer; transition: all 0.25s ease;">
+                    <svg id="demoCheckSvg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                  </button>
+                  <div>
+                    <div class="today-habit-name" style="font-size: 0.82rem; font-weight: 750; color: #ffffff;">Deep Work & Coding</div>
+                    <span id="demoStreakPill" class="today-streak-pill" style="font-size: 0.65rem; color: #94a3b8; font-weight: 750;">Tap to complete</span>
+                  </div>
+                </div>
+                <div class="today-week-strip" style="display: flex; gap: 2.5px;">
+                  <div class="today-strip-day" style="display: flex; flex-direction: column; align-items: center; gap: 2px;"><span style="font-size: 0.52rem; color: var(--lp-text-muted);">M</span><div style="width: 11px; height: 11px; border-radius: 2px; background: #10b981;"></div></div>
+                  <div class="today-strip-day" style="display: flex; flex-direction: column; align-items: center; gap: 2px;"><span style="font-size: 0.52rem; color: var(--lp-text-muted);">T</span><div style="width: 11px; height: 11px; border-radius: 2px; background: #10b981;"></div></div>
+                  <div class="today-strip-day" style="display: flex; flex-direction: column; align-items: center; gap: 2px;"><span style="font-size: 0.52rem; color: var(--lp-text-muted);">W</span><div style="width: 11px; height: 11px; border-radius: 2px; background: #10b981;"></div></div>
+                  <div class="today-strip-day" style="display: flex; flex-direction: column; align-items: center; gap: 2px;"><span style="font-size: 0.52rem; color: #10b981; font-weight: 800;">T</span><div id="demoStripDayT" style="width: 11px; height: 11px; border-radius: 2px; background: rgba(255,255,255,0.08); transition: all 0.3s ease;"></div></div>
+                  <div class="today-strip-day" style="display: flex; flex-direction: column; align-items: center; gap: 2px;"><span style="font-size: 0.52rem; color: var(--lp-text-muted);">F</span><div style="width: 11px; height: 11px; border-radius: 2px; background: rgba(255,255,255,0.08);"></div></div>
+                  <div class="today-strip-day" style="display: flex; flex-direction: column; align-items: center; gap: 2px;"><span style="font-size: 0.52rem; color: var(--lp-text-muted);">S</span><div style="width: 11px; height: 11px; border-radius: 2px; background: rgba(255,255,255,0.08);"></div></div>
+                  <div class="today-strip-day" style="display: flex; flex-direction: column; align-items: center; gap: 2px;"><span style="font-size: 0.52rem; color: var(--lp-text-muted);">S</span><div style="width: 11px; height: 11px; border-radius: 2px; background: rgba(255,255,255,0.08);"></div></div>
+                </div>
+              </div>
+
+              <!-- Animated Floating XP Bubble -->
+              <div id="demoXpFloat" class="lp-demo-xp-float">+10 XP</div>
+
             </div>
           </div>
 
           <div class="lp-screen-info">
             <div class="lp-screen-name">Today Checklist</div>
             <p class="lp-screen-summary">
-              Your home base. Complete habits with one tap, view your rolling 7-day week strip, and keep active streaks alive.
+              Your frictionless home base. Complete habits with one tap, view your rolling 7-day week strip, and keep active streaks alive.
             </p>
           </div>
         </div>
 
-        <!-- Screen 2: Habits -->
+        <!-- Screen 2: Habits Screen Component -->
         <div class="lp-screen-frame">
           <div class="lp-screen-header-bar">
             <div class="lp-screen-dots">
@@ -245,19 +373,65 @@
             <span class="lp-screen-tag">Habits Screen</span>
           </div>
 
-          <!-- Grey Placeholder Box -->
+          <!-- Authentic Habit Card in Placeholder -->
           <div class="lp-screen-placeholder">
-            <div class="lp-placeholder-mock-content">
-              <div class="lp-placeholder-icon-wrap">
-                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <rect width="7" height="7" x="3" y="3" rx="1" />
-                  <rect width="7" height="7" x="14" y="3" rx="1" />
-                  <rect width="7" height="7" x="14" y="14" rx="1" />
-                  <rect width="7" height="7" x="3" y="14" rx="1" />
-                </svg>
+            <div class="habit-card" style="margin: 0; padding: 0.8rem; background: rgba(19, 23, 34, 0.95); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; width: 100%;">
+              <div class="habit-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.55rem;">
+                <div class="habit-info-group" style="display: flex; align-items: center; gap: 0.55rem;">
+                  <div class="habit-icon-badge" style="width: 32px; height: 32px; border-radius: 8px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); display: flex; align-items: center; justify-content: center; color: #fff;">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                  </div>
+                  <div>
+                    <div class="habit-title" style="font-size: 0.86rem; font-weight: 800; color: #ffffff;">Deep Work & Code</div>
+                    <span class="frequency-quota-badge met" style="font-size: 0.62rem; color: #34d399; font-weight: 700;">Daily • Met</span>
+                  </div>
+                </div>
+                <span class="habit-streak-pill" style="font-size: 0.68rem; color: #fbbf24; background: rgba(245, 158, 11, 0.12); padding: 0.12rem 0.45rem; border-radius: 4px; font-weight: 750;">
+                  🔥 42d
+                </span>
               </div>
-              <div class="lp-placeholder-title">Habits Screen Preview</div>
-              <div class="lp-placeholder-meta">Heatmap cards • Category filters • Stats</div>
+
+              <!-- 60-Day Visual Grid -->
+              <div class="habit-grid-outer" style="margin-bottom: 0.55rem; background: rgba(0, 0, 0, 0.35); padding: 0.45rem; border-radius: 7px; border: 1px solid rgba(255, 255, 255, 0.05);">
+                <div class="habit-grid" style="display: grid; grid-template-columns: repeat(15, 1fr); gap: 2.5px;">
+                  <div style="aspect-ratio: 1; border-radius: 2px; background: #064e3b;"></div>
+                  <div style="aspect-ratio: 1; border-radius: 2px; background: #047857;"></div>
+                  <div style="aspect-ratio: 1; border-radius: 2px; background: #059669;"></div>
+                  <div style="aspect-ratio: 1; border-radius: 2px; background: #10b981;"></div>
+                  <div style="aspect-ratio: 1; border-radius: 2px; background: #047857;"></div>
+                  <div style="aspect-ratio: 1; border-radius: 2px; background: #10b981;"></div>
+                  <div style="aspect-ratio: 1; border-radius: 2px; background: #059669;"></div>
+                  <div style="aspect-ratio: 1; border-radius: 2px; background: #10b981;"></div>
+                  <div style="aspect-ratio: 1; border-radius: 2px; background: #141a27;"></div>
+                  <div style="aspect-ratio: 1; border-radius: 2px; background: #059669;"></div>
+                  <div style="aspect-ratio: 1; border-radius: 2px; background: #10b981;"></div>
+                  <div style="aspect-ratio: 1; border-radius: 2px; background: #10b981;"></div>
+                  <div style="aspect-ratio: 1; border-radius: 2px; background: #047857;"></div>
+                  <div style="aspect-ratio: 1; border-radius: 2px; background: #059669;"></div>
+                  <div style="aspect-ratio: 1; border-radius: 2px; background: #10b981;"></div>
+                  <div style="aspect-ratio: 1; border-radius: 2px; background: #064e3b;"></div>
+                  <div style="aspect-ratio: 1; border-radius: 2px; background: #047857;"></div>
+                  <div style="aspect-ratio: 1; border-radius: 2px; background: #10b981;"></div>
+                  <div style="aspect-ratio: 1; border-radius: 2px; background: #10b981;"></div>
+                  <div style="aspect-ratio: 1; border-radius: 2px; background: #059669;"></div>
+                  <div style="aspect-ratio: 1; border-radius: 2px; background: #10b981;"></div>
+                  <div style="aspect-ratio: 1; border-radius: 2px; background: #10b981;"></div>
+                  <div style="aspect-ratio: 1; border-radius: 2px; background: #047857;"></div>
+                  <div style="aspect-ratio: 1; border-radius: 2px; background: #059669;"></div>
+                  <div style="aspect-ratio: 1; border-radius: 2px; background: #10b981;"></div>
+                  <div style="aspect-ratio: 1; border-radius: 2px; background: #141a27;"></div>
+                  <div style="aspect-ratio: 1; border-radius: 2px; background: #059669;"></div>
+                  <div style="aspect-ratio: 1; border-radius: 2px; background: #10b981;"></div>
+                  <div style="aspect-ratio: 1; border-radius: 2px; background: #10b981;"></div>
+                  <div style="aspect-ratio: 1; border-radius: 2px; background: #10b981;"></div>
+                </div>
+              </div>
+
+              <div class="habit-footer" style="display: flex; justify-content: space-between; font-size: 0.68rem; color: var(--lp-text-secondary); font-weight: 600;">
+                <span>Total: <strong style="color: #10b981;">184</strong></span>
+                <span>Rate: <strong style="color: #10b981;">91.4%</strong></span>
+                <span>Best: <strong style="color: #fbbf24;">89d</strong></span>
+              </div>
             </div>
           </div>
 
@@ -269,7 +443,7 @@
           </div>
         </div>
 
-        <!-- Screen 3: Progress -->
+        <!-- Screen 3: Progress Screen Component -->
         <div class="lp-screen-frame">
           <div class="lp-screen-header-bar">
             <div class="lp-screen-dots">
@@ -280,17 +454,25 @@
             <span class="lp-screen-tag">Progress Screen</span>
           </div>
 
-          <!-- Grey Placeholder Box -->
+          <!-- Authentic Progress Component in Placeholder -->
           <div class="lp-screen-placeholder">
-            <div class="lp-placeholder-mock-content">
-              <div class="lp-placeholder-icon-wrap">
-                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <circle cx="12" cy="8" r="6" />
-                  <path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11" />
-                </svg>
+            <div class="progress-widget" style="margin: 0; padding: 0.9rem; background: rgba(19, 23, 34, 0.95); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; width: 100%;">
+              <div class="widget-header-row" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.55rem;">
+                <span class="widget-level-badge" style="font-size: 0.66rem; font-weight: 800; background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%); color: #fff; padding: 0.15rem 0.55rem; border-radius: 4px;">
+                  LEVEL 8
+                </span>
+                <span class="widget-rank-label" style="font-size: 0.72rem; font-weight: 700; color: var(--lp-text-secondary);">Master Habit Builder</span>
+                <span class="widget-xp-counts" style="font-size: 0.72rem; font-weight: 750; color: #ffffff;">1,850 / 2,000 XP</span>
               </div>
-              <div class="lp-placeholder-title">Progress Screen Preview</div>
-              <div class="lp-placeholder-meta">XP Levels • Perfect Days • Badges</div>
+
+              <div class="widget-track" style="width: 100%; height: 6px; background: rgba(255, 255, 255, 0.08); border-radius: 9999px; overflow: hidden; margin-bottom: 0.65rem;">
+                <div class="widget-fill" style="width: 82%; height: 100%; background: linear-gradient(90deg, #8b5cf6 0%, #10b981 100%); border-radius: 9999px;"></div>
+              </div>
+
+              <div class="widget-footer-row" style="display: flex; justify-content: space-between; align-items: center; font-size: 0.70rem; font-weight: 650;">
+                <span class="widget-streak-tag" style="color: #fbbf24;">🔥 42-day active streak</span>
+                <span class="widget-action-link" style="color: #10b981;">16 / 24 milestones unlocked →</span>
+              </div>
             </div>
           </div>
 
@@ -304,12 +486,125 @@
       </div>
     </section>
 
-    <!-- Badges Section (The 4 rarity tiers: Common, Rare, Epic, Legendary) -->
+    <!-- User Stats Section (Telemetry) -->
+    <section id="stats" class="lp-section">
+      <div class="lp-section-header">
+        <div class="lp-section-tag">User Stats</div>
+        <h2 class="lp-section-title">Telemetry that keeps you honest and inspired</h2>
+        <p class="lp-section-subhead">Every check-in feeds a live analytics engine that proves your consistency over days, months, and quarters.</p>
+      </div>
+
+      <div class="lp-stats-grid">
+        <!-- Stat 1 -->
+        <div class="lp-stat-card">
+          <div class="lp-stat-tag">Daily Momentum</div>
+          <div class="lp-stat-val highlight-gold">42d</div>
+          <div class="lp-stat-name">Current Streak</div>
+          <p class="lp-stat-caption">Unbroken check-in streak on active habits. Seen on Today and Habits.</p>
+        </div>
+
+        <!-- Stat 2 -->
+        <div class="lp-stat-card">
+          <div class="lp-stat-tag">Personal Best</div>
+          <div class="lp-stat-val highlight-gold">89d</div>
+          <div class="lp-stat-name">Best Streak</div>
+          <p class="lp-stat-caption">Your all-time streak record, permanently celebrated in your analytics.</p>
+        </div>
+
+        <!-- Stat 3 -->
+        <div class="lp-stat-card">
+          <div class="lp-stat-tag">Lifetime Reps</div>
+          <div class="lp-stat-val highlight-green">1,280</div>
+          <div class="lp-stat-name">Total Check-Ins</div>
+          <p class="lp-stat-caption">Aggregate completions across all your habits since you started.</p>
+        </div>
+
+        <!-- Stat 4 -->
+        <div class="lp-stat-card">
+          <div class="lp-stat-tag">Monthly Success</div>
+          <div class="lp-stat-val highlight-green">94.2%</div>
+          <div class="lp-stat-name">Monthly Consistency</div>
+          <p class="lp-stat-caption">Percentage of scheduled habits completed during the current month.</p>
+        </div>
+
+        <!-- Stat 5 -->
+        <div class="lp-stat-card">
+          <div class="lp-stat-tag">Insights Radar</div>
+          <div class="lp-stat-val highlight-cyan">96 • 91 • 88%</div>
+          <div class="lp-stat-name">Rolling Averages</div>
+          <p class="lp-stat-caption">1-month, 2-month, and 3-month rolling averages on your Insights dashboard.</p>
+        </div>
+
+        <!-- Stat 6 -->
+        <div class="lp-stat-card">
+          <div class="lp-stat-tag">100% Execution</div>
+          <div class="lp-stat-val highlight-green">48d</div>
+          <div class="lp-stat-name">Perfect Days</div>
+          <p class="lp-stat-caption">Days where every single scheduled habit was completed with zero skips.</p>
+        </div>
+
+        <!-- Stat 7 -->
+        <div class="lp-stat-card">
+          <div class="lp-stat-tag">Player Profile</div>
+          <div class="lp-stat-val highlight-cyan">Lv 8</div>
+          <div class="lp-stat-name">Player Level & XP</div>
+          <p class="lp-stat-caption">Master Habit Builder (1,850 / 2,000 XP). Earn XP on every check-in.</p>
+        </div>
+
+        <!-- Stat 8 -->
+        <div class="lp-stat-card">
+          <div class="lp-stat-tag">Rarity Milestones</div>
+          <div class="lp-stat-val highlight-gold">16 / 24</div>
+          <div class="lp-stat-name">Milestones Unlocked</div>
+          <p class="lp-stat-caption">Badges unlocked across Common, Rare, Epic, and Legendary tiers.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Outcomes Section (The Result of Using Committed) -->
     <section class="lp-section">
+      <div class="lp-section-header">
+        <div class="lp-section-tag">The Outcome</div>
+        <h2 class="lp-section-title">The outcome of using Committed</h2>
+        <p class="lp-section-subhead">What changes when showing up becomes visible, rewarding, and second nature.</p>
+      </div>
+
+      <div class="lp-outcomes-grid">
+        <!-- Outcome 1 -->
+        <div class="lp-outcome-card">
+          <div class="lp-outcome-num">01 • NO SILENT FORGETTING</div>
+          <div class="lp-outcome-title">Zero Routine Drift</div>
+          <p class="lp-outcome-desc">
+            You never fail all at once. You skip one day, forget for two, and wake up weeks later realizing you stopped. Committed makes consistency visually undeniable, catching habit drift the moment it begins.
+          </p>
+        </div>
+
+        <!-- Outcome 2 -->
+        <div class="lp-outcome-card">
+          <div class="lp-outcome-num">02 • VISUAL MOTIVATION</div>
+          <div class="lp-outcome-title">Unbreakable Momentum</div>
+          <p class="lp-outcome-desc">
+            Watching your 20-week contribution matrix fill with rich emerald creates genuine pride. On exhausted days, looking at an unbroken 42-day wall is the exact psychological catalyst that gets you across the line.
+          </p>
+        </div>
+
+        <!-- Outcome 3 -->
+        <div class="lp-outcome-card">
+          <div class="lp-outcome-num">03 • REAL IDENTITY CHANGE</div>
+          <div class="lp-outcome-title">Proof You Showed Up</div>
+          <p class="lp-outcome-desc">
+            Confidence isn't born from affirmations; it's forged by verifiable evidence. Seeing over 1,000 completed check-ins fundamentally changes how you see yourself: you are someone who shows up.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Badges Section (The 4 rarity tiers: Common, Rare, Epic, Legendary) -->
+    <section id="rewards" class="lp-section">
       <div class="lp-section-header">
         <div class="lp-section-tag">Badges & Tiers</div>
         <h2 class="lp-section-title">Rewards for staying consistent</h2>
-        <p class="lp-section-subhead">Four milestone tiers you unlock as your habits grow.</p>
+        <p class="lp-section-subhead">24 tiered milestones across four rarity tiers that celebrate your long-term dedication.</p>
       </div>
 
       <div class="lp-badges-grid">
@@ -318,11 +613,20 @@
           <div class="lp-badge-tier-pill">Common</div>
           <div class="lp-badge-tier-title">Starting Out</div>
           <p class="lp-badge-tier-desc">Great first milestones when building a fresh routine.</p>
-          <ul class="lp-badge-examples-list">
-            <li class="lp-badge-example-item"><span class="lp-badge-example-dot"></span> 7-Day Sprint</li>
-            <li class="lp-badge-example-item"><span class="lp-badge-example-dot"></span> First Perfect Day</li>
-            <li class="lp-badge-example-item"><span class="lp-badge-example-dot"></span> 100 Check-ins</li>
-          </ul>
+          <div class="lp-badge-chips-list">
+            <div class="lp-badge-chip">
+              <span class="lp-chip-icon">⚡</span>
+              <span class="lp-chip-text">7-Day Sprint</span>
+            </div>
+            <div class="lp-badge-chip">
+              <span class="lp-chip-icon">🎯</span>
+              <span class="lp-chip-text">First Perfect Day</span>
+            </div>
+            <div class="lp-badge-chip">
+              <span class="lp-chip-icon">📦</span>
+              <span class="lp-chip-text">100 Check-ins</span>
+            </div>
+          </div>
         </div>
 
         <!-- Rare -->
@@ -330,11 +634,20 @@
           <div class="lp-badge-tier-pill">Rare</div>
           <div class="lp-badge-tier-title">Consistent</div>
           <p class="lp-badge-tier-desc">Habits that have locked in and become second nature.</p>
-          <ul class="lp-badge-examples-list">
-            <li class="lp-badge-example-item"><span class="lp-badge-example-dot"></span> 30-Day Streak</li>
-            <li class="lp-badge-example-item"><span class="lp-badge-example-dot"></span> 10 Perfect Days</li>
-            <li class="lp-badge-example-item"><span class="lp-badge-example-dot"></span> 80% Monthly Master</li>
-          </ul>
+          <div class="lp-badge-chips-list">
+            <div class="lp-badge-chip">
+              <span class="lp-chip-icon">🔥</span>
+              <span class="lp-chip-text">30-Day Streak</span>
+            </div>
+            <div class="lp-badge-chip">
+              <span class="lp-chip-icon">⭐</span>
+              <span class="lp-chip-text">10 Perfect Days</span>
+            </div>
+            <div class="lp-badge-chip">
+              <span class="lp-chip-icon">📊</span>
+              <span class="lp-chip-text">80% Monthly Master</span>
+            </div>
+          </div>
         </div>
 
         <!-- Epic -->
@@ -342,11 +655,20 @@
           <div class="lp-badge-tier-pill">Epic</div>
           <div class="lp-badge-tier-title">Dedicated</div>
           <p class="lp-badge-tier-desc">Months of unbroken effort that set you apart.</p>
-          <ul class="lp-badge-examples-list">
-            <li class="lp-badge-example-item"><span class="lp-badge-example-dot"></span> 100-Day Streak</li>
-            <li class="lp-badge-example-item"><span class="lp-badge-example-dot"></span> 50 Perfect Days</li>
-            <li class="lp-badge-example-item"><span class="lp-badge-example-dot"></span> 1,000 Check-ins</li>
-          </ul>
+          <div class="lp-badge-chips-list">
+            <div class="lp-badge-chip">
+              <span class="lp-chip-icon">🛡️</span>
+              <span class="lp-chip-text">100-Day Streak</span>
+            </div>
+            <div class="lp-badge-chip">
+              <span class="lp-chip-icon">💎</span>
+              <span class="lp-chip-text">50 Perfect Days</span>
+            </div>
+            <div class="lp-badge-chip">
+              <span class="lp-chip-icon">🚀</span>
+              <span class="lp-chip-text">1,000 Check-ins</span>
+            </div>
+          </div>
         </div>
 
         <!-- Legendary -->
@@ -354,11 +676,20 @@
           <div class="lp-badge-tier-pill">Legendary</div>
           <div class="lp-badge-tier-title">Mastery</div>
           <p class="lp-badge-tier-desc">Year-long dedication reached by the top 1%.</p>
-          <ul class="lp-badge-examples-list">
-            <li class="lp-badge-example-item"><span class="lp-badge-example-dot"></span> 365-Day Year</li>
-            <li class="lp-badge-example-item"><span class="lp-badge-example-dot"></span> 500 Perfect Days</li>
-            <li class="lp-badge-example-item"><span class="lp-badge-example-dot"></span> Hall of Fame Club</li>
-          </ul>
+          <div class="lp-badge-chips-list">
+            <div class="lp-badge-chip">
+              <span class="lp-chip-icon">👑</span>
+              <span class="lp-chip-text">365-Day Year</span>
+            </div>
+            <div class="lp-badge-chip">
+              <span class="lp-chip-icon">🏆</span>
+              <span class="lp-chip-text">500 Perfect Days</span>
+            </div>
+            <div class="lp-badge-chip">
+              <span class="lp-chip-icon">🏛️</span>
+              <span class="lp-chip-text">Hall of Fame Club</span>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -369,7 +700,7 @@
       <p class="lp-cta-subhead">
         Committed is completely free to use. Open the app and begin tracking your habits in seconds.
       </p>
-      <a href="/" class="btn-open-app btn-open-app-lg">Open app</a>
+      <a href="/" class="btn-open-app btn-open-app-lg"><span>Open app</span><span class="btn-trailing-icon"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg></span></a>
     </section>
 
     <!-- Footer -->
@@ -378,13 +709,13 @@
         <strong>Committed</strong> • Built for daily habit builders. 100% free.
       </div>
       <div class="lp-footer-links">
-        <a href="/" class="btn-open-app btn-open-app-sm">Open app</a>
+        <a href="/" class="btn-open-app btn-open-app-sm"><span>Open app</span><span class="btn-trailing-icon"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg></span></a>
       </div>
     </footer>
 
   </div>
 
-  <script src="js/landingpage.js?v=1788650000"></script>
+  <script src="js/landingpage.js?v=1788670000"></script>
 </body>
 
 </html>

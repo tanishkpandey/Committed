@@ -122,25 +122,25 @@ function getCurrentWeekDays() {
 }
 
 /**
- * Generates matrix of 16 weeks ending on current week (112 days total)
+ * Generates matrix of 12 weeks ending on current week (84 days total)
  */
-function get16WeeksData() {
+function get12WeeksData() {
   const now = new Date();
   const dayIndex = (now.getDay() + 6) % 7;
   const currentMonday = new Date(now);
   currentMonday.setDate(now.getDate() - dayIndex);
   currentMonday.setHours(0, 0, 0, 0);
 
-  // Start Monday is 15 weeks prior to current week's Monday
+  // Start Monday is 11 weeks prior to current week's Monday (12 weeks total)
   const startMonday = new Date(currentMonday);
-  startMonday.setDate(currentMonday.getDate() - (15 * 7));
+  startMonday.setDate(currentMonday.getDate() - (11 * 7));
 
   const todayStr = window.Utils && Utils.getTodayStr ? Utils.getTodayStr() : new Date().toISOString().slice(0, 10);
   const weeks = [];
   const monthLabels = [];
   let lastMonth = -1;
 
-  for (let w = 0; w < 16; w++) {
+  for (let w = 0; w < 12; w++) {
     const weekStart = new Date(startMonday);
     weekStart.setDate(startMonday.getDate() + (w * 7));
 
@@ -177,6 +177,10 @@ function get16WeeksData() {
   }
 
   return { weeks, monthLabels };
+}
+
+function get16WeeksData() {
+  return get12WeeksData();
 }
 
 /**
@@ -373,25 +377,27 @@ function renderNudgeStrip(habits, todayStr) {
 }
 
 /**
- * Combined Heatmap Card: "Your last 16 weeks"
- * Merges all habits, with month labels and live intensity updates.
+ * Combined Heatmap Card: "Your last 12 weeks"
+ * Merges all habits, with month labels, live intensity updates, and link to Progress.
  */
 function renderCombinedHeatmap(habits) {
   const container = document.getElementById('todayHeatmapContainer');
   if (!container) return;
 
-  const { weeks, monthLabels } = get16WeeksData();
+  const { weeks, monthLabels } = get12WeeksData();
   const totalHabits = habits.length;
+  let totalCompletions = 0;
 
   // Render month labels row
   const monthsHtml = monthLabels.map(m => `
     <div class="today-heatmap-month-col">${m.name || ''}</div>
   `).join('');
 
-  // Render 16 columns $\times$ 7 rows matrix
+  // Render 12 columns x 7 rows matrix
   const matrixHtml = weeks.map(weekDays => {
     const tilesHtml = weekDays.map(day => {
       const doneCount = habits.filter(h => h.logs && h.logs.includes(day.date)).length;
+      totalCompletions += doneCount;
       const ratio = totalHabits > 0 ? (doneCount / totalHabits) : 0;
 
       let bgStyle = '';
@@ -436,7 +442,7 @@ function renderCombinedHeatmap(habits) {
   container.innerHTML = `
     <div class="today-heatmap-card">
       <div class="today-heatmap-header">
-        <h3 class="today-heatmap-title">Your last 16 weeks</h3>
+        <h3 class="today-heatmap-title">Your last 12 weeks</h3>
         <div class="today-heatmap-legend" aria-hidden="true">
           <span>Less</span>
           <span class="today-legend-tile" style="background: var(--tile-empty, rgba(255,255,255,0.05)); border: 1px solid var(--border-subtle);"></span>
@@ -458,8 +464,21 @@ function renderCombinedHeatmap(habits) {
           </div>
         </div>
       </div>
+
+      <div class="today-heatmap-footer">
+        <div class="today-heatmap-summary" id="todayHeatmapSummary">
+          ${totalCompletions.toLocaleString()} check-ins across past 12 weeks
+        </div>
+        <a href="/progress.html#activity" class="habit-details-link" title="Explore 26 weeks or full year in Progress">
+          <span>View all activity</span><i data-lucide="arrow-right" style="width: 12px; height: 12px;"></i>
+        </a>
+      </div>
     </div>
   `;
+
+  if (window.lucide) {
+    lucide.createIcons();
+  }
 }
 
 /**
@@ -727,6 +746,24 @@ function updateLiveHeatmapTile(dateStr) {
     tile.style.backgroundColor = '#10b981';
     tile.style.boxShadow = '0 0 6px rgba(16, 185, 129, 0.45)';
   }
+
+  updateLiveHeatmapSummary();
+}
+
+/**
+ * Live updates the total check-in count in the 12-week heatmap footer
+ */
+function updateLiveHeatmapSummary() {
+  const summaryEl = document.getElementById('todayHeatmapSummary');
+  if (!summaryEl) return;
+  const { weeks } = get12WeeksData();
+  let totalCompletions = 0;
+  weeks.forEach(weekDays => {
+    weekDays.forEach(day => {
+      totalCompletions += habitsData.filter(h => h.logs && h.logs.includes(day.date)).length;
+    });
+  });
+  summaryEl.textContent = `${totalCompletions.toLocaleString()} check-ins across past 12 weeks`;
 }
 
 /**

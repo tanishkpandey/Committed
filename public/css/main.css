@@ -298,10 +298,10 @@ body::before {
   #newHabitBtn,
   .btn-hide-text-mobile {
     padding: 0 !important;
-    width: 44px !important;
-    height: 44px !important;
-    min-width: 44px !important;
-    min-height: 44px !important;
+    width: 30px !important;
+    height: 30px !important;
+    min-width: 25px !important;
+    min-height: 25px !important;
     border-radius: var(--radius-full) !important;
   }
 

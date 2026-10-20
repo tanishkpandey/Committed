@@ -1,12 +1,24 @@
 // Committed Multi-Year Progression & Mastery Controller
 
 let progressionData = null;
+let progressHabitsData = [];
+let currentActivityWeeks = 26;
 let currentModalCategory = 'all';
 
 document.addEventListener('DOMContentLoaded', () => {
   initTheme();
   loadProgressData();
+  checkActivityHash();
 });
+
+function checkActivityHash() {
+  if (window.location.hash === '#activity' || window.location.hash === '#progressActivitySection') {
+    setTimeout(() => {
+      const el = document.getElementById('progressActivitySection');
+      if (el) el.scrollIntoView({ behavior: 'smooth' });
+    }, 350);
+  }
+}
 
 function initTheme() {
   const saved = localStorage.getItem('committed_theme') || localStorage.getItem('habitkit_theme') || 'dark';
@@ -15,10 +27,14 @@ function initTheme() {
 
 async function loadProgressData() {
   try {
-    const res = await API.getProgression();
+    const [res, habitsRes] = await Promise.all([
+      API.getProgression(),
+      API.getHabits().catch(() => ({ success: false, habits: [] }))
+    ]);
     if (!res.success) return;
 
     progressionData = res;
+    progressHabitsData = (habitsRes && habitsRes.habits) || [];
     const achievements = res.achievements || [];
     const unlockedCount = achievements.filter(a => a.unlocked).length;
 
@@ -26,6 +42,7 @@ async function loadProgressData() {
     renderLifetimeStats(res.lifetimeStats, unlockedCount);
     renderNextBadge(achievements);
     renderYourBadges(achievements);
+    renderProgressActivity(progressHabitsData, currentActivityWeeks);
 
     const seeAllBtn = document.getElementById('progressSeeAllBtn');
     if (seeAllBtn) {
@@ -115,7 +132,7 @@ function renderLifetimeStats(stats, unlockedCount = 0) {
       pdCard.innerHTML = `
         <div class="progress-stat-label">Perfect days</div>
         <div class="progress-stat-val muted">Not yet</div>
-        <div class="progress-stat-sub-text">Finish all habits in one day</div>
+        <div class="progress-stat-sub-text">Finish every habit in one day</div>
       `;
     } else {
       pdCard.innerHTML = `
@@ -844,3 +861,140 @@ function showLockedBadgeModal(badge) {
 
   document.body.appendChild(overlay);
 }
+
+/**
+ * 6. Progress Activity Heatmap Exploration (26 Weeks or Full Year)
+ */
+function setActivityRange(numWeeks, btn) {
+  currentActivityWeeks = numWeeks;
+  document.querySelectorAll('.activity-toggle-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  renderProgressActivity(progressHabitsData, numWeeks);
+}
+
+function getProgressWeeksData(numWeeks) {
+  const now = new Date();
+  const dayIndex = (now.getDay() + 6) % 7;
+  const currentMonday = new Date(now);
+  currentMonday.setDate(now.getDate() - dayIndex);
+  currentMonday.setHours(0, 0, 0, 0);
+
+  // Start Monday is (numWeeks - 1) weeks prior to current week's Monday
+  const startMonday = new Date(currentMonday);
+  startMonday.setDate(currentMonday.getDate() - ((numWeeks - 1) * 7));
+
+  const todayStr = window.Utils && Utils.getTodayStr ? Utils.getTodayStr() : new Date().toISOString().slice(0, 10);
+  const weeks = [];
+  const monthLabels = [];
+  let lastMonth = -1;
+
+  for (let w = 0; w < numWeeks; w++) {
+    const weekStart = new Date(startMonday);
+    weekStart.setDate(startMonday.getDate() + (w * 7));
+
+    const m = weekStart.getMonth();
+    if (m !== lastMonth) {
+      monthLabels.push({
+        weekIndex: w,
+        name: weekStart.toLocaleDateString('en-US', { month: 'short' })
+      });
+      lastMonth = m;
+    } else {
+      monthLabels.push({
+        weekIndex: w,
+        name: ''
+      });
+    }
+
+    const days = [];
+    for (let d = 0; d < 7; d++) {
+      const dayDate = new Date(weekStart);
+      dayDate.setDate(weekStart.getDate() + d);
+      const dateStr = window.Utils && Utils.formatYMD ? Utils.formatYMD(dayDate) : dayDate.toISOString().slice(0, 10);
+      const isToday = (dateStr === todayStr);
+      const isFuture = (dateStr > todayStr);
+
+      days.push({
+        date: dateStr,
+        isToday,
+        isFuture,
+        dayOfWeek: d
+      });
+    }
+    weeks.push(days);
+  }
+
+  return { weeks, monthLabels };
+}
+
+function renderProgressActivity(habits, numWeeks = 26) {
+  const container = document.getElementById('progressHeatmapGrid');
+  if (!container) return;
+
+  const { weeks, monthLabels } = getProgressWeeksData(numWeeks);
+  const totalHabits = (habits && habits.length) || 0;
+  let totalCompletions = 0;
+
+  // Month labels
+  const monthsHtml = monthLabels.map(m => `
+    <div class="today-heatmap-month-col" style="width: 12px; font-size: 0.58rem; color: var(--text-muted);">${m.name || ''}</div>
+  `).join('');
+
+  // Matrix (consistent square cells & intensity with Today)
+  const matrixHtml = weeks.map(weekDays => {
+    const tilesHtml = weekDays.map(day => {
+      const doneCount = habits.filter(h => h.logs && h.logs.includes(day.date)).length;
+      totalCompletions += doneCount;
+      const ratio = totalHabits > 0 ? (doneCount / totalHabits) : 0;
+
+      let bgStyle = '';
+      if (doneCount > 0) {
+        if (ratio <= 0.25) {
+          bgStyle = 'background-color: rgba(16, 185, 129, 0.35);';
+        } else if (ratio <= 0.50) {
+          bgStyle = 'background-color: rgba(16, 185, 129, 0.60);';
+        } else if (ratio <= 0.85) {
+          bgStyle = 'background-color: rgba(16, 185, 129, 0.82);';
+        } else {
+          bgStyle = 'background-color: #10b981; box-shadow: 0 0 6px rgba(16, 185, 129, 0.45);';
+        }
+      }
+
+      const todayClass = day.isToday ? 'is-today' : '';
+      const tooltipText = `${day.date}: ${doneCount} of ${totalHabits} habit${totalHabits === 1 ? '' : 's'} completed`;
+
+      return `
+        <div 
+          class="today-heatmap-tile ${todayClass}"
+          style="${bgStyle}"
+          data-date="${day.date}"
+          data-done="${doneCount}"
+          title="${tooltipText}"
+          aria-label="${tooltipText}"
+        ></div>
+      `;
+    }).join('');
+
+    return `
+      <div class="today-heatmap-week-col" style="gap: 2.5px;">
+        ${tilesHtml}
+      </div>
+    `;
+  }).join('');
+
+  container.innerHTML = `
+    <div class="today-heatmap-months-row" style="gap: 2.5px; height: 13px; margin-bottom: 2px;">
+      ${monthsHtml}
+    </div>
+    <div class="today-heatmap-matrix" style="gap: 2.5px;">
+      ${matrixHtml}
+    </div>
+  `;
+
+  // Update summary text
+  const summaryEl = document.getElementById('activitySummaryText');
+  if (summaryEl) {
+    summaryEl.textContent = `${totalCompletions.toLocaleString()} check-ins across past ${numWeeks === 52 ? 'year' : '26 weeks'}`;
+  }
+}
+

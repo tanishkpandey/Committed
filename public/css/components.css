@@ -5377,6 +5377,7 @@
 .mobile-toast.toast-success {
   border-color: rgba(16, 185, 129, 0.4);
 }
+
 .mobile-toast.toast-success i,
 .mobile-toast.toast-success svg {
   color: #10b981;
@@ -5385,6 +5386,7 @@
 .mobile-toast.toast-danger {
   border-color: rgba(244, 63, 94, 0.4);
 }
+
 .mobile-toast.toast-danger i,
 .mobile-toast.toast-danger svg {
   color: #f43f5e;
@@ -5421,7 +5423,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 0.45rem;
+  margin-bottom: 0.2rem;
 }
 
 .today-date-label {
@@ -5548,9 +5550,17 @@
 }
 
 @keyframes circlePop {
-  0% { transform: scale(0.85); }
-  60% { transform: scale(1.15); }
-  100% { transform: scale(1); }
+  0% {
+    transform: scale(0.85);
+  }
+
+  60% {
+    transform: scale(1.15);
+  }
+
+  100% {
+    transform: scale(1);
+  }
 }
 
 .today-habit-info {
@@ -5701,13 +5711,13 @@
   line-height: 1.35;
 }
 
-/* Combined Heatmap Card: Your last 16 weeks */
+/* Combined Heatmap Card: Your last 12 weeks */
 .today-heatmap-card {
   background: var(--bg-card);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-lg, 22px);
-  padding: 1.15rem 1rem 1rem;
-  margin-bottom: 1.5rem;
+  padding: 0.75rem 0.85rem 0.65rem;
+  margin-bottom: 1.15rem;
   box-shadow: var(--shadow-card), var(--inner-highlight);
   position: relative;
 }
@@ -5716,11 +5726,11 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 0.85rem;
+  margin-bottom: 0.55rem;
 }
 
 .today-heatmap-title {
-  font-size: 0.95rem;
+  font-size: 0.92rem;
   font-weight: 750;
   color: var(--text-primary);
   letter-spacing: -0.01em;
@@ -5745,7 +5755,7 @@
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
-  padding-bottom: 0.25rem;
+  padding-bottom: 0.15rem;
 }
 
 .today-heatmap-grid-scroll::-webkit-scrollbar {
@@ -5755,17 +5765,17 @@
 .today-heatmap-grid {
   display: inline-flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 2.5px;
   min-width: fit-content;
 }
 
 .today-heatmap-months-row {
   display: flex;
-  gap: 3px;
-  font-size: 0.62rem;
+  gap: 2.5px;
+  font-size: 0.60rem;
   font-weight: 650;
   color: var(--text-muted);
-  height: 14px;
+  height: 13px;
   margin-bottom: 2px;
 }
 
@@ -5778,19 +5788,19 @@
 
 .today-heatmap-matrix {
   display: flex;
-  gap: 3px;
+  gap: 2.5px;
 }
 
 .today-heatmap-week-col {
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 2.5px;
 }
 
 .today-heatmap-tile {
   width: 12px;
   height: 12px;
-  border-radius: 2.5px;
+  border-radius: 2px;
   background: var(--tile-empty, rgba(255, 255, 255, 0.05));
   border: 1px solid var(--border-subtle);
   cursor: pointer;
@@ -5811,6 +5821,95 @@
 .today-heatmap-tile.is-today {
   outline: 1.5px solid var(--text-primary);
   outline-offset: 1px;
+}
+
+.today-heatmap-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-top: 0.55rem;
+  padding-top: 0.45rem;
+  border-top: 1px solid var(--border-subtle);
+  flex-wrap: wrap;
+}
+
+.today-heatmap-summary {
+  font-size: 0.74rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.today-heatmap-view-all {
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: #10b981;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  transition: color 0.15s ease, transform 0.15s ease;
+}
+
+.today-heatmap-view-all:hover {
+  color: #34d399;
+  transform: translateX(2px);
+}
+
+/* Progress Activity Section */
+.progress-activity-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg, 22px);
+  padding: 0.95rem 1rem 0.85rem;
+  box-shadow: var(--shadow-card), var(--inner-highlight);
+  position: relative;
+}
+
+.progress-activity-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.55rem;
+}
+
+.progress-activity-subtitle {
+  font-size: 0.74rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.activity-range-toggle {
+  display: inline-flex;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-full);
+  padding: 2px;
+  gap: 2px;
+}
+
+.activity-toggle-btn {
+  background: transparent;
+  border: none;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  padding: 0.22rem 0.65rem;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.activity-toggle-btn:hover {
+  color: var(--text-primary);
+}
+
+.activity-toggle-btn.active {
+  background: #10b981;
+  color: #ffffff;
+  box-shadow: 0 1px 4px rgba(16, 185, 129, 0.35);
 }
 
 /* Today Empty State Card */
@@ -5857,23 +5956,29 @@
   .today-progress-headline {
     font-size: 1.72rem;
   }
+
   .today-habits-card {
     padding: 0.35rem 0.65rem;
   }
+
   .today-habit-row {
     gap: 0.45rem;
   }
+
   .today-strip-square {
     width: 15.5px;
     height: 15.5px;
   }
+
   .today-week-strip {
     gap: 2.5px;
   }
+
   .today-heatmap-tile,
   .today-heatmap-month-col {
     width: 11px;
   }
+
   .today-heatmap-tile {
     height: 11px;
   }
@@ -5952,10 +6057,27 @@ body.online-locked .bottom-nav {
 }
 
 @keyframes onlineGuardShake {
-  10%, 90% { transform: translate3d(-2px, 0, 0); }
-  20%, 80% { transform: translate3d(4px, 0, 0); }
-  30%, 50%, 70% { transform: translate3d(-5px, 0, 0); }
-  40%, 60% { transform: translate3d(5px, 0, 0); }
+
+  10%,
+  90% {
+    transform: translate3d(-2px, 0, 0);
+  }
+
+  20%,
+  80% {
+    transform: translate3d(4px, 0, 0);
+  }
+
+  30%,
+  50%,
+  70% {
+    transform: translate3d(-5px, 0, 0);
+  }
+
+  40%,
+  60% {
+    transform: translate3d(5px, 0, 0);
+  }
 }
 
 .online-guard-radar {
@@ -6000,6 +6122,7 @@ body.online-locked .bottom-nav {
     transform: scale(0.7);
     opacity: 0.9;
   }
+
   100% {
     transform: scale(1.65);
     opacity: 0;
@@ -6032,8 +6155,17 @@ body.online-locked .bottom-nav {
 }
 
 @keyframes onlineDotBlink {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.4; transform: scale(0.85); }
+
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.4;
+    transform: scale(0.85);
+  }
 }
 
 .online-guard-title {
@@ -6125,5 +6257,7 @@ body.online-locked .bottom-nav {
 }
 
 @keyframes onlineSpinner {
-  100% { transform: rotate(360deg); }
-}
+  100% {
+    transform: rotate(360deg);
+  }
+}
