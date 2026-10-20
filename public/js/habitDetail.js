@@ -7,6 +7,8 @@ let detailYear = new Date().getFullYear();
 let isAllMonthsView = false;
 let editSelectedColor = '#10B981';
 let editSelectedIcon = 'zap';
+let detailProgressionData = null;
+let knownDetailUnlockedBadges = new Set();
 
 const DETAIL_PALETTE = [
   '#10B981', '#059669', '#06B6D4', '#0EA5E9',
@@ -65,6 +67,16 @@ async function loadHabitDetail() {
 
     currentHabit = res.habit;
     renderHabitDetail(currentHabit);
+
+    // Initialize progression state in background
+    API.getProgression().then(prog => {
+      if (prog && prog.success) {
+        detailProgressionData = prog;
+        if (prog.achievements && Array.isArray(prog.achievements)) {
+          knownDetailUnlockedBadges = new Set(prog.achievements.filter(a => a.unlocked).map(a => a.id));
+        }
+      }
+    }).catch(() => {});
   } catch (err) {
     document.getElementById('detailContainer').innerHTML = `
       <div style="text-align: center; padding: 3rem 1.5rem; background: var(--bg-card); border-radius: var(--radius-sm); border: 1px solid rgba(244, 63, 94, 0.2); margin-top: 1rem;">
@@ -241,13 +253,19 @@ function openMonthPickerModal() {
   if (yearTitle) yearTitle.textContent = pickerYear;
   renderMonthPickerGrid();
   const overlay = document.getElementById('monthPickerModalOverlay');
-  if (overlay) overlay.classList.add('open');
+  if (overlay) {
+    overlay.classList.add('open');
+    if (window.UI && UI.lockBodyScroll) UI.lockBodyScroll();
+  }
   lucide.createIcons();
 }
 
 function closeMonthPickerModal() {
   const overlay = document.getElementById('monthPickerModalOverlay');
-  if (overlay) overlay.classList.remove('open');
+  if (overlay) {
+    overlay.classList.remove('open');
+    if (window.UI && UI.unlockBodyScroll) UI.unlockBodyScroll();
+  }
 }
 
 function changePickerYear(delta) {
@@ -594,6 +612,13 @@ function renderWeekdayDistributionChart() {
 // ------------------------------------------------------------------------------
 async function toggleDetailDate(dateStr, tileElem, event) {
   if (event) event.stopPropagation();
+
+  // Strict Online Guard: Prevent offline check-in and mutation
+  if (window.OnlineGuard && (!window.OnlineGuard.isOnline || (typeof navigator !== 'undefined' && !navigator.onLine))) {
+    window.OnlineGuard.show('An active internet connection is required to check in habits.');
+    return;
+  }
+
   Utils.playSound('click');
 
   if (!currentHabit) return;
@@ -618,8 +643,15 @@ async function toggleDetailDate(dateStr, tileElem, event) {
     }
   });
 
-  if (willBeCompleted && event) {
-    Utils.showFloatingXP(event.clientX, event.clientY, '+10 XP');
+  if (willBeCompleted) {
+    let clientX = event ? (event.clientX || (event.touches && event.touches[0] ? event.touches[0].clientX : null)) : null;
+    let clientY = event ? (event.clientY || (event.touches && event.touches[0] ? event.touches[0].clientY : null)) : null;
+    if ((clientX === null || clientY === null) && tileElem) {
+      const rect = tileElem.getBoundingClientRect();
+      clientX = rect.left + rect.width / 2;
+      clientY = rect.top;
+    }
+    Utils.showFloatingXP(clientX, clientY, '+10 XP');
     Utils.playSound('complete');
   }
 
@@ -668,7 +700,7 @@ async function toggleDetailDate(dateStr, tileElem, event) {
   lucide.createIcons();
   Utils.initGlobalTooltips();
 
-  // 5. Send API request to persist log
+  // 5. Send API request to persist log and evaluate progression milestones
   try {
     const res = await API.toggleLog(currentHabit.id, dateStr);
     if (res.success && res.habit) {
@@ -679,8 +711,28 @@ async function toggleDetailDate(dateStr, tileElem, event) {
       renderWeekdayDistributionChart();
       renderTop3Streaks(currentHabit);
     }
+
+    const progRes = await API.getProgression();
+    if (progRes && progRes.success) {
+      if (progRes.achievements && Array.isArray(progRes.achievements)) {
+        const newlyUnlocked = progRes.achievements.filter(a => a.unlocked && !knownDetailUnlockedBadges.has(a.id));
+        newlyUnlocked.forEach(badge => {
+          knownDetailUnlockedBadges.add(badge.id);
+          Utils.showMilestoneUnlockedModal(badge);
+        });
+      }
+
+      if (detailProgressionData && progRes.level > detailProgressionData.level) {
+        Utils.showLevelUpModal(progRes.level, detailProgressionData.level);
+      }
+      detailProgressionData = progRes;
+    }
   } catch (err) {
     console.error('Error persisting habit date log:', err);
+    if (window.OnlineGuard) {
+      window.OnlineGuard.show('Habit update failed because cloud connection was lost.');
+    }
+    loadHabitDetail();
   }
 }
 
@@ -713,11 +765,19 @@ async function openEditModal() {
 
   renderEditPalette();
   renderEditIconPicker();
-  document.getElementById('editHabitModalOverlay').classList.add('open');
+  const overlay = document.getElementById('editHabitModalOverlay');
+  if (overlay) {
+    overlay.classList.add('open');
+    if (window.UI && UI.lockBodyScroll) UI.lockBodyScroll();
+  }
 }
 
 function closeEditModal() {
-  document.getElementById('editHabitModalOverlay').classList.remove('open');
+  const overlay = document.getElementById('editHabitModalOverlay');
+  if (overlay) {
+    overlay.classList.remove('open');
+    if (window.UI && UI.unlockBodyScroll) UI.unlockBodyScroll();
+  }
 }
 
 function renderEditPalette() {
@@ -784,6 +844,11 @@ async function saveHabitEdits(e) {
 
   if (!title) return;
 
+  if (window.OnlineGuard && (!window.OnlineGuard.isOnline || (typeof navigator !== 'undefined' && !navigator.onLine))) {
+    window.OnlineGuard.show('An active internet connection is required to save changes.');
+    return;
+  }
+
   const updates = {
     title,
     description,
@@ -810,6 +875,12 @@ async function saveHabitEdits(e) {
 
 async function deleteCurrentHabit() {
   if (!currentHabit) return;
+
+  if (window.OnlineGuard && (!window.OnlineGuard.isOnline || (typeof navigator !== 'undefined' && !navigator.onLine))) {
+    window.OnlineGuard.show('An active internet connection is required to delete habits.');
+    return;
+  }
+
   if (confirm('Are you sure you want to delete this habit and all its logs?')) {
     const res = await API.deleteHabit(currentHabit.id);
     if (res.success) {

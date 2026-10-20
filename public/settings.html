@@ -1,15 +1,22 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
+
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0a0c10" id="themeColorMeta">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
   <title>Settings - Committed</title>
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
-  <link rel="manifest" href="/manifest.json">
-  <meta name="theme-color" content="#0B0F17">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <link rel="apple-touch-icon" href="favicon.svg">
   <link rel="preconnect" href="https://unpkg.com">
   <link rel="dns-prefetch" href="https://unpkg.com">
   <link rel="stylesheet" href="css/main.css?v=1787955555">
@@ -17,25 +24,33 @@
   <link rel="stylesheet" href="css/animations.css?v=1787955555">
   <script src="https://unpkg.com/lucide@latest"></script>
 </head>
+
 <body>
 
   <div class="app-container">
+    <!-- Header Top Bar -->
     <header class="header-bar">
-      <div>
-        <h1 class="app-title">Settings</h1>
-        <p style="font-size: 0.75rem; color: var(--text-muted);">Personalize categories, theme and manage data</p>
-      </div>
+      <a href="/" class="logo-group">
+        <img src="img/logo.svg" alt="Committed Logo"
+          style="width: 36px; height: 36px; border-radius: var(--radius-sm);" />
+        <span class="app-title">Committed</span>
+      </a>
     </header>
 
+    <!-- Page Title -->
+    <h1 class="page-title">Settings</h1>
+
     <!-- 1. Category Management -->
-    <div class="habit-card" style="margin-bottom: 1rem;">
-      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.85rem;">
-        <div style="display: flex; align-items: center; gap: 0.4rem;">
+    <div class="settings-card">
+      <div class="settings-card-header">
+        <div class="settings-card-title">
           <i data-lucide="tag" style="width: 16px; height: 16px; color: var(--accent-emerald);"></i>
-          <h3 style="font-size: 0.95rem; font-weight: 750;">Manage Categories</h3>
+          <span>Manage categories</span>
         </div>
-        <button class="btn btn-primary" onclick="openAddCategoryModal()" style="min-height: 44px; padding: 0.45rem 0.85rem; font-size: 0.8rem;">
-          <i data-lucide="plus" style="width: 14px; height: 14px;"></i>
+        <button class="btn btn-primary" onclick="openAddCategoryModal()"
+          style="min-height: 40px; padding: 0.4rem 0.8rem; font-size: 0.8rem;">
+          <span class="btn-icon-bubble" style="width: 20px; height: 20px;"><i data-lucide="plus"
+              style="width: 12px; height: 12px;"></i></span>
           <span>Add Category</span>
         </button>
       </div>
@@ -46,9 +61,14 @@
     </div>
 
     <!-- 2. Appearance -->
-    <div class="habit-card" style="margin-bottom: 1rem;">
-      <h3 style="font-size: 0.95rem; font-weight: 750; margin-bottom: 1rem;">Appearance</h3>
-      
+    <div class="settings-card">
+      <div class="settings-card-header" style="margin-bottom: 0.85rem;">
+        <div class="settings-card-title">
+          <i data-lucide="palette" style="width: 16px; height: 16px; color: var(--accent-emerald);"></i>
+          <span>Appearance</span>
+        </div>
+      </div>
+
       <div class="form-group">
         <label class="form-label">Theme</label>
         <select class="form-select" id="themeSelect" onchange="handleThemeChange(this.value)">
@@ -69,13 +89,19 @@
     </div>
 
     <!-- 3. Feedback & Sound -->
-    <div class="habit-card" style="margin-bottom: 1rem;">
-      <h3 style="font-size: 0.95rem; font-weight: 750; margin-bottom: 1rem;">Feedback & Sound</h3>
-      
-      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.85rem; min-height: 44px;">
+    <div class="settings-card">
+      <div class="settings-card-header" style="margin-bottom: 0.85rem;">
+        <div class="settings-card-title">
+          <i data-lucide="volume-2" style="width: 16px; height: 16px; color: var(--accent-emerald);"></i>
+          <span>Feedback & sound</span>
+        </div>
+      </div>
+
+      <div
+        style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.85rem; min-height: 44px;">
         <label for="soundToggle" style="flex: 1; cursor: pointer; padding-right: 0.75rem;">
           <div style="font-weight: 600; font-size: 0.85rem;">Haptic Audio Feedback</div>
-          <div style="font-size: 0.72rem; color: var(--text-muted);">Subtle click sound when toggling tiles</div>
+          <div style="font-size: 11.5px; color: var(--text-muted);">Subtle click sound when toggling tiles</div>
         </label>
         <label class="toggle-switch">
           <input type="checkbox" id="soundToggle" onchange="handleSoundToggle(event)">
@@ -83,10 +109,23 @@
         </label>
       </div>
 
+      <div
+        style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.85rem; min-height: 44px;">
+        <label for="hapticsToggle" style="flex: 1; cursor: pointer; padding-right: 0.75rem;">
+          <div style="font-weight: 600; font-size: 0.85rem;">Mobile Haptic Vibration</div>
+          <div style="font-size: 11.5px; color: var(--text-muted);">Tactile device vibration on touches & completions
+          </div>
+        </label>
+        <label class="toggle-switch">
+          <input type="checkbox" id="hapticsToggle" onchange="handleHapticsToggle(event)">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+
       <div style="display: flex; align-items: center; justify-content: space-between; min-height: 44px;">
         <label for="confettiToggle" style="flex: 1; cursor: pointer; padding-right: 0.75rem;">
           <div style="font-weight: 600; font-size: 0.85rem;">Celebratory Confetti</div>
-          <div style="font-size: 0.72rem; color: var(--text-muted);">Confetti burst when completing habits</div>
+          <div style="font-size: 11.5px; color: var(--text-muted);">Confetti burst when completing habits</div>
         </label>
         <label class="toggle-switch">
           <input type="checkbox" id="confettiToggle" onchange="handleConfettiToggle(event)">
@@ -95,48 +134,33 @@
       </div>
     </div>
 
-    <!-- 4. PWA & Offline Experience -->
-    <div class="habit-card" id="pwaCard" style="margin-bottom: 1rem;">
-      <div style="display: flex; align-items: center; justify-content: space-between; gap: 0.75rem;">
-        <div>
-          <div style="display: flex; align-items: center; gap: 0.4rem;">
-            <i data-lucide="smartphone" style="width: 15px; height: 15px; color: #10B981;"></i>
-            <h3 style="font-size: 0.92rem; font-weight: 750;">Offline App (PWA)</h3>
-          </div>
-          <p style="font-size: 0.72rem; color: var(--text-muted); margin-top: 0.15rem;" id="pwaCardDesc">
-            Offline caching active. All habits work without internet.
-          </p>
-        </div>
-        <button class="btn btn-primary" id="pwaInstallBtn" onclick="handlePwaInstall()" style="min-height: 38px; font-size: 0.8rem; padding: 0.4rem 0.85rem; display: none;">
-          <i data-lucide="download" style="width: 14px; height: 14px;"></i>
-          <span>Install</span>
-        </button>
-      </div>
-    </div>
-
-    <!-- 5. Advanced Data Management (Collapsible) -->
-    <details class="habit-card settings-advanced-card">
+    <!-- 4. Advanced Data Management (Collapsible) -->
+    <details class="settings-card settings-advanced-card">
       <summary class="settings-advanced-summary" style="padding: 0.2rem 0;">
         <div>
-          <div style="display: flex; align-items: center; gap: 0.4rem;">
+          <div class="settings-card-title">
             <i data-lucide="database" style="width: 15px; height: 15px; color: var(--text-muted);"></i>
-            <h3 style="font-size: 0.92rem; font-weight: 750;">Advanced Data Controls</h3>
+            <span>Advanced data controls</span>
           </div>
-          <p style="font-size: 0.72rem; color: var(--text-muted); margin-top: 0.15rem;">Export JSON backup or restore habit data</p>
+          <p style="font-size: 11.5px; color: var(--text-muted); margin-top: 0.2rem;">Export JSON backup or restore
+            habit data</p>
         </div>
         <i data-lucide="chevron-down" style="width: 15px; height: 15px; color: var(--text-muted);"></i>
       </summary>
 
       <div style="margin-top: 1rem; padding-top: 0.85rem; border-top: 1px solid var(--border-subtle);">
-        <p style="font-size: 0.74rem; color: var(--text-muted); margin-bottom: 0.85rem; line-height: 1.4;">
-          Export your complete habit history as JSON to safely store or migrate your data. Note: Importing will replace existing records.
+        <p style="font-size: 11.5px; color: var(--text-muted); margin-bottom: 0.85rem; line-height: 1.4;">
+          Export your complete habit history as JSON to safely store or migrate your data. Note: Importing will replace
+          existing records.
         </p>
         <div style="display: flex; gap: 0.5rem;">
-          <button class="btn btn-secondary" onclick="triggerExport()" style="flex: 1; min-height: 44px; font-size: 0.8rem;">
+          <button class="btn btn-secondary" onclick="triggerExport()"
+            style="flex: 1; min-height: 44px; font-size: 0.8rem;">
             <i data-lucide="download" style="width: 15px; height: 15px;"></i>
             <span>Export JSON</span>
           </button>
-          <label class="btn btn-secondary" style="flex: 1; margin-bottom: 0; min-height: 44px; font-size: 0.8rem; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem;">
+          <label class="btn btn-secondary"
+            style="flex: 1; margin-bottom: 0; min-height: 44px; font-size: 0.8rem; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem;">
             <i data-lucide="upload" style="width: 15px; height: 15px;"></i>
             <span>Import JSON</span>
             <input type="file" accept=".json" onchange="triggerImport(event)" style="display: none;">
@@ -144,11 +168,30 @@
         </div>
       </div>
     </details>
+
+    <!-- Cloud Connectivity Status Card -->
+    <div class="settings-card" style="margin-top: 1rem;">
+      <h3 class="settings-section-title">
+        <i data-lucide="cloud" style="width: 16px; height: 16px; color: var(--accent-primary);"></i>
+        <span>Cloud Connectivity</span>
+      </h3>
+      <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.4rem 0;">
+        <div>
+          <div style="font-size: 0.88rem; font-weight: 700; color: var(--text-primary);">Online-Only Mode</div>
+          <div style="font-size: 0.76rem; color: var(--text-muted);">Real-time Supabase cloud sync (offline mode disabled)</div>
+        </div>
+        <span style="display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.25rem 0.6rem; border-radius: var(--radius-full); background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.3); color: #10b981; font-size: 0.72rem; font-weight: 800; letter-spacing: 0.04em;">
+          <span style="width: 6px; height: 6px; border-radius: 50%; background: #10b981; box-shadow: 0 0 6px #10b981;"></span>
+          ONLINE
+        </span>
+      </div>
+    </div>
   </div>
 
   <!-- Add / Edit Category Modal -->
   <div class="modal-overlay" id="categoryModalOverlay">
     <div class="modal-box" style="max-width: 440px;">
+      <div class="sheet-drag-handle"></div>
       <div class="modal-header">
         <h3 class="modal-title" id="catModalTitle">Add Category</h3>
         <button class="close-btn" onclick="closeCategoryModal()">
@@ -169,7 +212,8 @@
         </div>
 
         <div style="display: flex; gap: 0.65rem; margin-top: 1.25rem;">
-          <button type="button" class="btn btn-secondary" style="flex: 1;" onclick="closeCategoryModal()">Cancel</button>
+          <button type="button" class="btn btn-secondary" style="flex: 1;"
+            onclick="closeCategoryModal()">Cancel</button>
           <button type="submit" class="btn btn-primary" style="flex: 2;">Save Category</button>
         </div>
       </form>
@@ -177,29 +221,62 @@
   </div>
 
   <!-- Bottom Navigation -->
-    <!-- Clean 4-Tab Bottom Navigation -->
+  <!-- Clean 5-Tab Bottom Navigation -->
   <nav class="bottom-nav">
-    <a href="/" class="nav-item">
-      <i data-lucide="grid"></i>
+    <a href="/habits.html" class="nav-item">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect width="7" height="7" x="3" y="3" rx="1" />
+        <rect width="7" height="7" x="14" y="3" rx="1" />
+        <rect width="7" height="7" x="14" y="14" rx="1" />
+        <rect width="7" height="7" x="3" y="14" rx="1" />
+      </svg>
       <span>Habits</span>
     </a>
     <a href="/progress.html" class="nav-item">
-      <i data-lucide="award"></i>
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="8" r="6" />
+        <path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11" />
+      </svg>
       <span>Progress</span>
     </a>
+    <a href="/" class="nav-item">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect width="18" height="18" x="3" y="4" rx="2" ry="2" />
+        <line x1="16" x2="16" y1="2" y2="6" />
+        <line x1="8" x2="8" y1="2" y2="6" />
+        <line x1="3" x2="21" y1="10" y2="10" />
+        <path d="m9 16 2 2 4-4" />
+      </svg>
+      <span>Today</span>
+    </a>
     <a href="/analytics.html" class="nav-item">
-      <i data-lucide="bar-chart-3"></i>
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="18" x2="18" y1="20" y2="10" />
+        <line x1="12" x2="12" y1="20" y2="4" />
+        <line x1="6" x2="6" y1="20" y2="14" />
+      </svg>
       <span>Insights</span>
     </a>
-    <a href="/settings.html" class="nav-item active">
-      <i data-lucide="settings"></i>
+    <a href="/settings.html" class="nav-item active" aria-current="page">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path
+          d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
+        <circle cx="12" cy="12" r="3" />
+      </svg>
       <span>Settings</span>
     </a>
   </nav>
 
-  <script src="js/utils.js?v=1787946236"></script>
-  <script src="js/offlineStore.js?v=1787946236"></script>
+  <script src="js/onlineGuard.js?v=1788640000"></script>
   <script src="js/api.js?v=1787946236"></script>
+  <script src="js/utils.js?v=1787946236"></script>
+  <script src="js/components.js?v=1788630000"></script>
   <script src="js/settings.js?v=1787946236"></script>
 </body>
+
 </html>

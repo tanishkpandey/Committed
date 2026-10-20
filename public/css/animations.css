@@ -169,3 +169,122 @@
 .animate-slide-right {
   animation: slideInFromLeft 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
+
+/* Milestone Celebration & Badge Congratulations Animations */
+@keyframes milestoneAuraPulse {
+  0% { transform: scale(0.92) rotate(0deg); opacity: 0.55; }
+  50% { transform: scale(1.18) rotate(180deg); opacity: 0.9; }
+  100% { transform: scale(0.92) rotate(360deg); opacity: 0.55; }
+}
+
+@keyframes celebrationBadgePop {
+  0% { transform: scale(0.35) rotate(-18deg); opacity: 0; }
+  55% { transform: scale(1.15) rotate(5deg); }
+  75% { transform: scale(0.96) rotate(-2deg); }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+.milestone-celebration-overlay {
+  background: rgba(0, 0, 0, 0.78);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  transition: opacity 0.22s ease-out;
+}
+
+.milestone-celebration-card {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.65), 0 0 40px rgba(139, 92, 246, 0.15);
+}
+
+.milestone-celebration-aura {
+  position: absolute;
+  width: 260px;
+  height: 260px;
+  border-radius: 50%;
+  pointer-events: none;
+  filter: blur(36px);
+  animation: milestoneAuraPulse 7s ease-in-out infinite;
+  z-index: 0;
+  opacity: 0.75;
+}
+
+.milestone-badge-stage {
+  position: relative;
+  width: 140px;
+  height: 140px;
+  margin: 0.5rem auto 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+
+.milestone-badge-stage svg {
+  width: 130px;
+  height: 130px;
+  overflow: visible;
+  filter: drop-shadow(0 12px 30px rgba(0, 0, 0, 0.5));
+  animation: celebrationBadgePop 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.milestone-celebration-title {
+  font-size: 1.4rem;
+  font-weight: 850;
+  letter-spacing: -0.025em;
+  color: var(--text-primary);
+  margin-bottom: 0.35rem;
+}
+
+.milestone-xp-reward {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.22), rgba(245, 158, 11, 0.08));
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  color: #f59e0b;
+  padding: 0.42rem 0.95rem;
+  border-radius: var(--radius-full);
+  font-size: 0.84rem;
+  font-weight: 800;
+  margin: 0.65rem 0 1.25rem;
+  box-shadow: 0 4px 16px rgba(245, 158, 11, 0.22);
+}
+
+.modal-overlay.closing {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease-out;
+}
+
+.modal-overlay.closing .modal-box {
+  transform: scale(0.92);
+  transition: transform 0.2s ease-out;
+}
+
+/* Accessibility: Respect OS Reduced-Motion Setting */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .tile-pop,
+  .check-pop,
+  .floating-xp-pill,
+  .animate-fade-in,
+  .animate-pop-in,
+  .animate-slide-left,
+  .animate-slide-right,
+  .mobile-toast {
+    animation: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+  }
+}
+

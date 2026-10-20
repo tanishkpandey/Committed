@@ -3,15 +3,19 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport"
-    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0a0c10" id="themeColorMeta">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <title>Habit Details - Committed</title>
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
-  <link rel="manifest" href="/manifest.json">
-  <meta name="theme-color" content="#0B0F17">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <link rel="apple-touch-icon" href="favicon.svg">
   <link rel="preconnect" href="https://unpkg.com">
   <link rel="dns-prefetch" href="https://unpkg.com">
   <link rel="stylesheet" href="css/main.css?v=1788628200">
@@ -63,29 +67,23 @@
 
         <!-- 3-Column Metrics -->
         <div class="detail-metrics-grid"
-          style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.35rem; text-align: center; background: var(--bg-input); padding: 0.75rem 0.4rem; border-radius: var(--radius-sm); margin-bottom: 1.15rem;">
+          style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; text-align: center; background: var(--bg-card); border: 1px solid var(--border-subtle); padding: 0.85rem 0.5rem; border-radius: var(--radius-md, 16px); margin-bottom: 1.15rem; box-shadow: var(--shadow-card);">
           <div>
-            <div class="detail-metric-label"
-              style="font-size: 0.65rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">Current
-              Streak</div>
-            <div id="statCurrentStreak" class="detail-metric-val"
-              style="font-size: 1.2rem; font-weight: 800; color: #f59e0b;"><span class="skeleton-shimmer"
+            <div class="stat-tile-label" style="text-align: center; margin-bottom: 0.25rem;">Current streak</div>
+            <div id="statCurrentStreak" class="stat-tile-val"
+              style="font-size: 1.35rem; color: #f59e0b;"><span class="skeleton-shimmer"
                 style="width: 35px; height: 1.2rem; display: inline-block;"></span></div>
           </div>
           <div>
-            <div class="detail-metric-label"
-              style="font-size: 0.65rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">Best
-              Streak</div>
-            <div id="statLongestStreak" class="detail-metric-val"
-              style="font-size: 1.2rem; font-weight: 800; color: #10b981;"><span class="skeleton-shimmer"
+            <div class="stat-tile-label" style="text-align: center; margin-bottom: 0.25rem;">Best streak</div>
+            <div id="statLongestStreak" class="stat-tile-val"
+              style="font-size: 1.35rem; color: #10b981;"><span class="skeleton-shimmer"
                 style="width: 35px; height: 1.2rem; display: inline-block;"></span></div>
           </div>
           <div>
-            <div class="detail-metric-label"
-              style="font-size: 0.65rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">Total
-              Logs</div>
-            <div id="statTotalCompletions" class="detail-metric-val"
-              style="font-size: 1.2rem; font-weight: 800; color: var(--text-primary);"><span class="skeleton-shimmer"
+            <div class="stat-tile-label" style="text-align: center; margin-bottom: 0.25rem;">Total logs</div>
+            <div id="statTotalCompletions" class="stat-tile-val"
+              style="font-size: 1.35rem; color: var(--text-primary);"><span class="skeleton-shimmer"
                 style="width: 35px; height: 1.2rem; display: inline-block;"></span></div>
           </div>
         </div>
@@ -163,6 +161,7 @@
   <!-- Edit Habit Modal -->
   <div class="modal-overlay" id="editHabitModalOverlay">
     <div class="modal-box">
+      <div class="sheet-drag-handle"></div>
       <div class="modal-header">
         <h3 class="modal-title">Edit Habit</h3>
         <button class="close-btn" onclick="closeEditModal()">
@@ -234,6 +233,7 @@
   <!-- Month & Year Selector Modal -->
   <div class="modal-overlay" id="monthPickerModalOverlay" onclick="if(event.target === this) closeMonthPickerModal()">
     <div class="modal-box" style="max-width: 360px;">
+      <div class="sheet-drag-handle"></div>
       <div class="modal-header">
         <div style="display: flex; align-items: center; gap: 0.5rem;">
           <button class="month-card-nav-arrow" onclick="changePickerYear(-1)" title="Previous Year" aria-label="Previous Year">
@@ -256,28 +256,33 @@
   </div>
 
   <!-- Clean 4-Tab Bottom Navigation -->
-  <nav class="bottom-nav">
-    <a href="/" class="nav-item active">
-      <i data-lucide="grid"></i>
+    <nav class="bottom-nav">
+    <a href="/habits.html" class="nav-item active">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg>
       <span>Habits</span>
     </a>
     <a href="/progress.html" class="nav-item">
-      <i data-lucide="award"></i>
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg>
       <span>Progress</span>
     </a>
+    <a href="/" class="nav-item">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/><path d="m9 16 2 2 4-4"/></svg>
+      <span>Today</span>
+    </a>
     <a href="/analytics.html" class="nav-item">
-      <i data-lucide="bar-chart-3"></i>
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" x2="18" y1="20" y2="10"/><line x1="12" x2="12" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="14"/></svg>
       <span>Insights</span>
     </a>
     <a href="/settings.html" class="nav-item">
-      <i data-lucide="settings"></i>
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
       <span>Settings</span>
     </a>
   </nav>
 
-  <script src="js/utils.js?v=1788628000"></script>
-  <script src="js/offlineStore.js?v=1788628000"></script>
+  <script src="js/onlineGuard.js?v=1788640000"></script>
   <script src="js/api.js?v=1788628000"></script>
+  <script src="js/utils.js?v=1788628000"></script>
+  <script src="js/components.js?v=1788630000"></script>
   <script src="js/habitDetail.js?v=1788628000"></script>
 </body>
 

@@ -3,15 +3,20 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport"
-    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0a0c10" id="themeColorMeta">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
   <title>Insights & Analytics - Committed</title>
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
-  <link rel="manifest" href="/manifest.json">
-  <meta name="theme-color" content="#0B0F17">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <link rel="apple-touch-icon" href="favicon.svg">
   <link rel="stylesheet" href="css/main.css?v=1788627500">
   <link rel="stylesheet" href="css/components.css?v=1788627500">
   <link rel="stylesheet" href="css/animations.css?v=1788627500">
@@ -21,255 +26,173 @@
 <body>
 
   <div class="app-container">
+    <!-- Header Top Bar -->
     <header class="header-bar">
-      <div>
-        <h1 class="app-title">Insights</h1>
-        <p style="font-size: 0.75rem; color: var(--text-muted);">Behavioral intelligence & consistency patterns</p>
-      </div>
+      <a href="/" class="logo-group">
+        <img src="img/logo.svg" alt="Committed Logo"
+          style="width: 36px; height: 36px; border-radius: var(--radius-sm);" />
+        <span class="app-title">Committed</span>
+      </a>
     </header>
 
-    <!-- 1. OVERVIEW SECTION -->
-    <section class="analytics-section">
-      <div class="ref-overview-header">
-        <div class="ref-section-tag">
-          <i data-lucide="pie-chart" style="width: 14px; height: 14px;"></i>
-          <span>Overview</span>
-        </div>
-        <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">Behavioral Pulse</span>
+    <!-- Title: Plain "Insights", no banner, no headline sentence -->
+    <h1 class="insights-page-title">Insights</h1>
+
+    <!-- 1. STAT TILES (2x2 Grid, 88px tall each) -->
+    <div class="stat-tiles-2x2">
+      <!-- Consistency -->
+      <div class="stat-tile">
+        <div class="stat-tile-label">Consistency</div>
+        <div class="stat-tile-val" id="ovConsistency">0%</div>
+        <div class="stat-tile-sub" id="ovConsistencySub">30 day average 0%</div>
       </div>
 
-      <div class="ref-overview-grid">
-        <!-- Card A: Overall Consistency -->
-        <div class="ref-overview-card">
-          <div class="ref-card-icon-badge" style="background: rgba(16, 185, 129, 0.12); color: #10b981;">
-            <i data-lucide="activity" style="width: 17px; height: 17px;"></i>
+      <!-- Active habits -->
+      <div class="stat-tile">
+        <div class="stat-tile-label">Active habits</div>
+        <div class="stat-tile-val" id="ovActiveHabits">0</div>
+        <div class="stat-tile-sub">Tracked right now</div>
+      </div>
+
+      <!-- Vs last month -->
+      <div class="stat-tile">
+        <div class="stat-tile-label">Vs last month</div>
+        <div class="stat-tile-val" id="ovTrendDelta">0%</div>
+        <div class="stat-tile-sub" id="ovTrendLine">No change</div>
+      </div>
+
+      <!-- Check ins this month -->
+      <div class="stat-tile">
+        <div class="stat-tile-label">Check ins this month</div>
+        <div class="stat-tile-val" id="ovMonthCheckIns">0</div>
+        <div class="stat-tile-sub" id="ovLastMonthSub">Last month had 0</div>
+      </div>
+    </div>
+
+    <!-- 2. WHAT STANDS OUT (2x2 Grid, 110px tall each) -->
+    <section class="insights-section">
+      <div class="insights-section-heading">What stands out</div>
+      <div class="stands-out-grid" id="standsOutGrid">
+        <!-- Rendered dynamically via analytics.js -->
+      </div>
+    </section>
+
+    <!-- 3. EXECUTION CURVES (Two Chart Cards, 220px tall each) -->
+    <section class="insights-section">
+      <div class="insights-section-heading">Execution curves</div>
+      <div class="curves-container">
+        <!-- Check-in Velocity -->
+        <div class="curve-chart-card">
+          <div class="curve-card-header">
+            <span class="curve-card-title">Check-in velocity</span>
+            <span class="curve-card-chip" id="velocityTotalBadge" style="background: rgba(16, 185, 129, 0.15); color: #10b981;">+0 logs</span>
           </div>
-          <div class="ref-card-val" id="ovConsistency">0%</div>
-          <div class="ref-card-label">Consistency</div>
-          <div class="ref-card-trend up">
-            <i data-lucide="check" style="width: 12px; height: 12px;"></i>
-            <span>Planned Targets</span>
+          <div class="curve-svg-wrap">
+            <svg id="velocityCurveSvg" viewBox="0 0 320 135" style="width: 100%; height: 100%; overflow: visible;"></svg>
           </div>
         </div>
 
-        <!-- Card B: 30-Day Avg Rate -->
-        <div class="ref-overview-card">
-          <div class="ref-card-icon-badge" style="background: rgba(16, 185, 129, 0.12); color: #10b981;">
-            <i data-lucide="circle-dot" style="width: 17px; height: 17px;"></i>
+        <!-- Weekly Execution -->
+        <div class="curve-chart-card">
+          <div class="curve-card-header">
+            <span class="curve-card-title">Weekly execution</span>
+            <span class="curve-card-chip" id="curvePeakBadge" style="background: rgba(139, 92, 246, 0.15); color: #8b5cf6;">0%</span>
           </div>
-          <div class="ref-card-val" id="ovCompletionRate">0%</div>
-          <div class="ref-card-label">30-Day Avg Rate</div>
-          <div class="ref-card-trend up">
-            <i data-lucide="arrow-up-right" style="width: 12px; height: 12px;"></i>
-            <span>30-Day Reliability</span>
-          </div>
-        </div>
-
-        <!-- Card C: Active Habits -->
-        <div class="ref-overview-card">
-          <div class="ref-card-icon-badge" style="background: var(--bg-input); color: var(--text-secondary);">
-            <i data-lucide="layers" style="width: 17px; height: 17px;"></i>
-          </div>
-          <div class="ref-card-val" id="ovActiveHabits">0</div>
-          <div class="ref-card-label">Active Habits</div>
-          <div style="font-size: 0.68rem; color: var(--text-muted); font-weight: 700;">
-            Currently Tracked
-          </div>
-        </div>
-
-        <!-- Card D: 30-Day Trend -->
-        <div class="ref-overview-card">
-          <div class="ref-card-icon-badge" style="background: rgba(16, 185, 129, 0.12); color: #10b981;">
-            <i data-lucide="trending-up" style="width: 17px; height: 17px;"></i>
-          </div>
-          <div class="ref-card-val" id="ovTrendDelta">+0%</div>
-          <div class="ref-card-label">30-Day Change</div>
-          <div class="ref-card-trend up" id="ovTrendBadge">
-            <i data-lucide="trending-up" style="width: 12px; height: 12px;"></i>
-            <span>vs Last Month</span>
+          <div class="curve-svg-wrap">
+            <svg id="completionCurveSvg" viewBox="0 0 320 135" style="width: 100%; height: 100%; overflow: visible;"></svg>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- 2. HABIT ANALYTICS SECTION: Long-Term Velocity vs Weekly Execution -->
-    <section class="analytics-section">
-      <div class="ref-overview-header">
-        <div class="ref-section-tag">
-          <i data-lucide="bar-chart-2" style="width: 14px; height: 14px;"></i>
-          <span>Execution Curves</span>
+    <!-- 4. HABIT DISTRIBUTION (Radar Chart Card, 300px tall) -->
+    <section class="insights-section">
+      <div class="insights-section-heading">Habit distribution</div>
+      <div class="radar-chart-card">
+        <div>
+          <span class="curve-card-title" style="display: block;">Days done this month</span>
+          <span class="radar-header-sub">Days done this month. Outer ring is 60%</span>
         </div>
-        <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">Long-Term vs Weekly</span>
-      </div>
-
-      <div class="analytics-two-col">
-        <!-- 30-Day Cumulative Velocity (Long-Term) -->
-        <div class="chart-card-box">
-          <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-            <div>
-              <div style="display: flex; align-items: center; gap: 0.45rem;">
-                <span class="chart-header-title">Check-In Velocity</span>
-              </div>
-              <div class="chart-header-sub">Compounding monthly growth</div>
-            </div>
-            <div
-              style="background: rgba(16, 185, 129, 0.15); color: #10b981; font-size: 0.75rem; font-weight: 850; padding: 0.25rem 0.55rem; border-radius: var(--radius-full);"
-              id="velocityTotalBadge">
-              +0 Logs
-            </div>
-          </div>
-          <div style="position: relative; height: 130px; width: 100%;">
-            <svg id="velocityCurveSvg" viewBox="0 0 300 110"
-              style="width: 100%; height: 100%; overflow: visible;"></svg>
-          </div>
-        </div>
-
-        <!-- Weekly Completion Rate Curve (7-Day Focus) -->
-        <div class="chart-card-box">
-          <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-            <div>
-              <div style="display: flex; align-items: center; gap: 0.45rem;">
-                <span class="chart-header-title">Weekly Execution</span>
-              </div>
-              <div class="chart-header-sub">Daily completion percentage</div>
-            </div>
-            <div
-              style="background: rgba(139, 92, 246, 0.15); color: #8b5cf6; font-size: 0.75rem; font-weight: 850; padding: 0.25rem 0.55rem; border-radius: var(--radius-full); border: 1px solid rgba(139, 92, 246, 0.3);"
-              id="curvePeakBadge">
-              --%
-            </div>
-          </div>
-          <div style="position: relative; height: 130px; width: 100%;">
-            <svg id="completionCurveSvg" viewBox="0 0 300 110"
-              style="width: 100%; height: 100%; overflow: visible;"></svg>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- 3. HABIT DISTRIBUTION SECTION (Donut & Category Breakdown) -->
-    <section class="analytics-section">
-      <div class="ref-overview-header">
-        <div class="ref-section-tag">
-          <i data-lucide="pie-chart" style="width: 14px; height: 14px;"></i>
-          <span>Habit Distribution</span>
-        </div>
-        <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">This Month Logged %</span>
-      </div>
-
-      <div class="habit-card" style="margin-bottom: 0;">
-        <div id="habitDistributionContainer">
+        <div class="radar-svg-wrap" id="habitDistributionContainer">
           <!-- Rendered via analytics.js -->
         </div>
       </div>
     </section>
 
-    <!-- 4. BEHAVIORAL INSIGHTS SECTION (Swipeable Cards with Peek & Nav) -->
-    <section class="analytics-section">
-      <div class="ref-overview-header">
-        <div class="ref-section-tag">
-          <i data-lucide="brain" style="width: 14px; height: 14px;"></i>
-          <span>Behavioral Insights</span>
-        </div>
-        <div class="carousel-nav-arrows">
-          <button class="carousel-nav-btn" onclick="scrollCarousel('behavioralInsightsContainer', -1)"
-            title="Previous card" aria-label="Previous card">
-            <i data-lucide="chevron-left" style="width: 16px; height: 16px;"></i>
-          </button>
-          <button class="carousel-nav-btn" onclick="scrollCarousel('behavioralInsightsContainer', 1)" title="Next card"
-            aria-label="Next card">
-            <i data-lucide="chevron-right" style="width: 16px; height: 16px;"></i>
-          </button>
-        </div>
-      </div>
-
-      <div class="insights-carousel-wrapper">
-        <div class="insights-list insights-carousel" id="behavioralInsightsContainer">
-          <!-- Rendered dynamically via analytics.js -->
-        </div>
-        <div class="carousel-dots" id="behavioralDots"></div>
-      </div>
-    </section>
-
-    <!-- 5. CONSISTENCY PATTERNS SECTION (Swipeable Cards with Peek & Nav) -->
-    <section class="analytics-section">
-      <div class="ref-overview-header">
-        <div class="ref-section-tag">
-          <i data-lucide="repeat" style="width: 14px; height: 14px;"></i>
-          <span>Consistency Patterns</span>
-        </div>
-        <div class="carousel-nav-arrows">
-          <button class="carousel-nav-btn" onclick="scrollCarousel('consistencyPatternsContainer', -1)"
-            title="Previous card" aria-label="Previous card">
-            <i data-lucide="chevron-left" style="width: 16px; height: 16px;"></i>
-          </button>
-          <button class="carousel-nav-btn" onclick="scrollCarousel('consistencyPatternsContainer', 1)" title="Next card"
-            aria-label="Next card">
-            <i data-lucide="chevron-right" style="width: 16px; height: 16px;"></i>
-          </button>
-        </div>
-      </div>
-
-      <div class="insights-carousel-wrapper">
-        <div class="insights-list insights-carousel" id="consistencyPatternsContainer">
-          <!-- Rendered dynamically via analytics.js -->
-        </div>
-        <div class="carousel-dots" id="consistencyDots"></div>
-      </div>
-    </section>
-
-    <!-- 6. 6-MONTH MACRO ACTIVITY BAR CHART SECTION -->
-    <section class="analytics-section">
-      <div class="ref-overview-header">
-        <div class="ref-section-tag">
-          <i data-lucide="activity" style="width: 14px; height: 14px;"></i>
-          <span>Macro Volume</span>
-        </div>
-        <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">Monthly Check-Ins</span>
-      </div>
-
-      <div class="habit-card" style="margin-bottom: 0;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
-          <div>
-            <h3 style="font-size: 0.92rem; font-weight: 750;">Monthly Check-Ins</h3>
-          </div>
-          <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">Last 6 Months</span>
-        </div>
+    <!-- 5. CHECK INS BY MONTH -->
+    <section class="insights-section">
+      <div class="insights-section-heading">Check ins by month</div>
+      <div class="monthly-chart-card">
         <div id="monthlyChartContainer"
-          style="display: flex; gap: 0.4rem; align-items: flex-end; padding-top: 1rem; min-height: 140px;"></div>
-        <div
-          style="margin-top: 0.75rem; padding-top: 0.65rem; border-top: 1px solid var(--border-subtle); display: flex; align-items: center; justify-content: space-between; font-size: 0.68rem; color: var(--text-muted);">
-          <span><i data-lucide="info"
-              style="width: 12px; height: 12px; vertical-align: middle; margin-right: 0.2rem;"></i> Bars reflect total
-            recorded check-ins per calendar month</span>
+          style="display: flex; gap: 0.4rem; align-items: flex-end; padding-top: 0.75rem; min-height: 125px;"></div>
+        <div class="monthly-chart-footer" id="monthlyChartFooter">
+          <!-- Rendered via analytics.js: "[best month] was your best month" -->
         </div>
       </div>
     </section>
+
+    <!-- Hidden containers for preserved logic (Consistency Patterns, Swipe Carousel) -->
+    <div id="consistencyPatternsContainer" style="display: none;" aria-hidden="true"></div>
+    <div id="behavioralInsightsContainer" style="display: none;" aria-hidden="true"></div>
+    <div id="behavioralDots" style="display: none;" aria-hidden="true"></div>
+    <div id="consistencyDots" style="display: none;" aria-hidden="true"></div>
   </div>
 
   <!-- Bottom Navigation -->
   <nav class="bottom-nav">
-    <a href="/" class="nav-item">
-      <i data-lucide="grid"></i>
+    <a href="/habits.html" class="nav-item">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect width="7" height="7" x="3" y="3" rx="1" />
+        <rect width="7" height="7" x="14" y="3" rx="1" />
+        <rect width="7" height="7" x="14" y="14" rx="1" />
+        <rect width="7" height="7" x="3" y="14" rx="1" />
+      </svg>
       <span>Habits</span>
     </a>
     <a href="/progress.html" class="nav-item">
-      <i data-lucide="award"></i>
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="8" r="6" />
+        <path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11" />
+      </svg>
       <span>Progress</span>
     </a>
-    <a href="/analytics.html" class="nav-item active">
-      <i data-lucide="bar-chart-3"></i>
+    <a href="/" class="nav-item">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect width="18" height="18" x="3" y="4" rx="2" ry="2" />
+        <line x1="16" x2="16" y1="2" y2="6" />
+        <line x1="8" x2="8" y1="2" y2="6" />
+        <line x1="3" x2="21" y1="10" y2="10" />
+        <path d="m9 16 2 2 4-4" />
+      </svg>
+      <span>Today</span>
+    </a>
+    <a href="/analytics.html" class="nav-item active" aria-current="page">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="18" x2="18" y1="20" y2="10" />
+        <line x1="12" x2="12" y1="20" y2="4" />
+        <line x1="6" x2="6" y1="20" y2="14" />
+      </svg>
       <span>Insights</span>
     </a>
     <a href="/settings.html" class="nav-item">
-      <i data-lucide="settings"></i>
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path
+          d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
+        <circle cx="12" cy="12" r="3" />
+      </svg>
       <span>Settings</span>
     </a>
   </nav>
 
-  <script src="js/utils.js?v=1788627700"></script>
-  <script src="js/offlineStore.js?v=1788627700"></script>
+  <script src="js/onlineGuard.js?v=1788640000"></script>
   <script src="js/api.js?v=1788627700"></script>
+  <script src="js/utils.js?v=1788627700"></script>
+  <script src="js/components.js?v=1788630000"></script>
   <script src="js/analytics.js?v=1788627700"></script>
 </body>
 

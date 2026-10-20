@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0a0c10" id="themeColorMeta">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
+  <title>Committed - Visual Habit Tracker</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="preconnect" href="https://unpkg.com">
+  <link rel="dns-prefetch" href="https://unpkg.com">
+  <link rel="stylesheet" href="css/main.css?v=1788627000">
+  <link rel="stylesheet" href="css/components.css?v=1788627000">
+  <link rel="stylesheet" href="css/animations.css?v=1788627000">
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<body>
+
+  <div class="app-container">
+    <!-- Header Top Bar -->
+    <header class="header-bar">
+      <a href="/" class="logo-group">
+        <img src="img/logo.svg" alt="Committed Logo"
+          style="width: 36px; height: 36px; border-radius: var(--radius-sm);" />
+        <span class="app-title">Committed</span>
+      </a>
+
+      <div class="header-actions">
+        <button class="btn btn-primary" id="newHabitBtn" onclick="openHabitModal()" title="New Habit"
+          aria-label="New Habit">
+          <span class="btn-icon-bubble"><i data-lucide="plus" style="width: 14px; height: 14px;"></i></span>
+          <span class="btn-text">New Habit</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Page Title -->
+    <h1 class="page-title">Habits</h1>
+
+    <!-- Category Filter Chips with Horizontal Scroll Cue -->
+    <div class="scroll-fade-wrapper">
+      <div class="filter-scroll">
+        <button class="chip active" data-category="All">All</button>
+        <button class="chip" data-category="Fitness">Fitness</button>
+        <button class="chip" data-category="Mindfulness">Mindfulness</button>
+        <button class="chip" data-category="Health">Health</button>
+        <button class="chip" data-category="Learning">Learning</button>
+        <button class="chip" data-category="Productivity">Productivity</button>
+      </div>
+    </div>
+
+    <!-- Habit Cards Container (With Component Skeletons by default) -->
+    <main id="habitsContainer">
+      <div class="skeleton-habit-card">
+        <div class="skeleton-habit-header">
+          <div class="skeleton-habit-header-left">
+            <div class="skeleton-shimmer skeleton-circle" style="width: 38px; height: 38px;"></div>
+            <div>
+              <div class="skeleton-shimmer" style="width: 130px; height: 16px; margin-bottom: 6px;"></div>
+              <div class="skeleton-shimmer" style="width: 80px; height: 12px;"></div>
+            </div>
+          </div>
+          <div class="skeleton-shimmer skeleton-pill" style="width: 50px; height: 26px;"></div>
+        </div>
+        <div class="skeleton-grid-box">
+          <div class="skeleton-shimmer skeleton-grid-square"></div>
+          <div class="skeleton-shimmer skeleton-grid-square"></div>
+          <div class="skeleton-shimmer skeleton-grid-square"></div>
+          <div class="skeleton-shimmer skeleton-grid-square"></div>
+          <div class="skeleton-shimmer skeleton-grid-square"></div>
+          <div class="skeleton-shimmer skeleton-grid-square"></div>
+          <div class="skeleton-shimmer skeleton-grid-square"></div>
+          <div class="skeleton-shimmer skeleton-grid-square"></div>
+          <div class="skeleton-shimmer skeleton-grid-square"></div>
+          <div class="skeleton-shimmer skeleton-grid-square"></div>
+          <div class="skeleton-shimmer skeleton-grid-square"></div>
+          <div class="skeleton-shimmer skeleton-grid-square"></div>
+          <div class="skeleton-shimmer skeleton-grid-square"></div>
+          <div class="skeleton-shimmer skeleton-grid-square"></div>
+          <div class="skeleton-shimmer skeleton-grid-square"></div>
+          <div class="skeleton-shimmer skeleton-grid-square"></div>
+          <div class="skeleton-shimmer skeleton-grid-square"></div>
+          <div class="skeleton-shimmer skeleton-grid-square"></div>
+          <div class="skeleton-shimmer skeleton-grid-square"></div>
+          <div class="skeleton-shimmer skeleton-grid-square"></div>
+          <div class="skeleton-shimmer skeleton-grid-square"></div>
+          <div class="skeleton-shimmer skeleton-grid-square"></div>
+        </div>
+        <div class="skeleton-habit-footer">
+          <div class="skeleton-shimmer" style="width: 70px; height: 14px;"></div>
+          <div class="skeleton-shimmer" style="width: 60px; height: 14px;"></div>
+          <div class="skeleton-shimmer" style="width: 60px; height: 14px;"></div>
+        </div>
+      </div>
+      <div class="skeleton-habit-card">
+        <div class="skeleton-habit-header">
+          <div class="skeleton-habit-header-left">
+            <div class="skeleton-shimmer skeleton-circle" style="width: 38px; height: 38px;"></div>
+            <div>
+              <div class="skeleton-shimmer" style="width: 110px; height: 16px; margin-bottom: 6px;"></div>
+              <div class="skeleton-shimmer" style="width: 70px; height: 12px;"></div>
+            </div>
+          </div>
+          <div class="skeleton-shimmer skeleton-pill" style="width: 50px; height: 26px;"></div>
+        </div>
+        <div class="skeleton-grid-box">
+          <div class="skeleton-shimmer skeleton-grid-square"></div>
+          <div class="skeleton-shimmer skeleton-grid-square"></div>
+          <div class="skeleton-shimmer skeleton-grid-square"></div>
+          <div class="skeleton-shimmer skeleton-grid-square"></div>
+          <div class="skeleton-shimmer skeleton-grid-square"></div>
+          <div class="skeleton-shimmer skeleton-grid-square"></div>
+          <div class="skeleton-shimmer skeleton-grid-square"></div>
+          <div class="skeleton-shimmer skeleton-grid-square"></div>
+          <div class="skeleton-shimmer skeleton-grid-square"></div>
+          <div class="skeleton-shimmer skeleton-grid-square"></div>
+          <div class="skeleton-shimmer skeleton-grid-square"></div>
+          <div class="skeleton-shimmer skeleton-grid-square"></div>
+          <div class="skeleton-shimmer skeleton-grid-square"></div>
+          <div class="skeleton-shimmer skeleton-grid-square"></div>
+          <div class="skeleton-shimmer skeleton-grid-square"></div>
+          <div class="skeleton-shimmer skeleton-grid-square"></div>
+          <div class="skeleton-shimmer skeleton-grid-square"></div>
+          <div class="skeleton-shimmer skeleton-grid-square"></div>
+          <div class="skeleton-shimmer skeleton-grid-square"></div>
+          <div class="skeleton-shimmer skeleton-grid-square"></div>
+          <div class="skeleton-shimmer skeleton-grid-square"></div>
+          <div class="skeleton-shimmer skeleton-grid-square"></div>
+          <div class="skeleton-shimmer skeleton-grid-square"></div>
+          <div class="skeleton-shimmer skeleton-grid-square"></div>
+          <div class="skeleton-shimmer skeleton-grid-square"></div>
+          <div class="skeleton-shimmer skeleton-grid-square"></div>
+          <div class="skeleton-shimmer skeleton-grid-square"></div>
+          <div class="skeleton-shimmer skeleton-grid-square"></div>
+          <div class="skeleton-shimmer skeleton-grid-square"></div>
+          <div class="skeleton-shimmer skeleton-grid-square"></div>
+          <div class="skeleton-shimmer skeleton-grid-square"></div>
+          <div class="skeleton-shimmer skeleton-grid-square"></div>
+        </div>
+        <div class="skeleton-habit-footer">
+          <div class="skeleton-shimmer" style="width: 70px; height: 14px;"></div>
+          <div class="skeleton-shimmer" style="width: 60px; height: 14px;"></div>
+          <div class="skeleton-shimmer" style="width: 60px; height: 14px;"></div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Create / Edit Habit Modal -->
+  <div class="modal-overlay" id="habitModalOverlay">
+    <div class="modal-box">
+      <div class="sheet-drag-handle"></div>
+      <div class="modal-header">
+        <h3 class="modal-title" id="modalTitle">Create Habit</h3>
+        <button class="close-btn" onclick="closeHabitModal()">
+          <i data-lucide="x" style="width: 22px; height: 22px;"></i>
+        </button>
+      </div>
+
+      <form onsubmit="saveHabitForm(event)">
+        <div class="form-group">
+          <label class="form-label">Habit Name *</label>
+          <input type="text" class="form-input" id="habitTitleInput" placeholder="e.g. Daily Workout" required
+            oninput="updateLivePreview()">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Goal / Note (Optional)</label>
+          <input type="text" class="form-input" id="habitDescInput" placeholder="e.g. 15 mins daily"
+            oninput="updateLivePreview()">
+        </div>
+
+        <div class="form-row-2col">
+          <div class="form-group">
+            <label class="form-label">Category</label>
+            <select class="form-select" id="habitCategorySelect">
+              <option value="General">General</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Target Frequency</label>
+            <select class="form-select" id="habitFrequencySelect">
+              <option value="7" selected>7x / Week (Daily)</option>
+              <option value="6">6x / Week</option>
+              <option value="5">5x / Week (Weekdays)</option>
+              <option value="4">4x / Week</option>
+              <option value="3">3x / Week (Gym)</option>
+              <option value="2">2x / Week</option>
+              <option value="1">1x / Week</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Grid Timeframe</label>
+          <select class="form-select" id="habitGridDaysSelect">
+            <option value="30">30 Days</option>
+            <option value="60">60 Days</option>
+            <option value="90">90 Days</option>
+            <option value="180">180 Days</option>
+            <option value="365" selected>365 Days (Full Year)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Color Theme</label>
+          <div class="palette-grid" id="paletteGrid"></div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Icon</label>
+          <div class="icon-picker-grid" id="iconPickerGrid"></div>
+        </div>
+
+        <div style="display: flex; gap: 0.65rem; margin-top: 1.25rem;">
+          <button type="button" class="btn btn-secondary" style="flex: 1;" onclick="closeHabitModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary" style="flex: 2;">Save Habit</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 5-Tab Bottom Navigation: Habits, Progress, Today, Insights, Settings -->
+  <nav class="bottom-nav">
+    <a href="/habits.html" class="nav-item active" aria-current="page">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect width="7" height="7" x="3" y="3" rx="1" />
+        <rect width="7" height="7" x="14" y="3" rx="1" />
+        <rect width="7" height="7" x="14" y="14" rx="1" />
+        <rect width="7" height="7" x="3" y="14" rx="1" />
+      </svg>
+      <span>Habits</span>
+    </a>
+    <a href="/progress.html" class="nav-item">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="8" r="6" />
+        <path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11" />
+      </svg>
+      <span>Progress</span>
+    </a>
+    <a href="/" class="nav-item">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect width="18" height="18" x="3" y="4" rx="2" ry="2" />
+        <line x1="16" x2="16" y1="2" y2="6" />
+        <line x1="8" x2="8" y1="2" y2="6" />
+        <line x1="3" x2="21" y1="10" y2="10" />
+        <path d="m9 16 2 2 4-4" />
+      </svg>
+      <span>Today</span>
+    </a>
+    <a href="/analytics.html" class="nav-item">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="18" x2="18" y1="20" y2="10" />
+        <line x1="12" x2="12" y1="20" y2="4" />
+        <line x1="6" x2="6" y1="20" y2="14" />
+      </svg>
+      <span>Insights</span>
+    </a>
+    <a href="/settings.html" class="nav-item">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path
+          d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
+        <circle cx="12" cy="12" r="3" />
+      </svg>
+      <span>Settings</span>
+    </a>
+  </nav>
+
+  <script src="js/onlineGuard.js?v=1788640000"></script>
+  <script src="js/api.js?v=1788628000"></script>
+  <script src="js/utils.js?v=1788628000"></script>
+  <script src="js/components.js?v=1788630000"></script>
+  <script src="js/habitModal.js?v=1788632000"></script>
+  <script src="js/app.js?v=1788628000"></script>
+
+</body>
+
+</html>

@@ -102,7 +102,71 @@ const Utils = {
     return startStr === endStr ? sFormatted : `${sFormatted} – ${eFormatted}`;
   },
 
+  triggerHaptic(type = 'light') {
+    if (localStorage.getItem('habitkit_haptics') === 'false') return;
+    if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+      try {
+        if (type === 'light') navigator.vibrate(12);
+        else if (type === 'medium') navigator.vibrate(22);
+        else if (type === 'success') navigator.vibrate([15, 35, 20]);
+        else if (type === 'warning') navigator.vibrate([25, 40, 25]);
+      } catch (e) {}
+    }
+  },
+
+  syncMobileThemeColor(theme) {
+    const meta = document.getElementById('themeColorMeta') || document.querySelector('meta[name="theme-color"]');
+    if (meta) {
+      meta.setAttribute('content', theme === 'light' ? '#f8fafc' : '#0a0c10');
+    }
+  },
+
+  showToast(message, type = 'info', duration = 2800) {
+    let container = document.getElementById('mobileToastContainer');
+    if (!container) {
+      container = document.createElement('div');
+      container.id = 'mobileToastContainer';
+      container.className = 'mobile-toast-container';
+      document.body.appendChild(container);
+    }
+
+    const toast = document.createElement('div');
+    toast.className = `mobile-toast ${type === 'success' ? 'toast-success' : type === 'danger' ? 'toast-danger' : ''}`;
+    
+    let iconName = 'info';
+    if (type === 'success') iconName = 'check-circle';
+    else if (type === 'danger') iconName = 'alert-circle';
+    
+    const escapeText = (str) => {
+      if (!str) return '';
+      return String(str).replace(/[&<>"']/g, m => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;'
+      })[m]);
+    };
+
+    toast.innerHTML = `
+      <i data-lucide="${iconName}" style="width: 16px; height: 16px; flex-shrink: 0;"></i>
+      <span>${escapeText(message)}</span>
+    `;
+
+    container.appendChild(toast);
+    if (window.lucide && lucide.createIcons) lucide.createIcons();
+    this.triggerHaptic(type === 'danger' ? 'warning' : 'light');
+
+    setTimeout(() => {
+      toast.classList.add('fade-out');
+      setTimeout(() => {
+        if (toast.parentNode) toast.parentNode.removeChild(toast);
+      }, 260);
+    }, duration);
+  },
+
   playSound(type = 'click') {
+    this.triggerHaptic(type === 'complete' || type === 'levelup' ? 'success' : 'light');
     if (localStorage.getItem('habitkit_sound') === 'false') return;
     try {
       const ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -141,6 +205,22 @@ const Utils = {
         gain.connect(ctx.destination);
         osc.start();
         osc.stop(ctx.currentTime + 0.45);
+      } else if (type === 'milestone') {
+        // Multi-harmonic celebratory fanfare arpeggio (C5, E5, G5, B5, C6)
+        const notes = [523.25, 659.25, 783.99, 987.77, 1046.50];
+        notes.forEach((freq, idx) => {
+          const oscNode = ctx.createOscillator();
+          const noteGain = ctx.createGain();
+          oscNode.type = 'triangle';
+          oscNode.frequency.setValueAtTime(freq, ctx.currentTime + idx * 0.065);
+          noteGain.gain.setValueAtTime(0, ctx.currentTime + idx * 0.065);
+          noteGain.gain.linearRampToValueAtTime(0.22, ctx.currentTime + idx * 0.065 + 0.02);
+          noteGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + idx * 0.065 + 0.36);
+          oscNode.connect(noteGain);
+          noteGain.connect(ctx.destination);
+          oscNode.start(ctx.currentTime + idx * 0.065);
+          oscNode.stop(ctx.currentTime + idx * 0.065 + 0.38);
+        });
       }
     } catch (e) {}
   },
@@ -192,11 +272,13 @@ const Utils = {
   },
 
   showFloatingXP(x, y, text = '+10 XP') {
+    const safeX = (typeof x === 'number' && !isNaN(x)) ? x : (window.innerWidth / 2);
+    const safeY = (typeof y === 'number' && !isNaN(y)) ? y : (window.innerHeight / 2);
     const el = document.createElement('div');
     el.className = 'floating-xp-pill';
     el.textContent = text;
-    el.style.left = `${Math.max(10, Math.min(window.innerWidth - 80, x - 30))}px`;
-    el.style.top = `${y - 20}px`;
+    el.style.left = `${Math.max(10, Math.min(window.innerWidth - 80, safeX - 30))}px`;
+    el.style.top = `${Math.max(20, safeY - 20)}px`;
     document.body.appendChild(el);
 
     setTimeout(() => {
@@ -243,38 +325,342 @@ const Utils = {
     }, 1000);
   },
 
+  _modalQueue: [],
+  _isModalActive: false,
+
+  escapeHtml(str) {
+    if (!str) return '';
+    return String(str).replace(/[&<>"']/g, m => ({
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#039;'
+    })[m]);
+  },
+
+  CATEGORY_META: {
+    streak: {
+      color: '#8B5CF6',
+      name: 'Streaks',
+      glow: 'rgba(139, 92, 246, 0.22)',
+      top: '#241C4A',
+      topLight: '#49359A',
+      bottom: '#6D5BC7',
+      bottomDark: '#30245F',
+      ribbon: '#806EE0',
+      ribbonShadow: '#4B3D91'
+    },
+    perfect_days: {
+      color: '#F59E0B',
+      name: 'Perfect Days',
+      glow: 'rgba(245, 158, 11, 0.20)',
+      top: '#49330F',
+      topLight: '#8B6218',
+      bottom: '#C28A24',
+      bottomDark: '#65430D',
+      ribbon: '#D7A83F',
+      ribbonShadow: '#765716'
+    },
+    consistency: {
+      color: '#10B981',
+      name: 'Consistency',
+      glow: 'rgba(16, 185, 129, 0.20)',
+      top: '#123A35',
+      topLight: '#1F7668',
+      bottom: '#3DAF9B',
+      bottomDark: '#164E47',
+      ribbon: '#58C6B0',
+      ribbonShadow: '#347D70'
+    },
+    volume: {
+      color: '#06B6D4',
+      name: 'Volume',
+      glow: 'rgba(6, 182, 212, 0.20)',
+      top: '#103B49',
+      topLight: '#176E87',
+      bottom: '#3C9FC0',
+      bottomDark: '#154E63',
+      ribbon: '#5BB6D5',
+      ribbonShadow: '#347A96'
+    }
+  },
+
+  BADGE_CATALOG: {
+    streak_7: { displayNum: '7', unitText: 'DAYS', ribbon: 'none', category: 'streak', title: '7-Day Streak' },
+    streak_21: { displayNum: '21', unitText: 'DAYS', ribbon: 'ribbon', category: 'streak', title: '21-Day Streak' },
+    streak_30: { displayNum: '30', unitText: 'DAYS', ribbon: 'starRibbon', category: 'streak', title: '30-Day Streak' },
+    streak_50: { displayNum: '50', unitText: 'DAYS', ribbon: 'starRibbon', category: 'streak', title: '50-Day Streak' },
+    streak_100: { displayNum: '100', unitText: 'DAYS', ribbon: 'starRibbon', category: 'streak', title: '100-Day Streak' },
+    streak_180: { displayNum: '180', unitText: 'DAYS', ribbon: 'starRibbon', category: 'streak', title: '180-Day Streak' },
+    streak_365: { displayNum: '365', unitText: 'DAYS', ribbon: 'starRibbon', category: 'streak', title: '365-Day Streak' },
+    streak_730: { displayNum: '730', unitText: 'DAYS', ribbon: 'starRibbon', category: 'streak', title: '730-Day Streak' },
+    pd_1: { displayNum: '1', unitText: 'PERFECT DAY', ribbon: 'none', category: 'perfect_days', title: 'First Perfect Day' },
+    pd_7: { displayNum: '7', unitText: 'PERFECT DAYS', ribbon: 'ribbon', category: 'perfect_days', title: 'Perfect Week' },
+    pd_30: { displayNum: '30', unitText: 'PERFECT DAYS', ribbon: 'starRibbon', category: 'perfect_days', title: 'Perfect Month' },
+    pd_100: { displayNum: '100', unitText: 'PERFECT DAYS', ribbon: 'starRibbon', category: 'perfect_days', title: '100 Perfect Days' },
+    pd_365: { displayNum: '365', unitText: 'PERFECT DAYS', ribbon: 'starRibbon', category: 'perfect_days', title: 'Perfect Year' },
+    pd_500: { displayNum: '500', unitText: 'PERFECT DAYS', ribbon: 'starRibbon', category: 'perfect_days', title: '500 Perfect Days' },
+    rate_m70: { displayNum: '70%', unitText: 'MONTHLY', ribbon: 'none', category: 'consistency', title: '70% Monthly' },
+    rate_m80: { displayNum: '80%', unitText: 'MONTHLY', ribbon: 'ribbon', category: 'consistency', title: '80% Monthly' },
+    rate_m90: { displayNum: '90%', unitText: 'MONTHLY', ribbon: 'starRibbon', category: 'consistency', title: '90% Monthly' },
+    rate_y80: { displayNum: '80%', unitText: 'FULL YEAR', ribbon: 'starRibbon', category: 'consistency', title: '80% Annual' },
+    vol_100: { displayNum: '100', unitText: 'CHECK-INS', ribbon: 'none', category: 'volume', title: '100 Check-Ins' },
+    vol_500: { displayNum: '500', unitText: 'CHECK-INS', ribbon: 'ribbon', category: 'volume', title: '500 Check-Ins' },
+    vol_1000: { displayNum: '1K', unitText: 'CHECK-INS', ribbon: 'starRibbon', category: 'volume', title: '1,000 Check-Ins' },
+    vol_2500: { displayNum: '2.5K', unitText: 'CHECK-INS', ribbon: 'starRibbon', category: 'volume', title: '2,500 Check-Ins' },
+    vol_5000: { displayNum: '5K', unitText: 'CHECK-INS', ribbon: 'starRibbon', category: 'volume', title: '5,000 Check-Ins' },
+    vol_10000: { displayNum: '10K', unitText: 'CHECK-INS', ribbon: 'starRibbon', category: 'volume', title: '10,000 Check-Ins' }
+  },
+
+  generateBadgeSVG(badgeId, unlocked = true) {
+    const conf = this.BADGE_CATALOG[badgeId] || {
+      displayNum: '★',
+      unitText: 'MILESTONE',
+      ribbon: 'ribbon',
+      category: 'streak',
+      title: 'Milestone Achieved'
+    };
+    const meta = this.CATEGORY_META[conf.category] || this.CATEGORY_META.streak;
+    const uid = 'ub_' + String(badgeId).replace(/[^a-zA-Z0-9_]/g, '_') + '_' + Math.random().toString(36).substring(2, 7);
+
+    const numStr = String(conf.displayNum);
+    let numClass = 'badge-svg-number';
+    if (numStr.length >= 4) {
+      numClass += ' badge-svg-number-xs';
+    } else if (numStr.length >= 3) {
+      numClass += ' badge-svg-number-small';
+    }
+
+    const yNum = conf.ribbon === 'none' ? 36 : conf.category === 'volume' ? 44 : 40;
+    const yUnit = conf.ribbon === 'none' ? 72 : 75;
+
+    let topC1 = meta.top;
+    let topC2 = meta.topLight;
+    let botC1 = meta.bottom;
+    let botC2 = meta.bottomDark;
+    let ribColor = meta.ribbon;
+    let ribShadow = meta.ribbonShadow;
+    let glowColor = meta.glow;
+
+    if (!unlocked) {
+      topC1 = '#181C22';
+      topC2 = '#252B34';
+      botC1 = '#303640';
+      botC2 = '#1B2027';
+      ribColor = '#343A44';
+      ribShadow = '#181C22';
+      glowColor = 'rgba(0,0,0,0)';
+    }
+
+    const hexD = 'M 38,0 L 92,0 Q 98,0 101,6 L 124,49 Q 127,55 124,61 L 101,104 Q 98,110 92,110 L 38,110 Q 32,110 29,104 L 6,61 Q 3,55 6,49 L 29,6 Q 32,0 38,0 Z';
+
+    let ribbonMarkup = '';
+    if (conf.ribbon === 'ribbon' || conf.ribbon === 'starRibbon') {
+      const starMarkup = conf.ribbon === 'starRibbon'
+        ? '<path d="M18,37 L20,42 L25,42 L21,45 L23,50 L18,47 L13,50 L15,45 L11,42 L16,42 Z" fill="#FFFFFF" fill-opacity="0.88"/><path d="M112,37 L114,42 L119,42 L115,45 L117,50 L112,47 L107,50 L109,45 L105,42 L110,42 Z" fill="#FFFFFF" fill-opacity="0.88"/>'
+        : '';
+
+      ribbonMarkup = `
+        <path d="M15 44 L-30 44 L-15 59 L-30 74 L15 74 Z" fill="${ribShadow}" />
+        <path d="M115 44 L160 44 L145 59 L160 74 L115 74 Z" fill="${ribShadow}" />
+        <path d="M-15 59 L15 74 L15 59 Z" fill="#000000" fill-opacity="0.22" />
+        <path d="M145 59 L115 74 L115 59 Z" fill="#000000" fill-opacity="0.22" />
+        <path d="M-15 29 Q65 14 145 29 L145 59 Q65 44 -15 59 Z" fill="${ribColor}" filter="url(#ribbonShad_${uid})" />
+        ${starMarkup}
+      `;
+    }
+
+    return `
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="-35 -8 200 135" class="milestone-badge-svg ${unlocked ? 'unlocked' : 'locked'}" aria-label="${this.escapeHtml(conf.title)}">
+        <defs>
+          <linearGradient id="top_${uid}" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="${topC1}" />
+            <stop offset="100%" stop-color="${topC2}" />
+          </linearGradient>
+          <linearGradient id="bot_${uid}" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="${botC1}" />
+            <stop offset="100%" stop-color="${botC2}" />
+          </linearGradient>
+          <filter id="badgeGlow_${uid}" x="-45%" y="-45%" width="190%" height="190%">
+            <feGaussianBlur stdDeviation="5" result="blur" />
+            <feFlood flood-color="${glowColor}" flood-opacity="${unlocked ? '1' : '0'}" result="glowColor" />
+            <feComposite in="glowColor" in2="blur" operator="in" result="coloredGlow" />
+            <feMerge>
+              <feMergeNode in="coloredGlow" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+          <filter id="badgeShad_${uid}" x="-35%" y="-35%" width="170%" height="180%">
+            <feDropShadow dx="0" dy="4" stdDeviation="3" flood-color="#000000" flood-opacity="0.35" />
+          </filter>
+          <filter id="ribbonShad_${uid}" x="-30%" y="-30%" width="160%" height="170%">
+            <feDropShadow dx="0" dy="2" stdDeviation="2.5" flood-color="#000000" flood-opacity="0.25" />
+          </filter>
+          <clipPath id="clip_${uid}">
+            <path d="${hexD}" />
+          </clipPath>
+        </defs>
+        <g filter="url(#badgeGlow_${uid})">
+          <g filter="url(#badgeShad_${uid})">
+            <path d="${hexD}" fill="url(#top_${uid})" />
+            <g clip-path="url(#clip_${uid})">
+              <path d="M0 58 Q65 43 130 58 L130 115 L0 115 Z" fill="url(#bot_${uid})" />
+            </g>
+          </g>
+          <path d="${hexD}" fill="none" stroke="${unlocked ? meta.color : '#4B5563'}" stroke-opacity="${unlocked ? '0.65' : '0.35'}" stroke-width="1.2" />
+          <path d="M30 7 Q65 -1 100 7" fill="none" stroke="#FFFFFF" stroke-opacity="${unlocked ? '0.16' : '0.06'}" stroke-width="1.6" />
+        </g>
+        ${ribbonMarkup}
+        <text x="65" y="${yNum}" class="${numClass}" fill="#FFFFFF" fill-opacity="${unlocked ? '1' : '0.45'}">${this.escapeHtml(conf.displayNum)}</text>
+        <text x="65" y="${yUnit}" class="badge-svg-unit" fill="#FFFFFF" fill-opacity="${unlocked ? '0.82' : '0.35'}">${this.escapeHtml(conf.unitText)}</text>
+      </svg>
+    `;
+  },
+
+  // Celebratory Milestone / Badge Unlocked Modal
+  showMilestoneUnlockedModal(milestone) {
+    if (!milestone) return;
+
+    if (this._isModalActive) {
+      this._modalQueue.push(milestone);
+      return;
+    }
+    this._isModalActive = true;
+
+    this.playSound('milestone');
+    if (localStorage.getItem('habitkit_confetti') !== 'false') {
+      this.triggerConfetti();
+    }
+    this.triggerHaptic('success');
+
+    const catMeta = (this.CATEGORY_META && this.CATEGORY_META[milestone.category]) || {
+      name: milestone.category ? (milestone.category.charAt(0).toUpperCase() + milestone.category.slice(1)).replace('_', ' ') : 'Milestone',
+      color: '#8B5CF6',
+      glow: 'rgba(139, 92, 246, 0.35)'
+    };
+
+    let badgeSvg = '';
+    if (typeof generateBadgeSVG === 'function') {
+      badgeSvg = generateBadgeSVG(milestone.id, true);
+    } else if (typeof this.generateBadgeSVG === 'function') {
+      badgeSvg = this.generateBadgeSVG(milestone.id, true);
+    }
+
+    const modal = document.createElement('div');
+    modal.className = 'modal-overlay open milestone-celebration-overlay';
+    modal.style.zIndex = '10001';
+
+    const safeTitle = this.escapeHtml(milestone.name || 'Milestone Achieved');
+    const safeDesc = this.escapeHtml(milestone.description || 'You just achieved an incredible habit milestone!');
+    const xpBonus = milestone.xpBonus || (milestone.target ? milestone.target * 10 : 50);
+
+    modal.innerHTML = `
+      <div class="modal-box animate-pop-in milestone-celebration-card" style="max-width: 360px; text-align: center; padding: 2.25rem 1.6rem; position: relative; overflow: hidden;">
+        <!-- Aura Halo -->
+        <div class="milestone-celebration-aura" style="background: radial-gradient(circle, ${catMeta.color} 0%, transparent 70%); top: -20px; left: calc(50% - 130px);"></div>
+        
+        <!-- Category Tag -->
+        <div style="position: relative; z-index: 2;">
+          <span style="display: inline-block; font-size: 0.72rem; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: ${catMeta.color}; background: rgba(255, 255, 255, 0.05); padding: 0.25rem 0.75rem; border-radius: var(--radius-full); border: 1px solid ${catMeta.color}55; margin-bottom: 0.75rem;">
+            ${catMeta.name} MILESTONE
+          </span>
+        </div>
+
+        <!-- Badge Visual Stage -->
+        <div class="milestone-badge-stage">
+          ${badgeSvg || `
+            <div style="width: 88px; height: 88px; border-radius: 50%; background: linear-gradient(135deg, ${catMeta.color}, #059669); display: flex; align-items: center; justify-content: center; box-shadow: 0 0 35px ${catMeta.color}88; color: #fff;">
+              <i data-lucide="award" style="width: 44px; height: 44px;"></i>
+            </div>
+          `}
+        </div>
+
+        <div style="position: relative; z-index: 2;">
+          <div style="font-size: 0.78rem; font-weight: 850; letter-spacing: 0.08em; text-transform: uppercase; color: #10b981; margin-bottom: 0.25rem;">
+            CONGRATULATIONS!
+          </div>
+          <h2 class="milestone-celebration-title">${safeTitle}</h2>
+          <p style="color: var(--text-muted); font-size: 0.84rem; line-height: 1.45; margin: 0.35rem 0 0.85rem;">${safeDesc}</p>
+
+          <!-- XP Bonus Reward Pill -->
+          <div>
+            <div class="milestone-xp-reward">
+              <i data-lucide="sparkles" style="width: 14px; height: 14px;"></i>
+              <span>+${xpBonus} XP Bonus Earned</span>
+            </div>
+          </div>
+
+          <button class="btn btn-primary" id="milestoneClaimBtn" style="width: 100%; min-height: 46px; font-weight: 800; letter-spacing: 0.01em;">
+            Awesome!
+          </button>
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(modal);
+    if (window.lucide && lucide.createIcons) lucide.createIcons();
+
+    const closeModal = () => {
+      modal.classList.add('closing');
+      setTimeout(() => {
+        if (modal.parentNode) modal.parentNode.removeChild(modal);
+        this._isModalActive = false;
+        if (this._modalQueue.length > 0) {
+          const next = this._modalQueue.shift();
+          setTimeout(() => this.showMilestoneUnlockedModal(next), 220);
+        }
+      }, 200);
+    };
+
+    const claimBtn = modal.querySelector('#milestoneClaimBtn');
+    if (claimBtn) {
+      claimBtn.addEventListener('click', () => {
+        this.playSound('click');
+        closeModal();
+      });
+    }
+
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        closeModal();
+      }
+    });
+  },
+
   triggerConfetti() {
-    const colors = ['#10B981', '#8B5CF6', '#06B6D4', '#F59E0B', '#EC4899'];
-    for (let i = 0; i < 30; i++) {
+    const colors = ['#10B981', '#8B5CF6', '#06B6D4', '#F59E0B', '#EC4899', '#3B82F6', '#F43F5E'];
+    for (let i = 0; i < 48; i++) {
       const p = document.createElement('div');
       const color = colors[Math.floor(Math.random() * colors.length)];
-      const size = Math.random() * 7 + 4;
+      const size = Math.random() * 8 + 5;
+      const isSquare = Math.random() > 0.5;
       p.style.position = 'fixed';
       p.style.left = `${window.innerWidth / 2}px`;
       p.style.top = `${window.innerHeight / 2}px`;
       p.style.width = `${size}px`;
-      p.style.height = `${size * 0.6}px`;
+      p.style.height = `${isSquare ? size : size * 0.45}px`;
       p.style.backgroundColor = color;
-      p.style.borderRadius = '2px';
+      p.style.borderRadius = isSquare ? '2px' : '1px';
       p.style.pointerEvents = 'none';
-      p.style.zIndex = '10000';
+      p.style.zIndex = '10002';
       document.body.appendChild(p);
 
       const angle = Math.random() * Math.PI * 2;
-      const velocity = Math.random() * 100 + 50;
+      const velocity = Math.random() * 140 + 70;
       const vx = Math.cos(angle) * velocity;
-      const vy = Math.sin(angle) * velocity - 40;
+      const vy = Math.sin(angle) * velocity - 60;
 
       let posX = window.innerWidth / 2;
       let posY = window.innerHeight / 2;
       let opacity = 1;
-      let rot = 0;
+      let rot = Math.random() * 360;
 
       const anim = setInterval(() => {
-        posX += vx * 0.06;
-        posY += vy * 0.06 + 1.6;
-        rot += 8;
-        opacity -= 0.03;
+        posX += vx * 0.055;
+        posY += vy * 0.055 + 1.8;
+        rot += 9;
+        opacity -= 0.024;
         p.style.left = `${posX}px`;
         p.style.top = `${posY}px`;
         p.style.transform = `rotate(${rot}deg)`;
@@ -457,265 +843,25 @@ const Utils = {
   }
 };
 
-// Global Real-Time Network & Offline Health Monitor
-const NetworkMonitor = {
-  isOffline: false,
-  isSlow: false,
-  _bannerEl: null,
-  _hideTimer: null,
-  _dismissed: false,
-
-  init() {
-    this._createBannerDOM();
-    this._createHeaderBadge();
-    this._bindEvents();
-    this.checkStatus();
-  },
-
-  _createHeaderBadge() {
-    if (document.getElementById('networkAmbientPill')) return;
-    const headerActions = document.querySelector('.header-actions') || document.querySelector('.header-bar');
-    if (!headerActions) return;
-
-    const pill = document.createElement('div');
-    pill.id = 'networkAmbientPill';
-    pill.className = 'network-ambient-pill status-online';
-    pill.title = 'Network: Online (Click for details)';
-    pill.innerHTML = `
-      <span class="ambient-dot"></span>
-      <span class="ambient-label" id="networkAmbientLabel">Online</span>
-    `;
-    pill.addEventListener('click', () => {
-      this._dismissed = false;
-      if (this.isOffline) {
-        this.showOffline();
-      } else {
-        this.showOnlineRecovered('Connected to Supabase. All systems operational.');
-      }
-    });
-
-    if (headerActions.classList.contains('header-actions')) {
-      headerActions.insertBefore(pill, headerActions.firstChild);
-    } else {
-      headerActions.appendChild(pill);
-    }
-  },
-
-  _updateAmbientPill(status, labelText) {
-    const pill = document.getElementById('networkAmbientPill');
-    const label = document.getElementById('networkAmbientLabel');
-    if (!pill || !label) return;
-
-    pill.className = `network-ambient-pill status-${status}`;
-    label.textContent = labelText;
-  },
-
-  _createBannerDOM() {
-    if (this._bannerEl || document.getElementById('appNetworkBanner')) {
-      this._bannerEl = document.getElementById('appNetworkBanner');
-      return;
-    }
-    const el = document.createElement('div');
-    el.id = 'appNetworkBanner';
-    el.className = 'network-status-banner';
-    el.innerHTML = `
-      <div class="network-banner-content">
-        <div class="network-icon-wrap" id="networkIconWrap">
-          <i data-lucide="wifi-off"></i>
-        </div>
-        <div class="network-text-group">
-          <div class="network-banner-title" id="networkTitle">You are Offline</div>
-          <div class="network-banner-sub" id="networkSub">Please connect to a network to sync your habits.</div>
-        </div>
-        <button class="network-close-btn" id="networkCloseBtn" title="Dismiss" type="button">
-          <i data-lucide="x"></i>
-        </button>
-      </div>
-    `;
-    document.body.appendChild(el);
-    this._bannerEl = el;
-
-    const closeBtn = document.getElementById('networkCloseBtn');
-    if (closeBtn) {
-      closeBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        this._dismissed = true;
-        this.hide();
-      });
-    }
-  },
-
-  _bindEvents() {
-    window.addEventListener('offline', () => {
-      this._dismissed = false;
-      this.showOffline();
-    });
-
-    window.addEventListener('online', () => {
-      this._dismissed = false;
-      this.showOnlineRecovered();
-    });
-
-    if ('connection' in navigator) {
-      const conn = navigator.connection;
-      conn.addEventListener('change', () => {
-        this.checkConnectionQuality();
-      });
-    }
-  },
-
-  checkStatus() {
-    this._createHeaderBadge();
-    if (!navigator.onLine) {
-      this.showOffline();
-    } else {
-      this._updateAmbientPill('online', 'Online');
-      this.checkConnectionQuality();
-    }
-  },
-
-  checkConnectionQuality() {
-    if (!navigator.onLine) {
-      this.showOffline();
-      return;
-    }
-
-    if ('connection' in navigator) {
-      const conn = navigator.connection;
-      if (conn.effectiveType === 'slow-2g' || conn.effectiveType === '2g' || conn.rtt > 1200 || (conn.downlink > 0 && conn.downlink < 0.4)) {
-        this.showSlowNetwork();
-      }
-    }
-  },
-
-  showOffline() {
-    this.isOffline = true;
-    const queueCount = window.OfflineStore ? OfflineStore.getSyncQueue().length : 0;
-    const subText = queueCount > 0 
-      ? `Offline Mode • ${queueCount} change${queueCount === 1 ? '' : 's'} queued to sync automatically`
-      : 'Offline Mode • All habits and actions work locally and will sync when reconnected';
-
-    this._updateAmbientPill('offline', queueCount > 0 ? `Offline (${queueCount})` : 'Offline');
-
-    this._updateBanner({
-      type: 'offline',
-      icon: 'wifi-off',
-      title: 'You are Offline',
-      sub: subText,
-      persistent: true
-    });
-  },
-
-  updateSyncBadge(count) {
-    if (this.isOffline) {
-      this.showOffline();
-    }
-  },
-
-  showSyncing(count) {
-    this._updateAmbientPill('syncing', 'Syncing...');
-    this._updateBanner({
-      type: 'syncing',
-      icon: 'refresh-cw',
-      title: 'Syncing Changes...',
-      sub: `Syncing ${count} offline mutation${count === 1 ? '' : 's'} with Supabase`,
-      persistent: true
-    });
-  },
-
-  showSlowNetwork(customMsg) {
-    if (this.isOffline || this._dismissed) return;
-    this.isSlow = true;
-    this._updateBanner({
-      type: 'slow',
-      icon: 'zap-off',
-      title: 'Slow Network Detected',
-      sub: customMsg || 'Your connection is slow. Please move to an area with better network reception for smooth syncing.',
-      persistent: false,
-      autoHideMs: 8000
-    });
-  },
-
-  showOnlineRecovered(customMsg) {
-    this.isOffline = false;
-    this.isSlow = false;
-    this._dismissed = false;
-
-    this._updateAmbientPill('online', 'Synced ✓');
-    setTimeout(() => {
-      if (!this.isOffline) this._updateAmbientPill('online', 'Online');
-    }, 2500);
-
-    this._updateBanner({
-      type: 'online',
-      icon: 'wifi',
-      title: 'Back Online',
-      sub: customMsg || 'Connected to network. Syncing data with Supabase...',
-      persistent: false,
-      autoHideMs: 3500
-    });
-
-    if (window.OfflineStore && typeof OfflineStore.processSyncQueue === 'function') {
-      OfflineStore.processSyncQueue();
-    }
-  },
-
-  _updateBanner({ type, icon, title, sub, persistent, autoHideMs }) {
-    if (!this._bannerEl) this._createBannerDOM();
-    if (this._hideTimer) {
-      clearTimeout(this._hideTimer);
-      this._hideTimer = null;
-    }
-
-    this._bannerEl.className = `network-status-banner visible type-${type}`;
-    const iconWrap = document.getElementById('networkIconWrap');
-    const titleEl = document.getElementById('networkTitle');
-    const subEl = document.getElementById('networkSub');
-
-    if (iconWrap) iconWrap.innerHTML = `<i data-lucide="${icon}"></i>`;
-    if (titleEl) titleEl.textContent = title;
-    if (subEl) subEl.textContent = sub;
-
-    if (window.lucide) lucide.createIcons();
-
-    if (!persistent && autoHideMs) {
-      this._hideTimer = setTimeout(() => {
-        this.hide();
-      }, autoHideMs);
-    }
-  },
-
-  hide() {
-    if (this._bannerEl) {
-      this._bannerEl.classList.remove('visible');
-    }
-  }
-};
-
-// Register PWA Service Worker
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js')
-      .then((reg) => {
-        console.log('[PWA] Service Worker active:', reg.scope);
-      })
-      .catch((err) => {
-        console.warn('[PWA] Service Worker registration failed:', err);
-      });
-  });
+if (typeof window !== 'undefined') {
+  window.Utils = Utils;
+}
+if (typeof globalThis !== 'undefined') {
+  globalThis.Utils = Utils;
 }
 
-// Global PWA Install Prompt Listener
-window.addEventListener('beforeinstallprompt', (e) => {
-  e.preventDefault();
-  window.deferredPrompt = e;
-  window.dispatchEvent(new CustomEvent('committed:pwa-installable'));
-  console.log('[PWA] App is installable');
-});
-
-// Auto-initialize NetworkMonitor on DOM ready
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', () => NetworkMonitor.init());
-} else {
-  NetworkMonitor.init();
+// Unregister any legacy PWA Service Workers and clear caches
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.getRegistrations().then((registrations) => {
+    for (const registration of registrations) {
+      registration.unregister();
+    }
+  });
+}
+if ('caches' in window) {
+  caches.keys().then((names) => {
+    for (const name of names) {
+      caches.delete(name);
+    }
+  });
 }

@@ -12,15 +12,17 @@ let categoriesList = [];
 
 document.addEventListener('DOMContentLoaded', () => {
   initSettings();
-  initPwaSettings();
   loadCategories();
   renderCategoryPalette();
 });
 
 function initSettings() {
-  const currentTheme = localStorage.getItem('committed_theme' || localStorage.getItem('habitkit_theme')) || 'dark';
+  const currentTheme = localStorage.getItem('committed_theme') || localStorage.getItem('habitkit_theme') || 'dark';
   document.getElementById('themeSelect').value = currentTheme;
   document.documentElement.setAttribute('data-theme', currentTheme);
+  if (window.Utils && Utils.syncMobileThemeColor) {
+    Utils.syncMobileThemeColor(currentTheme);
+  }
 
   const currentShape = localStorage.getItem('habitkit_tile_shape') || 'tile-rounded';
   document.getElementById('tileShapeSelect').value = currentShape;
@@ -28,45 +30,12 @@ function initSettings() {
   document.getElementById('soundToggle').checked = localStorage.getItem('habitkit_sound') !== 'false';
   document.getElementById('confettiToggle').checked = localStorage.getItem('habitkit_confetti') !== 'false';
 
+  const hapticsEl = document.getElementById('hapticsToggle');
+  if (hapticsEl) {
+    hapticsEl.checked = localStorage.getItem('habitkit_haptics') !== 'false';
+  }
+
   lucide.createIcons();
-}
-
-function initPwaSettings() {
-  const installBtn = document.getElementById('pwaInstallBtn');
-  const desc = document.getElementById('pwaCardDesc');
-  const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
-
-  if (isStandalone) {
-    if (desc) desc.textContent = 'Running as installed PWA. All habits work offline & sync automatically.';
-    if (installBtn) installBtn.style.display = 'none';
-  } else if (window.deferredPrompt) {
-    if (installBtn) installBtn.style.display = 'inline-flex';
-    if (desc) desc.textContent = 'Install Committed to your home screen or dock for instant offline access.';
-  } else {
-    if (desc) desc.textContent = 'Offline caching active. Install from your browser menu to use as native app.';
-  }
-
-  window.addEventListener('committed:pwa-installable', () => {
-    if (installBtn) installBtn.style.display = 'inline-flex';
-    if (desc) desc.textContent = 'Install Committed to your home screen or dock for instant offline access.';
-    if (window.lucide) lucide.createIcons();
-  });
-}
-
-function handlePwaInstall() {
-  if (window.deferredPrompt) {
-    window.deferredPrompt.prompt();
-    window.deferredPrompt.userChoice.then((choice) => {
-      if (choice.outcome === 'accepted') {
-        console.log('[PWA] App installed');
-      }
-      window.deferredPrompt = null;
-      const installBtn = document.getElementById('pwaInstallBtn');
-      if (installBtn) installBtn.style.display = 'none';
-    });
-  } else {
-    alert('To install on iPhone/iPad: Tap Share -> "Add to Home Screen". On Android/Chrome: Tap ⋮ -> "Install app".');
-  }
 }
 
 async function loadCategories() {
@@ -107,11 +76,11 @@ function renderCategoriesList(categories) {
         </div>
       </div>
       <div class="category-actions">
-        <button class="btn btn-icon" onclick="openEditCategoryModal('${cat.id}')" title="Edit Category" style="width: 32px; height: 32px;">
-          <i data-lucide="edit-2" style="width: 14px; height: 14px;"></i>
+        <button class="btn btn-icon" onclick="openEditCategoryModal('${cat.id}')" title="Edit Category" style="width: 40px; height: 40px; min-width: 44px; min-height: 44px;">
+          <i data-lucide="edit-2" style="width: 15px; height: 15px;"></i>
         </button>
-        <button class="btn btn-icon category-btn-delete" onclick="handleDeleteCategory('${cat.id}', '${escapeHtml(cat.name)}')" title="Delete Category" style="width: 32px; height: 32px;">
-          <i data-lucide="trash-2" style="width: 14px; height: 14px;"></i>
+        <button class="btn btn-icon category-btn-delete" onclick="handleDeleteCategory('${cat.id}', '${escapeHtml(cat.name)}')" title="Delete Category" style="width: 40px; height: 40px; min-width: 44px; min-height: 44px;">
+          <i data-lucide="trash-2" style="width: 15px; height: 15px;"></i>
         </button>
       </div>
     </div>
@@ -177,7 +146,15 @@ function openAddCategoryModal() {
   selectedCategoryColor = availableColor;
   
   renderCategoryPalette(null);
-  document.getElementById('categoryModalOverlay').classList.add('open');
+  const overlay = document.getElementById('categoryModalOverlay');
+  overlay.classList.add('open');
+  if (window.UI && UI.lockBodyScroll) UI.lockBodyScroll();
+  if (!overlay.dataset.backdropBound) {
+    overlay.dataset.backdropBound = 'true';
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) closeCategoryModal();
+    });
+  }
 }
 
 function openEditCategoryModal(catId) {
@@ -189,11 +166,20 @@ function openEditCategoryModal(catId) {
   document.getElementById('catNameInput').value = cat.name;
   selectedCategoryColor = cat.color || '#10B981';
   renderCategoryPalette(cat.id);
-  document.getElementById('categoryModalOverlay').classList.add('open');
+  const overlay = document.getElementById('categoryModalOverlay');
+  overlay.classList.add('open');
+  if (window.UI && UI.lockBodyScroll) UI.lockBodyScroll();
+  if (!overlay.dataset.backdropBound) {
+    overlay.dataset.backdropBound = 'true';
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) closeCategoryModal();
+    });
+  }
 }
 
 function closeCategoryModal() {
   document.getElementById('categoryModalOverlay').classList.remove('open');
+  if (window.UI && UI.unlockBodyScroll) UI.unlockBodyScroll();
 }
 
 async function saveCategoryForm(e) {
@@ -202,6 +188,12 @@ async function saveCategoryForm(e) {
   const name = document.getElementById('catNameInput').value.trim();
 
   if (!name) return;
+
+  // Strict Online Guard: Prevent offline category creation/updates
+  if (window.OnlineGuard && (!window.OnlineGuard.isOnline || (typeof navigator !== 'undefined' && !navigator.onLine))) {
+    window.OnlineGuard.show('An active internet connection is required to modify categories.');
+    return;
+  }
 
   const usedByOther = categoriesList.find(c => (!id || c.id !== id) && (c.color || '').toUpperCase() === selectedCategoryColor.toUpperCase());
   if (usedByOther) {
@@ -235,6 +227,12 @@ async function saveCategoryForm(e) {
 }
 
 async function handleDeleteCategory(id, name) {
+  // Strict Online Guard: Prevent offline category deletion
+  if (window.OnlineGuard && (!window.OnlineGuard.isOnline || (typeof navigator !== 'undefined' && !navigator.onLine))) {
+    window.OnlineGuard.show('An active internet connection is required to delete categories.');
+    return;
+  }
+
   if (confirm(`Are you sure you want to delete category "${name}"? Any habits in this category will be safely reassigned to General.`)) {
     try {
       const res = await API.deleteCategory(id);
@@ -251,26 +249,55 @@ async function handleDeleteCategory(id, name) {
 
 function handleThemeChange(val) {
   document.documentElement.setAttribute('data-theme', val);
-  localStorage.setItem('committed_theme' || localStorage.getItem('habitkit_theme'), val);
+  localStorage.setItem('committed_theme', val);
+  localStorage.setItem('habitkit_theme', val);
+  if (window.Utils) {
+    Utils.syncMobileThemeColor(val);
+    Utils.showToast('Theme updated to ' + val, 'success');
+  }
 }
 
 function handleTileShapeChange(val) {
   localStorage.setItem('habitkit_tile_shape', val);
+  if (window.Utils) Utils.showToast('Tile shape updated', 'success');
 }
 
 function handleSoundToggle(e) {
   localStorage.setItem('habitkit_sound', e.target.checked);
+  if (window.Utils) {
+    if (e.target.checked) Utils.playSound('click');
+    Utils.showToast('Audio feedback ' + (e.target.checked ? 'enabled' : 'disabled'), 'info');
+  }
 }
 
 function handleConfettiToggle(e) {
   localStorage.setItem('habitkit_confetti', e.target.checked);
+  if (window.Utils) Utils.showToast('Celebration confetti ' + (e.target.checked ? 'enabled' : 'disabled'), 'info');
+}
+
+function handleHapticsToggle(e) {
+  localStorage.setItem('habitkit_haptics', e.target.checked);
+  if (window.Utils) {
+    if (e.target.checked) Utils.triggerHaptic('success');
+    Utils.showToast('Haptic vibration ' + (e.target.checked ? 'enabled' : 'disabled'), 'info');
+  }
 }
 
 function triggerExport() {
+  if (window.OnlineGuard && (!window.OnlineGuard.isOnline || (typeof navigator !== 'undefined' && !navigator.onLine))) {
+    window.OnlineGuard.show('An active internet connection is required to export data.');
+    return;
+  }
   API.exportBackup();
 }
 
 async function triggerImport(e) {
+  if (window.OnlineGuard && (!window.OnlineGuard.isOnline || (typeof navigator !== 'undefined' && !navigator.onLine))) {
+    window.OnlineGuard.show('An active internet connection is required to import backup data.');
+    e.target.value = '';
+    return;
+  }
+
   const file = e.target.files[0];
   if (!file) return;
 

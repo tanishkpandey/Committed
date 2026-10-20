@@ -11,16 +11,21 @@ app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
-// Health check endpoint for Render / monitoring
-app.get('/health', (req, res) => {
+// Health check endpoint for monitoring & real-time connection verification
+const healthHandler = (req, res) => {
+  res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
   res.json({
     status: 'ok',
+    mode: 'online-only',
     app: 'Committed',
     commit: process.env.RENDER_GIT_COMMIT || 'local-dev',
     branch: process.env.RENDER_GIT_BRANCH || 'main',
     timestamp: new Date().toISOString()
   });
-});
+};
+
+app.get('/health', healthHandler);
+app.get('/api/health', healthHandler);
 
 // Performance & Security Headers
 app.use((req, res, next) => {
@@ -28,16 +33,21 @@ app.use((req, res, next) => {
   res.set('Connection', 'keep-alive');
   if (req.path.startsWith('/api')) {
     res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+    res.set('Pragma', 'no-cache');
+    res.set('Expires', '0');
   }
   next();
 });
 
+// Static assets: strictly disable caching for HTML to enforce online operation
 app.use(express.static(path.join(__dirname, '..', 'public'), {
-  etag: true,
-  maxAge: '1h',
-  setHeaders: (res, path) => {
-    if (path.endsWith('.html') || path.endsWith('sw.js')) {
-      res.set('Cache-Control', 'no-cache, must-revalidate');
+  etag: false,
+  maxAge: 0,
+  setHeaders: (res, filePath) => {
+    if (filePath.endsWith('.html')) {
+      res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0');
+      res.set('Pragma', 'no-cache');
+      res.set('Expires', '0');
     } else {
       res.set('Cache-Control', 'public, max-age=3600');
     }
@@ -46,12 +56,20 @@ app.use(express.static(path.join(__dirname, '..', 'public'), {
 
 app.use('/api', apiRoutes);
 
-// Fallback HTML routing
-app.get('/progress', (req, res) => res.sendFile(path.join(__dirname, '..', 'public', 'progress.html')));
-app.get('/analytics', (req, res) => res.sendFile(path.join(__dirname, '..', 'public', 'analytics.html')));
-app.get('/manage', (req, res) => res.sendFile(path.join(__dirname, '..', 'public', 'manage-habits.html')));
-app.get('/habit/:id', (req, res) => res.sendFile(path.join(__dirname, '..', 'public', 'habit-detail.html')));
-app.get('/settings', (req, res) => res.sendFile(path.join(__dirname, '..', 'public', 'settings.html')));
+// Fallback HTML routing with anti-cache headers
+const sendFreshHtml = (filePath) => (req, res) => {
+  res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0');
+  res.set('Pragma', 'no-cache');
+  res.set('Expires', '0');
+  res.sendFile(filePath);
+};
+
+app.get('/today', sendFreshHtml(path.join(__dirname, '..', 'public', 'index.html')));
+app.get('/habits', sendFreshHtml(path.join(__dirname, '..', 'public', 'habits.html')));
+app.get('/progress', sendFreshHtml(path.join(__dirname, '..', 'public', 'progress.html')));
+app.get('/analytics', sendFreshHtml(path.join(__dirname, '..', 'public', 'analytics.html')));
+app.get('/habit/:id', sendFreshHtml(path.join(__dirname, '..', 'public', 'habit-detail.html')));
+app.get('/settings', sendFreshHtml(path.join(__dirname, '..', 'public', 'settings.html')));
 
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`====================================================`);

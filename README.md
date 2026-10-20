@@ -43,18 +43,19 @@ Categorized into 4 distinct tracks:
 - **High-Contrast Vector Tabs:** Fast category filtering with official Lucide vector icons and zero cartoon emojis.
 - **Safe-Area Padding:** Dynamic padding ensures bottom navigation never covers cards or buttons.
 
-### 5. ☁️ Supabase PostgreSQL Cloud Sync & Dual-Mode Engine
-- **Cloud-Native:** Backed by Supabase PostgreSQL for multi-device synchronization.
-- **Offline Resilience:** Seamless fallback to local file storage (store.json) when offline.
+### 5. ☁️ Supabase PostgreSQL Real-Time Cloud Engine (Online-Only)
+- **Strictly Cloud-Native:** Backed exclusively by Supabase PostgreSQL for instant multi-device synchronization and verifiable behavioral streaks.
+- **Online-Only Architecture:** Disconnected/offline usage is disabled to protect database integrity, prevent out-of-sync streak corruption, and maintain atomic XP progression.
+- **Real-Time Connectivity Guard:** Intelligent live connection monitor alerts immediately if internet access drops and auto-resumes once restored.
 - **Smart Import Engine:** Automatic detection and conversion for both native HabitKit mobile exports and web JSON backups.
 
 ---
 
 ## 🛠️ Tech Stack
 
-- **Frontend:** Vanilla HTML5, CSS3 Custom Properties (Fluid & Mobile-First), ES6+ JavaScript, Lucide Icons.
+- **Frontend:** Vanilla HTML5, CSS3 Custom Properties (Fluid & Mobile-First), ES6+ JavaScript, Lucide Icons, OnlineGuard.
 - **Backend:** Node.js, Express.js.
-- **Database:** Supabase (Cloud PostgreSQL) with local fallback.
+- **Database:** Supabase (Cloud PostgreSQL, Strict Online Mode).
 - **Audio & Animations:** Web Audio API sound effects and CSS3 hardware-accelerated animations.
 
 ---
@@ -83,7 +84,7 @@ PORT=3000
 NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=your-supabase-key
 `
-*(If Supabase keys are not provided, Committed automatically runs in local storage mode.)*
+*(Committed operates in strict online mode and requires active Supabase credentials to run.)*
 
 ### 4. Start Development Server
 `ash

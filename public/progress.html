@@ -3,19 +3,24 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport"
-    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Progress & Mastery - Committed</title>
-  <link rel="icon" type="image/svg+xml" href="favicon.svg">
-  <link rel="manifest" href="/manifest.json">
-  <meta name="theme-color" content="#0B0F17">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0a0c10" id="themeColorMeta">
   <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <link rel="apple-touch-icon" href="favicon.svg">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
+  <title>Progress - Committed</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="preconnect" href="https://unpkg.com">
   <link rel="dns-prefetch" href="https://unpkg.com">
   <link rel="stylesheet" href="css/main.css?v=1788627500">
-  <link rel="stylesheet" href="css/components.css?v=1788627500">
+  <link rel="stylesheet" href="css/components.css?v=1788632000">
   <link rel="stylesheet" href="css/animations.css?v=1788627500">
   <script src="https://unpkg.com/lucide@latest"></script>
 </head>
@@ -47,7 +52,7 @@
         <feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#000000" flood-opacity="0.30" />
       </filter>
 
-      <!-- Category Gradients: STREAKS (Purple / Indigo) -->
+      <!-- Category Gradients: STREAKS (Violet) -->
       <linearGradient id="streakTop" x1="0" y1="0" x2="0" y2="1">
         <stop offset="0%" stop-color="#40318F" />
         <stop offset="100%" stop-color="#6752D6" />
@@ -57,7 +62,7 @@
         <stop offset="100%" stop-color="#342779" />
       </linearGradient>
 
-      <!-- Category Gradients: PERFECT DAYS (Gold / Amber) -->
+      <!-- Category Gradients: PERFECT DAYS (Gold) -->
       <linearGradient id="perfectTop" x1="0" y1="0" x2="0" y2="1">
         <stop offset="0%" stop-color="#C78312" />
         <stop offset="100%" stop-color="#F3B52E" />
@@ -67,7 +72,7 @@
         <stop offset="100%" stop-color="#D99217" />
       </linearGradient>
 
-      <!-- Category Gradients: CONSISTENCY (Teal / Emerald) -->
+      <!-- Category Gradients: CONSISTENCY (Emerald) -->
       <linearGradient id="consistencyTop" x1="0" y1="0" x2="0" y2="1">
         <stop offset="0%" stop-color="#176A61" />
         <stop offset="100%" stop-color="#2D9A89" />
@@ -77,7 +82,7 @@
         <stop offset="100%" stop-color="#1C7065" />
       </linearGradient>
 
-      <!-- Category Gradients: VOLUME (Ocean Blue / Cyan) -->
+      <!-- Category Gradients: VOLUME (Ocean Blue) -->
       <linearGradient id="volumeTop" x1="0" y1="0" x2="0" y2="1">
         <stop offset="0%" stop-color="#164B78" />
         <stop offset="100%" stop-color="#247DB5" />
@@ -86,284 +91,205 @@
         <stop offset="0%" stop-color="#5DB8E8" />
         <stop offset="100%" stop-color="#1C5D89" />
       </linearGradient>
-
-      <!-- Locked / Grayscale Gradients -->
-      <linearGradient id="lockedTop" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="#2c3038" />
-        <stop offset="100%" stop-color="#3d4450" />
-      </linearGradient>
-      <linearGradient id="lockedBottom" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="#4b5563" />
-        <stop offset="100%" stop-color="#1f242d" />
-      </linearGradient>
-
-      <!-- Base Badge Template -->
-      <g id="badge-baseBadge">
-        <g filter="url(#badgeShadow)">
-          <use href="#badge-hex" fill="var(--badge-top)" />
-          <g clip-path="url(#badge-hexClip)">
-            <path d="M0 58 Q65 43 130 58 L130 115 L0 115 Z" fill="var(--badge-bottom)" />
-          </g>
-        </g>
-        <path d="M30 7 Q65 -1 100 7" fill="none" stroke="#FFFFFF" stroke-opacity="0.22" stroke-width="2" />
-      </g>
-
-      <!-- Ribbon Template -->
-      <g id="badge-ribbon">
-        <path d="M15 44 L-30 44 L-15 59 L-30 74 L15 74 Z" fill="var(--ribbon-shadow)" />
-        <path d="M-15 59 L15 74 L15 59 Z" fill="#000000" fill-opacity="0.25" />
-        <path d="M115 44 L160 44 L145 59 L160 74 L115 74 Z" fill="var(--ribbon-shadow)" />
-        <path d="M145 59 L115 74 L115 59 Z" fill="#000000" fill-opacity="0.25" />
-        <g filter="url(#ribbonShadow)">
-          <path d="M-15 29 Q65 14 145 29 L145 59 Q65 44 -15 59 Z" fill="var(--ribbon)" />
-        </g>
-      </g>
-
-      <!-- Star Ribbon Template -->
-      <g id="badge-starRibbon">
-        <use href="#badge-ribbon" />
-        <use href="#badge-star" x="18" y="44" />
-        <use href="#badge-star" x="112" y="44" />
-      </g>
     </defs>
   </svg>
 
   <div class="app-container">
+    <!-- Header Top Bar -->
     <header class="header-bar">
-      <div>
-        <h1 class="app-title">Progress</h1>
-        <p style="font-size: 0.75rem; color: var(--text-muted);">Multi-year mastery, milestones & lifetime XP</p>
-      </div>
+      <a href="/" class="logo-group">
+        <img src="img/logo.svg" alt="Committed Logo"
+          style="width: 36px; height: 36px; border-radius: var(--radius-sm);" />
+        <span class="app-title">Committed</span>
+      </a>
     </header>
 
-    <!-- 1. PLAYER RANK & LEVEL SECTION -->
-    <section class="progress-section">
-      <div class="ref-overview-header">
-        <div class="ref-section-tag">
-          <i data-lucide="award" style="width: 14px; height: 14px;"></i>
-          <span>Player Rank</span>
-        </div>
-      </div>
+    <!-- Page Title -->
+    <h1 class="page-title">Progress</h1>
 
-      <div class="hero-level-card">
-        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.85rem;">
-          <div style="display: flex; align-items: center; gap: 0.75rem;">
-            <div class="hero-badge-circle" style="margin: 0; width: 44px; height: 44px;">
-              <i data-lucide="award" style="width: 22px; height: 22px;"></i>
-            </div>
-            <div style="text-align: left;">
-              <div class="hero-level-title" id="heroLevelNum" style="font-size: 1.45rem;"><span class="skeleton-shimmer"
-                  style="width: 90px; height: 1.45rem; display: inline-block;"></span></div>
-              <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">Mastery Rank</div>
-            </div>
+    <!-- 1. LEVEL CARD -->
+    <section class="progress-section" style="margin-bottom: 0.85rem;">
+      <div class="progress-level-card">
+        <div class="level-card-top">
+          <div class="level-card-badge-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+            </svg>
           </div>
-          <div
-            style="background: rgba(16, 185, 129, 0.15); color: #10b981; padding: 0.3rem 0.65rem; border-radius: var(--radius-full); font-size: 0.74rem; font-weight: 800; border: 1px solid rgba(16, 185, 129, 0.3);">
-            Active Tier
+          <div class="level-card-info">
+            <span class="level-card-label" id="levelCardLabel">Level 1</span>
+            <h2 class="level-card-headline" id="levelCardHeadline">Loading XP...</h2>
           </div>
         </div>
 
-        <div class="hero-xp-track" style="margin: 0.65rem 0 0.45rem;">
-          <div class="hero-xp-fill" id="heroXpFill" style="width: 0%;"></div>
+        <div class="level-progress-track">
+          <div class="level-progress-fill" id="levelProgressFill" style="width: 0%;"></div>
         </div>
 
-        <div class="hero-xp-labels">
-          <span id="heroXpCurrentText"><span class="skeleton-shimmer"
-              style="width: 75px; height: 12px; display: inline-block;"></span></span>
-          <span id="heroXpRemainingText"><span class="skeleton-shimmer"
-              style="width: 100px; height: 12px; display: inline-block;"></span></span>
+        <div class="level-xp-footer">
+          <span id="levelXpCurrent">0 XP</span>
+          <span id="levelXpNext">100 XP</span>
         </div>
       </div>
     </section>
 
-    <!-- 2. LIFETIME ACCUMULATION SECTION (Tiered Structured Board to break card repetition) -->
-    <section class="progress-section">
-      <div class="ref-overview-header">
-        <div class="ref-section-tag">
-          <i data-lucide="layers" style="width: 14px; height: 14px;"></i>
-          <span>Lifetime Accumulation</span>
+    <!-- 2. BEST STREAK CARD (Directly under level card, gold tint) -->
+    <section class="progress-section" style="margin-bottom: 1.15rem;">
+      <div class="best-streak-card">
+        <div class="best-streak-label">Your best streak ever</div>
+        <div class="best-streak-val-row">
+          <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"
+            class="best-streak-icon">
+            <path
+              d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z" />
+          </svg>
+          <span class="best-streak-number" id="bestStreakDays">0 days</span>
         </div>
-        <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">All-Time Records</span>
       </div>
+    </section>
 
-
-      <!-- Lifetime Grid: Total XP, Completions, Perfect Days, Best Streak -->
-      <div class="lifetime-grid">
+    <!-- 3. STATS GRID (2 columns, 2 rows) -->
+    <section class="progress-section" style="margin-bottom: 1.25rem;">
+      <div class="progress-stats-grid">
         <!-- Total XP -->
-        <div class="lifetime-card">
-          <div class="lifetime-card-left">
-            <div class="lifetime-card-icon" style="background: rgba(16, 185, 129, 0.12); color: #10b981;">
-              <i data-lucide="sparkles" style="width: 16px; height: 16px;"></i>
-            </div>
-            <div class="lifetime-card-text">
-              <div class="lifetime-card-title">Total XP</div>
-              <div class="lifetime-card-sub">Cumulative experience points</div>
-            </div>
-          </div>
-          <div class="lifetime-card-val" id="statLifetimeXP">
-            <span class="skeleton-shimmer" style="width: 50px; height: 1.4rem; display: inline-block;"></span>
-          </div>
+        <div class="progress-stat-card">
+          <div class="progress-stat-label">Total XP</div>
+          <div class="progress-stat-val" id="statTotalXp">0</div>
         </div>
 
-        <!-- Total Completions -->
-        <div class="lifetime-card">
-          <div class="lifetime-card-left">
-            <div class="lifetime-card-icon" style="background: rgba(16, 185, 129, 0.12); color: #10b981;">
-              <i data-lucide="check-circle-2" style="width: 16px; height: 16px;"></i>
-            </div>
-            <div class="lifetime-card-text">
-              <div class="lifetime-card-title">Completions</div>
-              <div class="lifetime-card-sub">Total verified check-ins</div>
-            </div>
-          </div>
-          <div class="lifetime-card-val" id="statTotalCompletions">
-            <span class="skeleton-shimmer" style="width: 45px; height: 1.4rem; display: inline-block;"></span>
-          </div>
+        <!-- Check ins -->
+        <div class="progress-stat-card">
+          <div class="progress-stat-label">Check ins</div>
+          <div class="progress-stat-val" id="statCheckIns">0</div>
         </div>
 
-        <!-- Perfect Days -->
-        <div class="lifetime-card">
-          <div class="lifetime-card-left">
-            <div class="lifetime-card-icon" style="background: rgba(16, 185, 129, 0.12); color: #10b981;">
-              <i data-lucide="star" style="width: 16px; height: 16px;"></i>
-            </div>
-            <div class="lifetime-card-text">
-              <div class="lifetime-card-title">Perfect Days</div>
-              <div class="lifetime-card-sub">100% daily habit completion days</div>
-            </div>
-          </div>
-          <div class="lifetime-card-val" id="statPerfectDays">
-            <span class="skeleton-shimmer" style="width: 30px; height: 1.4rem; display: inline-block;"></span>
-          </div>
+        <!-- Perfect days -->
+        <div class="progress-stat-card" id="statCardPerfectDays">
+          <div class="progress-stat-label">Perfect days</div>
+          <div class="progress-stat-val" id="statPerfectDays">0</div>
         </div>
 
-        <!-- Best Streak -->
-        <div class="lifetime-card">
-          <div class="lifetime-card-left">
-            <div class="lifetime-card-icon" style="background: rgba(245, 158, 11, 0.15); color: #f59e0b;">
-              <i data-lucide="flame" style="width: 16px; height: 16px;"></i>
-            </div>
-            <div class="lifetime-card-text">
-              <div class="lifetime-card-title">Best Streak</div>
-              <div class="lifetime-card-sub">Personal best consecutive record</div>
-            </div>
-          </div>
-          <div class="lifetime-card-val" id="statBestStreak" style="color: #f59e0b;">
-            <span class="skeleton-shimmer" style="width: 40px; height: 1.4rem; display: inline-block;"></span>
-          </div>
+        <!-- Badges -->
+        <div class="progress-stat-card">
+          <div class="progress-stat-label">Badges</div>
+          <div class="progress-stat-val" id="statBadgesCount">0 of 24</div>
         </div>
       </div>
     </section>
 
-    <!-- 3. LONG-TERM MILESTONES SECTION (Achieved Badges Only + Info Icon) -->
-    <section class="progress-section">
-      <div class="milestones-section-header">
-        <div class="ref-section-tag">
-          <i data-lucide="trophy" style="width: 15px; height: 15px;"></i>
-          <span>Long-Term Milestones</span>
-        </div>
-        <div style="display: flex; align-items: center; gap: 0.55rem;">
-          <button class="milestones-info-btn" onclick="openAllBadgesModal()" title="View all badges and progress"
-            aria-label="View all badges">
-            <i data-lucide="info" style="width: 14px; height: 14px;"></i>
-            <span>All Badges</span>
-          </button>
-        </div>
+    <!-- 4. NEXT BADGE SECTION (Single card with circular progress ring SVG) -->
+    <section class="progress-section" id="nextBadgeSection" style="margin-bottom: 1.25rem;">
+      <div class="progress-section-heading">Next badge to unlock</div>
+      <div class="next-badge-card" id="nextBadgeCard">
+        <!-- Rendered dynamically via progress.js -->
       </div>
+    </section>
 
-      <!-- Achieved Badges Showcase Grid -->
-      <div class="achieved-badges-wrapper" id="achievedBadgesContainer">
-        <div class="skeleton-milestone-grid">
-          <div class="skeleton-milestone-card">
-            <div class="skeleton-shimmer skeleton-circle" style="width: 60px; height: 60px;"></div>
-            <div class="skeleton-shimmer" style="width: 80px; height: 14px;"></div>
-            <div class="skeleton-shimmer" style="width: 50px; height: 10px;"></div>
-          </div>
-          <div class="skeleton-milestone-card">
-            <div class="skeleton-shimmer skeleton-circle" style="width: 60px; height: 60px;"></div>
-            <div class="skeleton-shimmer" style="width: 80px; height: 14px;"></div>
-            <div class="skeleton-shimmer" style="width: 50px; height: 10px;"></div>
-          </div>
-        </div>
+    <!-- 5. YOUR BADGES SECTION (Heading left, "See all (24) →" right, 4-column row) -->
+    <section class="progress-section" style="margin-bottom: 1.5rem;">
+      <div class="progress-badges-header">
+        <div class="progress-section-heading" style="margin-bottom: 0;">Your badges</div>
+        <button class="progress-see-all-btn" id="progressSeeAllBtn" onclick="openAllBadgesModal()"
+          aria-label="See all badges">See all (24) →</button>
+      </div>
+      <div class="your-badges-row" id="yourBadgesRow">
+        <!-- 4-column row rendered dynamically via progress.js -->
       </div>
     </section>
   </div>
 
-  <!-- All Badges & Milestones Modal -->
+  <!-- All Badges Modal (Bottom Sheet) -->
   <div class="modal-overlay" id="allBadgesModalOverlay" onclick="if(event.target === this) closeAllBadgesModal()">
     <div class="modal-box all-badges-modal">
+      <div class="sheet-drag-handle"></div>
       <div class="modal-header">
-        <div style="display: flex; align-items: center; gap: 0.65rem;">
-          <div
-            style="background: rgba(16, 185, 129, 0.12); color: #10b981; width: 34px; height: 34px; border-radius: var(--radius-xs); display: flex; align-items: center; justify-content: center;">
-            <i data-lucide="trophy" style="width: 18px; height: 18px;"></i>
-          </div>
-          <div>
-            <h3 class="modal-title" style="margin-bottom: 0.1rem; font-size: 1.05rem;">All Badges & Milestones</h3>
-            <span style="font-size: 0.72rem; color: var(--text-muted);" id="modalBadgesSummaryText">24 Milestones
-              Available</span>
-          </div>
+        <div>
+          <h3 class="modal-title" style="font-size: 1.1rem; font-weight: 850; margin-bottom: 0.15rem;">All badges</h3>
+          <p class="modal-subtitle" id="modalBadgesSubtitle">0 of 24 unlocked</p>
         </div>
         <button class="close-btn" onclick="closeAllBadgesModal()" aria-label="Close modal">
-          <i data-lucide="x" style="width: 20px; height: 20px;"></i>
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
         </button>
       </div>
 
-      <!-- Modal Category Tabs -->
-      <div class="achieve-tabs-bar" style="margin-bottom: 1rem;">
-        <button class="achieve-tab-btn active" onclick="setModalCategoryFilter('all', this)">
-          <i data-lucide="layers" style="width: 13px; height: 13px;"></i>
-          <span>All (24)</span>
-        </button>
-        <button class="achieve-tab-btn" onclick="setModalCategoryFilter('streak', this)">
-          <i data-lucide="flame" style="width: 13px; height: 13px;"></i>
-          <span>Streaks</span>
-        </button>
-        <button class="achieve-tab-btn" onclick="setModalCategoryFilter('perfect_days', this)">
-          <i data-lucide="star" style="width: 13px; height: 13px;"></i>
-          <span>Perfect Days</span>
-        </button>
-        <button class="achieve-tab-btn" onclick="setModalCategoryFilter('consistency', this)">
-          <i data-lucide="trending-up" style="width: 13px; height: 13px;"></i>
-          <span>Consistency</span>
-        </button>
-        <button class="achieve-tab-btn" onclick="setModalCategoryFilter('volume', this)">
-          <i data-lucide="award" style="width: 13px; height: 13px;"></i>
-          <span>Volume</span>
-        </button>
+      <!-- Filter chips: All, Streaks, Perfect days, Consistency, Total logs -->
+      <div class="modal-filter-scroll" role="tablist" aria-label="Badge categories">
+        <button class="modal-filter-chip active" onclick="setModalCategoryFilter('all', this)">All</button>
+        <button class="modal-filter-chip" onclick="setModalCategoryFilter('streak', this)">Streaks</button>
+        <button class="modal-filter-chip" onclick="setModalCategoryFilter('perfect_days', this)">Perfect days</button>
+        <button class="modal-filter-chip" onclick="setModalCategoryFilter('consistency', this)">Consistency</button>
+        <button class="modal-filter-chip" onclick="setModalCategoryFilter('volume', this)">Total logs</button>
       </div>
 
-      <!-- Full Badges List Grid in Modal -->
-      <div class="modal-badges-grid" id="modalBadgesGrid">
+      <!-- Full Badges List Grid in Modal (Grouped by Category) -->
+      <div class="modal-badges-container" id="modalBadgesContainer">
         <!-- Rendered dynamically via progress.js -->
       </div>
     </div>
   </div>
 
-  <!-- Bottom Navigation -->
+  <!-- 5-Tab Bottom Navigation -->
   <nav class="bottom-nav">
-    <a href="/" class="nav-item">
-      <i data-lucide="grid"></i>
+    <a href="/habits.html" class="nav-item">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect width="7" height="7" x="3" y="3" rx="1" />
+        <rect width="7" height="7" x="14" y="3" rx="1" />
+        <rect width="7" height="7" x="14" y="14" rx="1" />
+        <rect width="7" height="7" x="3" y="14" rx="1" />
+      </svg>
       <span>Habits</span>
     </a>
-    <a href="/progress.html" class="nav-item active">
-      <i data-lucide="award"></i>
+    <a href="/progress.html" class="nav-item active" aria-current="page">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="8" r="6" />
+        <path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11" />
+      </svg>
       <span>Progress</span>
     </a>
+    <a href="/" class="nav-item">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect width="18" height="18" x="3" y="4" rx="2" ry="2" />
+        <line x1="16" x2="16" y1="2" y2="6" />
+        <line x1="8" x2="8" y1="2" y2="6" />
+        <line x1="3" x2="21" y1="10" y2="10" />
+        <path d="m9 16 2 2 4-4" />
+      </svg>
+      <span>Today</span>
+    </a>
     <a href="/analytics.html" class="nav-item">
-      <i data-lucide="bar-chart-3"></i>
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="18" x2="18" y1="20" y2="10" />
+        <line x1="12" x2="12" y1="20" y2="4" />
+        <line x1="6" x2="6" y1="20" y2="14" />
+      </svg>
       <span>Insights</span>
     </a>
     <a href="/settings.html" class="nav-item">
-      <i data-lucide="settings"></i>
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path
+          d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
+        <circle cx="12" cy="12" r="3" />
+      </svg>
       <span>Settings</span>
     </a>
   </nav>
 
-  <script src="js/utils.js?v=1788627500"></script>
-  <script src="js/offlineStore.js?v=1788627500"></script>
-  <script src="js/api.js?v=1788627500"></script>
-  <script src="js/progress.js?v=1788627500"></script>
+  <script src="js/onlineGuard.js?v=1788640000"></script>
+  <script src="js/api.js?v=1788628000"></script>
+  <script src="js/utils.js?v=1788628000"></script>
+  <script src="js/components.js?v=1788632000"></script>
+  <script src="js/progress.js?v=1788632000"></script>
 </body>
 
 </html>

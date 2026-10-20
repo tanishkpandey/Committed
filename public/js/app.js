@@ -3,6 +3,7 @@
 let currentCategory = 'All';
 let habitsData = [];
 let userProgressionData = null;
+let knownUnlockedBadges = new Set();
 
 document.addEventListener('DOMContentLoaded', () => {
   initTheme();
@@ -10,16 +11,18 @@ document.addEventListener('DOMContentLoaded', () => {
   loadDashboard();
   setupFilterChips();
   setupEventListeners();
-
-  window.addEventListener('committed:sync-complete', () => {
-    console.log('[Dashboard] Auto-refreshing habits and progression post-sync');
-    loadDashboard();
-  });
 });
 
 function initTheme() {
-  const saved = localStorage.getItem('committed_theme' || localStorage.getItem('habitkit_theme')) || 'dark';
+  const saved = localStorage.getItem('committed_theme') || localStorage.getItem('habitkit_theme') || 'dark';
   document.documentElement.setAttribute('data-theme', saved);
+  if (window.Utils && Utils.syncMobileThemeColor) {
+    Utils.syncMobileThemeColor(saved);
+  }
+  const themeIcon = document.getElementById('themeIcon');
+  if (themeIcon) {
+    themeIcon.setAttribute('data-lucide', saved === 'dark' ? 'moon' : 'sun');
+  }
 }
 
 async function loadDashboard() {
@@ -31,6 +34,9 @@ async function loadProgressionWidget() {
     const res = await API.getProgression();
     if (!res.success) return;
     userProgressionData = res;
+    if (res.achievements && Array.isArray(res.achievements)) {
+      knownUnlockedBadges = new Set(res.achievements.filter(a => a.unlocked).map(a => a.id));
+    }
     updateWidgetUI(res);
   } catch (err) {
     console.error('Error loading progression widget:', err);
@@ -66,16 +72,15 @@ async function loadHabits() {
     }
 
     if (!res.habits || res.habits.length === 0) {
-      container.innerHTML = `
-        <div style="text-align: center; padding: 3.5rem 1rem; color: var(--text-muted);">
-          <i data-lucide="sparkles" style="width: 42px; height: 42px; margin: 0 auto 0.85rem; opacity: 0.5;"></i>
-          <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.35rem;">No habits found</h3>
-          <p style="font-size: 0.85rem; margin-bottom: 1.25rem;">Create your first habit to start building your streak grid in Supabase!</p>
-          <button class="btn btn-primary" onclick="openHabitModal()">
-            <i data-lucide="plus" style="width: 16px; height: 16px;"></i> Create Habit
-          </button>
-        </div>
-      `;
+      if (window.UI && UI.renderEmptyState) {
+        container.innerHTML = UI.renderEmptyState({
+          icon: 'sparkles',
+          title: 'No habits found',
+          description: 'Create your first habit to start building your streak grid in Supabase!',
+          buttonText: 'Create Habit',
+          buttonAction: 'openHabitModal()'
+        });
+      }
       lucide.createIcons();
       return;
     }
@@ -101,118 +106,108 @@ async function loadHabits() {
 function renderHabitCards(habits) {
   const container = document.getElementById('habitsContainer');
   const tileShape = localStorage.getItem('habitkit_tile_shape') || 'tile-rounded';
-  const todayStr = Utils.getTodayStr();
 
-  container.innerHTML = habits.map(habit => {
-    const isCompletedToday = habit.logs && habit.logs.includes(todayStr);
-    const gridDays = Utils.generateGridDays(habit.grid_days || 60);
-    const logsSet = new Set(habit.logs || []);
+  if (window.UI && typeof UI.renderHabitCard === 'function') {
+    container.innerHTML = habits.map(habit => UI.renderHabitCard(habit, { tileShape })).join('');
+  } else {
+    const todayStr = Utils.getTodayStr();
+    container.innerHTML = habits.map(habit => {
+      const isCompletedToday = habit.logs && habit.logs.includes(todayStr);
+      const gridDays = Utils.generateGridDays(habit.grid_days || 60);
+      const logsSet = new Set(habit.logs || []);
 
-    const stats = Utils.calculateHabitStats(logsSet, habit.frequency_days || 7);
-    habit.currentStreak = stats.currentStreak;
-    habit.longestStreak = stats.longestStreak;
-    habit.streakUnit = stats.streakUnit;
-    habit.completionRate = stats.completionRate;
-    habit.totalCompletions = stats.totalCompletions;
-    habit.thisWeekCompleted = stats.thisWeekCompleted;
-    habit.isTargetMetThisWeek = stats.isTargetMetThisWeek;
+      const stats = Utils.calculateHabitStats(logsSet, habit.frequency_days || 7);
+      habit.currentStreak = stats.currentStreak;
+      habit.longestStreak = stats.longestStreak;
+      habit.streakUnit = stats.streakUnit;
+      habit.completionRate = stats.completionRate;
+      habit.totalCompletions = stats.totalCompletions;
+      habit.thisWeekCompleted = stats.thisWeekCompleted;
+      habit.isTargetMetThisWeek = stats.isTargetMetThisWeek;
 
-    const tilesHtml = gridDays.map(day => {
-      if (day.isFuture) {
-        return `<div class="grid-tile ${tileShape}" style="opacity: 0.12; pointer-events: none;"></div>`;
-      }
+      const tilesHtml = gridDays.map(day => {
+        if (day.isFuture) {
+          return `<div class="grid-tile ${tileShape}" style="opacity: 0.12; pointer-events: none;"></div>`;
+        }
+        const isCompleted = logsSet.has(day.date);
+        const bgStyle = isCompleted ? `background-color: ${habit.color}; --tile-glow-color: ${habit.color};` : '';
+        const completedClass = isCompleted ? 'completed' : '';
+        const todayClass = day.isToday ? 'is-today' : '';
 
-      const isCompleted = logsSet.has(day.date);
-      const bgStyle = isCompleted
-        ? `background-color: ${habit.color}; --tile-glow-color: ${habit.color};`
-        : '';
-      const completedClass = isCompleted ? 'completed' : '';
-      const todayClass = day.isToday ? 'is-today' : '';
+        return `
+          <div 
+            class="grid-tile ${tileShape} ${completedClass} ${todayClass}"
+            style="${bgStyle}"
+            data-date="${day.date}"
+            data-habit-id="${habit.id}"
+            onclick="handleTileClick('${habit.id}', '${day.date}', this, event)"
+          >
+            <div class="tile-tooltip">${day.formatted} ${isCompleted ? '✓ Done' : '○ Not logged'}</div>
+          </div>
+        `;
+      }).join('');
 
       return `
-        <div 
-          class="grid-tile ${tileShape} ${completedClass} ${todayClass}"
-          style="${bgStyle}"
-          data-date="${day.date}"
-          data-habit-id="${habit.id}"
-          onclick="handleTileClick('${habit.id}', '${day.date}', this, event)"
-        >
-          <div class="tile-tooltip">${day.formatted} ${isCompleted ? '✓ Done' : '○ Not logged'}</div>
-        </div>
-      `;
-    }).join('');
-
-    return `
-      <div class="habit-card animate-fade-in" id="card-${habit.id}">
-        <div class="habit-header">
-          <div class="habit-info-group">
-            <div class="habit-icon-badge" style="background-color: ${habit.color};">
-              <i data-lucide="${habit.icon || 'zap'}" style="width: 15px; height: 15px;"></i>
-            </div>
-            <div class="habit-text">
-              <a href="/habit-detail.html?id=${habit.id}" class="habit-title">${escapeHtml(habit.title)}</a>
-              <div style="display: flex; align-items: center; gap: 0.4rem; margin-top: 0.15rem;">
+        <article class="habit-card animate-fade-in" id="card-${habit.id}" data-habit-id="${habit.id}">
+          <header class="habit-header">
+            <div class="habit-info-group" onclick="window.location.href='/habit-detail.html?id=${habit.id}'" style="cursor: pointer;">
+              <div class="habit-icon-badge" style="background-color: ${habit.color};">
+                <i data-lucide="${habit.icon || 'zap'}" style="width: 15px; height: 15px;"></i>
+              </div>
+              <div class="habit-text">
+                <a href="/habit-detail.html?id=${habit.id}" class="habit-title" onclick="event.stopPropagation()">${escapeHtml(habit.title)}</a>
                 <span class="habit-desc">${escapeHtml(habit.description || habit.category || 'Daily')}</span>
-                ${habit.frequency_days < 7 ? `
-                  <span class="frequency-quota-badge ${habit.isTargetMetThisWeek ? 'met' : ''}">
-                    ${habit.isTargetMetThisWeek ? '<i data-lucide="check" style="width: 11px; height: 11px;"></i>' : ''}
-                    <span>${habit.thisWeekCompleted}/${habit.frequency_days} this week</span>
-                  </span>
-                ` : ''}
               </div>
             </div>
-          </div>
-
-          <div class="habit-meta-actions">
-            <div class="streak-badge ${habit.currentStreak > 0 ? 'active-fire' : ''}" id="streak-${habit.id}">
-              <i data-lucide="flame" style="width: 14px; height: 14px;"></i>
-              <span class="streak-val">${habit.currentStreak || 0}${habit.streakUnit || 'd'}</span>
+            <div class="habit-meta-actions">
+              <div class="streak-badge ${habit.currentStreak > 0 ? 'active-fire' : ''}" id="streak-${habit.id}">
+                <i data-lucide="flame" style="width: 14px; height: 14px;"></i>
+                <span class="streak-val">${habit.currentStreak || 0}${habit.streakUnit || 'd'}</span>
+              </div>
+              <button class="quick-check-btn ${isCompletedToday ? 'completed' : ''}" id="check-${habit.id}" style="${isCompletedToday ? `background-color: ${habit.color};` : ''}" onclick="handleQuickTodayToggle('${habit.id}', this, event)">
+                <i data-lucide="check" style="width: 18px; height: 18px; stroke-width: 3;"></i>
+              </button>
             </div>
-            <button 
-              class="quick-check-btn ${isCompletedToday ? 'completed' : ''}" 
-              id="check-${habit.id}"
-              style="${isCompletedToday ? `background-color: ${habit.color};` : ''}"
-              onclick="handleQuickTodayToggle('${habit.id}', this, event)"
-              title="Toggle Today Completion"
-            >
-              <i data-lucide="check" style="width: 18px; height: 18px; stroke-width: 3;"></i>
-            </button>
-          </div>
-        </div>
-
-        <div class="grid-wrapper">
-          <div class="contribution-grid" id="grid-${habit.id}">
-            ${tilesHtml}
-          </div>
-        </div>
-
-        <div class="habit-card-footer">
-          <div class="habit-footer-stats">
-            <div class="habit-footer-stat">
-              <i data-lucide="flame" style="width: 12px; height: 12px; color: #f59e0b;"></i>
-              <span class="habit-footer-label">Best:</span>
-              <span class="habit-footer-val" id="best-${habit.id}">${habit.longestStreak || 0}${habit.streakUnit || 'd'}</span>
-            </div>
-            <div class="habit-footer-stat">
-              <i data-lucide="activity" style="width: 12px; height: 12px; color: #10b981;"></i>
-              <span class="habit-footer-label">Month:</span>
-              <span class="habit-footer-val" id="rate-${habit.id}">${habit.completionRate || 0}%</span>
+          </header>
+          <div class="grid-wrapper">
+            <div class="contribution-grid" id="grid-${habit.id}">
+              ${tilesHtml}
             </div>
           </div>
-          <a href="/habit-detail.html?id=${habit.id}" class="habit-details-link" title="View Full Statistics & Breakdown">
-            <span>Details</span> <i data-lucide="arrow-right" style="width: 12px; height: 12px;"></i>
-          </a>
-        </div>
-      </div>
-    `;
-  }).join('');
-
+          <footer class="habit-card-footer">
+            <div class="habit-footer-stats">
+              <div class="habit-footer-stat">
+                <i data-lucide="flame" style="width: 12px; height: 12px; color: #f59e0b;"></i>
+                <span class="habit-footer-label">Best:</span>
+                <span class="habit-footer-val" id="best-${habit.id}">${habit.longestStreak || 0}${habit.streakUnit || 'd'}</span>
+              </div>
+              <div class="habit-footer-stat">
+                <i data-lucide="activity" style="width: 12px; height: 12px; color: #10b981;"></i>
+                <span class="habit-footer-label">Month:</span>
+                <span class="habit-footer-val" id="rate-${habit.id}">${habit.completionRate || 0}%</span>
+              </div>
+            </div>
+            <a href="/habit-detail.html?id=${habit.id}" class="habit-details-link">
+              <span>Details</span> <i data-lucide="arrow-right" style="width: 12px; height: 12px;"></i>
+            </a>
+          </footer>
+        </article>
+      `;
+    }).join('');
+  }
   lucide.createIcons();
   Utils.initGlobalTooltips();
 }
 
 async function handleTileClick(habitId, dateStr, tileElem, event) {
   if (event) event.stopPropagation();
+
+  // Strict Online Guard: Prevent offline check-in and mutation
+  if (window.OnlineGuard && (!window.OnlineGuard.isOnline || (typeof navigator !== 'undefined' && !navigator.onLine))) {
+    window.OnlineGuard.show('An active internet connection is required to check in habits.');
+    return;
+  }
+
   Utils.playSound('click');
 
   const habit = habitsData.find(h => h.id === habitId);
@@ -265,8 +260,15 @@ async function handleTileClick(habitId, dateStr, tileElem, event) {
   }
 
   // 3. Trigger floating +10 XP animation near interaction on completion
-  if (willBeCompleted && event) {
-    Utils.showFloatingXP(event.clientX, event.clientY, '+10 XP');
+  if (willBeCompleted) {
+    let clientX = event ? (event.clientX || (event.touches && event.touches[0] ? event.touches[0].clientX : null)) : null;
+    let clientY = event ? (event.clientY || (event.touches && event.touches[0] ? event.touches[0].clientY : null)) : null;
+    if ((clientX === null || clientY === null) && tileElem) {
+      const rect = tileElem.getBoundingClientRect();
+      clientX = rect.left + rect.width / 2;
+      clientY = rect.top;
+    }
+    Utils.showFloatingXP(clientX, clientY, '+10 XP');
     Utils.playSound('complete');
   }
 
@@ -344,6 +346,16 @@ async function handleTileClick(habitId, dateStr, tileElem, event) {
 
       const progRes = await API.getProgression();
       if (progRes.success) {
+        // 1. Check and trigger congratulations celebration for any newly achieved milestone badges
+        if (progRes.achievements && Array.isArray(progRes.achievements)) {
+          const newlyUnlocked = progRes.achievements.filter(a => a.unlocked && !knownUnlockedBadges.has(a.id));
+          newlyUnlocked.forEach(badge => {
+            knownUnlockedBadges.add(badge.id);
+            Utils.showMilestoneUnlockedModal(badge);
+          });
+        }
+
+        // 2. Check for player level-up
         if (userProgressionData && progRes.level > userProgressionData.level) {
           Utils.showLevelUpModal(progRes.level, userProgressionData ? userProgressionData.level : progRes.level - 1);
         }
@@ -353,6 +365,10 @@ async function handleTileClick(habitId, dateStr, tileElem, event) {
     }
   } catch (err) {
     console.error('Error toggling log:', err);
+    if (window.OnlineGuard) {
+      window.OnlineGuard.show('Habit update failed because cloud connection was lost.');
+    }
+    loadHabits();
   }
 }
 
@@ -411,6 +427,9 @@ function setupFilterChips() {
       chips.forEach(c => c.classList.remove('active'));
       chip.classList.add('active');
       currentCategory = chip.dataset.category || 'All';
+      if (typeof chip.scrollIntoView === 'function') {
+        chip.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+      }
       loadHabits();
     });
   });
@@ -420,6 +439,15 @@ function setupEventListeners() {
   const newHabitBtn = document.getElementById('newHabitBtn');
   if (newHabitBtn) {
     newHabitBtn.addEventListener('click', () => openHabitModal());
+  }
+
+  const container = document.getElementById('habitsContainer');
+  if (container && window.UI && UI.bindGridEvents) {
+    UI.bindGridEvents(
+      container,
+      (habitId, date, tileElem, event) => handleTileClick(habitId, date, tileElem, event),
+      (habitId, checkBtn, event) => handleQuickTodayToggle(habitId, checkBtn, event)
+    );
   }
 }
 
