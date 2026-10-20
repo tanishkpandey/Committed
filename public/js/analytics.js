@@ -1,5 +1,8 @@
 // Committed Insights & Behavioral Intelligence Controller (Redesigned with Fixed Card Heights)
 
+let cachedAnalyticsData = null;
+let currentRadarTimeframe = '1m';
+
 document.addEventListener('DOMContentLoaded', () => {
   initTheme();
   loadAnalytics();
@@ -10,12 +13,40 @@ function initTheme() {
   document.documentElement.setAttribute('data-theme', saved);
 }
 
+function handleTimeframeSwitch(tf) {
+  if (!['1m', '2m', '3m'].includes(tf)) return;
+  currentRadarTimeframe = tf;
+
+  // Update pills
+  document.querySelectorAll('.timeframe-pill').forEach(btn => {
+    btn.classList.toggle('active', btn.getAttribute('data-tf') === tf);
+  });
+
+  // Update subtitle
+  const subEl = document.getElementById('radarHeaderSub');
+  if (subEl) {
+    if (tf === '1m') {
+      subEl.textContent = 'Current month • Outer ring is 100%';
+    } else if (tf === '2m') {
+      subEl.textContent = 'Last 2 months avg • Outer ring is 100%';
+    } else if (tf === '3m') {
+      subEl.textContent = 'Last 3 months avg • Outer ring is 100%';
+    }
+  }
+
+  if (cachedAnalyticsData && cachedAnalyticsData.habitDistribution) {
+    renderHabitDistribution(cachedAnalyticsData.habitDistribution, tf);
+  }
+}
+window.handleTimeframeSwitch = handleTimeframeSwitch;
+
 async function loadAnalytics() {
   try {
     const res = await API.getAnalytics();
     if (!res.success || !res.analytics) return;
 
     const data = res.analytics;
+    cachedAnalyticsData = data;
     const ov = data.overview || {};
 
     // 1. Stat Tiles: 2x2 grid (88px tall each)
@@ -63,11 +94,11 @@ async function loadAnalytics() {
     renderVelocityCurve(data.cumulativeVelocity30);
     renderCompletionCurve(data.weekCurve);
 
-    // 4. Section "Habit distribution": 300px radar chart card
-    renderHabitDistribution(data.habitDistribution);
+    // 4. Section "Habit distribution": Radar chart card with 1m | 2m | 3m support
+    renderHabitDistribution(data.habitDistribution, currentRadarTimeframe);
 
-    // 5. Section "Check ins by month": Monthly bar chart with current in emerald & older in dark emerald
-    renderMonthlyChart(data.monthlyCounts);
+    // 5. Section "Check ins by month": Monthly bar chart (All 12 Months)
+    renderMonthlyChart(data.monthlyCounts, data.totalAnnualLogs);
 
     // Populate preserved hidden containers for backwards-compatibility / legacy hooks
     renderInsightCards('behavioralInsightsContainer', 'behavioralDots', data.behavioralInsights);
@@ -299,48 +330,59 @@ function renderCompletionCurve(weekCurve) {
 }
 
 // -----------------------------------------------------------------------------
-// 4. Section "Habit distribution": Radar Chart (300px card)
+// 4. Section "Habit consistency": Radar Chart (Outer ring is 100%)
 // -----------------------------------------------------------------------------
-function renderHabitDistribution(dist) {
+function renderHabitDistribution(dist, timeframe = '1m') {
   const container = document.getElementById('habitDistributionContainer');
   if (!container) return;
 
   if (!dist || dist.length === 0) {
-    container.innerHTML = '<div style="color: var(--text-muted); font-size: 11px; padding: 1.5rem; text-align: center;">Logging habits this month will populate your habit consistency radar.</div>';
+    container.innerHTML = '<div style="color: var(--text-muted); font-size: 11px; padding: 1.5rem; text-align: center;">Logging habits will populate your habit consistency radar.</div>';
     return;
   }
 
-  // Rule: If there are more than 8 habits, show the top 8 by percent.
-  let habitsToShow = [...dist];
+  // Map habits using the selected timeframe metrics (1m | 2m | 3m)
+  let habitsToShow = dist.map(h => {
+    const tfData = (h.timeframes && h.timeframes[timeframe]) ? h.timeframes[timeframe] : null;
+    return {
+      ...h,
+      effectivePercentage: tfData ? tfData.percentage : (h.percentage || 0),
+      effectiveCount: tfData ? tfData.count : (h.count || 0),
+      effectiveLabel: tfData ? tfData.label : '',
+      effectiveSubtitle: tfData ? tfData.subtitle : ''
+    };
+  });
+
+  // Rule: If there are more than 8 habits, show the top 8 by percent
   if (habitsToShow.length > 8) {
-    habitsToShow.sort((a, b) => (b.percentage || 0) - (a.percentage || 0));
+    habitsToShow.sort((a, b) => (b.effectivePercentage || 0) - (a.effectivePercentage || 0));
     habitsToShow = habitsToShow.slice(0, 8);
   }
 
-  // Rule: If there are fewer than 3 habits, hide the radar and show a ranked bar list instead.
+  // Rule: If there are fewer than 3 habits, show a ranked bar list instead.
   if (habitsToShow.length < 3) {
-    renderRankedBarList(habitsToShow, container);
+    renderRankedBarList(habitsToShow, container, timeframe);
   } else {
-    renderRadarHabitDistribution(habitsToShow, container);
+    renderRadarHabitDistribution(habitsToShow, container, timeframe);
   }
 }
 
-function renderRadarHabitDistribution(habits, container) {
+function renderRadarHabitDistribution(habits, container, timeframe = '1m') {
   const N = habits.length;
-  const width = 340;
-  const height = 220;
+  const width = 380;
+  const height = 270;
   const cx = width / 2;
-  const cy = 108;
-  const radius = 64;
+  const cy = 135;
+  const radius = 80;
 
   const angles = habits.map((_, i) => -Math.PI / 2 + (2 * Math.PI * i) / N);
 
-  // Outer ring is 60%. Values mapped to 60%.
+  // Outer ring is strictly 100%. Data values mapped to 100%.
   const dataPoints = habits.map((item, i) => {
     const angle = angles[i];
-    const rawPct = Math.round(item.percentage || 0);
-    const clampedPct = Math.min(60, Math.max(0, rawPct));
-    const r = (clampedPct / 60) * radius;
+    const rawPct = Math.round(item.effectivePercentage || 0);
+    const clampedPct = Math.min(100, Math.max(0, rawPct));
+    const r = (clampedPct / 100) * radius;
     const x = cx + r * Math.cos(angle);
     const y = cy + r * Math.sin(angle);
     return { x, y, rawPct, item, angle };
@@ -348,26 +390,26 @@ function renderRadarHabitDistribution(habits, container) {
 
   const polygonPointsStr = dataPoints.map(p => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ');
 
-  // Rings at 20%, 40%, 60%. Outer ring is 60%.
-  const rings = [20, 40, 60];
+  // Concentric rings at 25%, 50%, 75%, 100%. Outer ring is 100%.
+  const rings = [25, 50, 75, 100];
   const gridPolygonsHtml = rings.map(level => {
-    const rL = (level / 60) * radius;
+    const rL = (level / 100) * radius;
     const pts = angles.map(angle => {
       const x = cx + rL * Math.cos(angle);
       const y = cy + rL * Math.sin(angle);
       return `${x.toFixed(1)},${y.toFixed(1)}`;
     }).join(' ');
 
-    const isOuter = level === 60;
+    const isOuter = level === 100;
     return `
       <polygon points="${pts}" 
-        fill="${isOuter ? 'rgba(255, 255, 255, 0.02)' : 'none'}" 
-        stroke="${isOuter ? 'rgba(255, 255, 255, 0.22)' : 'rgba(255, 255, 255, 0.09)'}" 
-        stroke-width="${isOuter ? '1.2' : '1'}" 
-        stroke-dasharray="${isOuter ? 'none' : '2 3'}" 
+        fill="${isOuter ? 'rgba(16, 185, 129, 0.03)' : 'none'}" 
+        stroke="${isOuter ? 'rgba(255, 255, 255, 0.32)' : 'rgba(255, 255, 255, 0.1)'}" 
+        stroke-width="${isOuter ? '1.5' : '1'}" 
+        stroke-dasharray="${isOuter ? 'none' : '3 3'}" 
       />
-      <text x="${cx + 3}" y="${(cy - rL + 3.5).toFixed(1)}" 
-        font-size="11" font-weight="600" fill="var(--text-muted)">${level}%</text>
+      <text x="${cx + 4}" y="${(cy - rL + 3.5).toFixed(1)}" 
+        font-size="10" font-weight="700" fill="var(--text-muted)">${level}%</text>
     `;
   }).join('');
 
@@ -377,12 +419,12 @@ function renderRadarHabitDistribution(habits, container) {
     const y2 = cy + radius * Math.sin(angle);
     return `
       <line x1="${cx}" y1="${cy}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}" 
-        stroke="rgba(255, 255, 255, 0.12)" stroke-width="1" stroke-dasharray="2 2" />
+        stroke="rgba(255, 255, 255, 0.12)" stroke-width="1" stroke-dasharray="2 3" />
     `;
   }).join('');
 
-  // Outside axis labels: habit name in white, percent in emerald underneath, 11px minimum
-  const labelRadius = radius + 20;
+  // Outside axis labels: habit name in white, percent in emerald underneath
+  const labelRadius = radius + 22;
   const labelsHtml = dataPoints.map(dp => {
     const angle = dp.angle;
     const cosA = Math.cos(angle);
@@ -400,17 +442,17 @@ function renderRadarHabitDistribution(habits, container) {
       lx -= 4;
     }
 
-    if (sinA < -0.7) ly -= 5;
-    else if (sinA > 0.7) ly += 7;
+    if (sinA < -0.65) ly -= 5;
+    else if (sinA > 0.65) ly += 6;
 
     const rawTitle = dp.item.title || 'Habit';
-    const cleanTitle = rawTitle.length > 10 ? rawTitle.slice(0, 9) + '…' : rawTitle;
+    const cleanTitle = rawTitle.length > 11 ? rawTitle.slice(0, 10) + '…' : rawTitle;
 
     return `
       <g class="radar-axis-label-group">
         <text x="${lx.toFixed(1)}" y="${ly.toFixed(1)}" text-anchor="${textAnchor}" dominant-baseline="central">
           <tspan x="${lx.toFixed(1)}" dy="-7" font-size="11" font-weight="700" fill="#ffffff">${escapeHtml(cleanTitle)}</tspan>
-          <tspan x="${lx.toFixed(1)}" dy="14" font-size="11" font-weight="700" fill="#10b981">${dp.rawPct}%</tspan>
+          <tspan x="${lx.toFixed(1)}" dy="14" font-size="11" font-weight="800" fill="#10b981">${dp.rawPct}%</tspan>
         </text>
       </g>
     `;
@@ -418,22 +460,28 @@ function renderRadarHabitDistribution(habits, container) {
 
   // Dot on each vertex
   const dataDotsHtml = dataPoints.map(dp => `
-    <circle cx="${dp.x.toFixed(1)}" cy="${dp.y.toFixed(1)}" r="3.5" 
-      fill="#34d399" stroke="#07090e" stroke-width="1.5" />
+    <circle cx="${dp.x.toFixed(1)}" cy="${dp.y.toFixed(1)}" r="4" 
+      fill="#34d399" stroke="#07090e" stroke-width="2" />
   `).join('');
 
   container.innerHTML = `
     <svg viewBox="0 0 ${width} ${height}" style="width: 100%; height: 100%; overflow: visible;">
+      <defs>
+        <filter id="radarEmeraldGlow" x="-20%" y="-20%" width="140%" height="140%">
+          <feDropShadow dx="0" dy="0" stdDeviation="4" flood-color="#10b981" flood-opacity="0.35"/>
+        </filter>
+      </defs>
       <!-- Grid rings -->
       ${gridPolygonsHtml}
       <!-- Spokes -->
       ${spokesHtml}
-      <!-- Translucent emerald fill & solid emerald stroke -->
+      <!-- Translucent emerald fill & solid emerald stroke with subtle glow -->
       <polygon points="${polygonPointsStr}" 
-        fill="rgba(16, 185, 129, 0.18)" 
+        fill="rgba(16, 185, 129, 0.22)" 
         stroke="#10b981" 
-        stroke-width="2" 
+        stroke-width="2.2" 
         stroke-linejoin="round" 
+        filter="url(#radarEmeraldGlow)"
       />
       <!-- Vertex dots -->
       ${dataDotsHtml}
@@ -443,25 +491,26 @@ function renderRadarHabitDistribution(habits, container) {
   `;
 }
 
-// Fallback for < 3 habits: Ranked Bar List
-function renderRankedBarList(habits, container) {
+// Fallback for < 3 habits: Ranked Bar List with Timeframe Support
+function renderRankedBarList(habits, container, timeframe = '1m') {
   if (!habits || habits.length === 0) {
-    container.innerHTML = '<div style="color: var(--text-muted); font-size: 11px; padding: 1.5rem; text-align: center;">Logging habits this month will populate your habit consistency breakdown.</div>';
+    container.innerHTML = '<div style="color: var(--text-muted); font-size: 11px; padding: 1.5rem; text-align: center;">Logging habits will populate your habit consistency breakdown.</div>';
     return;
   }
-  const sorted = [...habits].sort((a, b) => (b.percentage || 0) - (a.percentage || 0));
+  const sorted = [...habits].sort((a, b) => (b.effectivePercentage || 0) - (a.effectivePercentage || 0));
   container.innerHTML = `
-    <div style="width: 100%; display: flex; flex-direction: column; gap: 0.75rem; padding: 0.5rem 0.25rem;">
+    <div style="width: 100%; display: flex; flex-direction: column; gap: 0.85rem; padding: 0.5rem 0.25rem;">
       ${sorted.map(h => {
-        const pct = Math.min(100, Math.max(0, Math.round(h.percentage || 0)));
+        const pct = Math.min(100, Math.max(0, Math.round(h.effectivePercentage || 0)));
+        const detailSub = h.effectiveLabel ? ` • ${h.effectiveLabel}` : '';
         return `
-          <div style="display: flex; flex-direction: column; gap: 0.35rem;">
-            <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px;">
-              <span style="font-weight: 700; color: #ffffff;">${escapeHtml(h.title)}</span>
-              <span style="font-weight: 700; color: #10b981;">${pct}%</span>
+          <div style="display: flex; flex-direction: column; gap: 0.4rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11.5px;">
+              <span style="font-weight: 700; color: #ffffff;">${escapeHtml(h.title)} <span style="font-weight: 500; font-size: 10.5px; color: var(--text-muted);">${escapeHtml(detailSub)}</span></span>
+              <span style="font-weight: 800; color: #10b981;">${pct}%</span>
             </div>
-            <div style="width: 100%; height: 6px; background: rgba(255, 255, 255, 0.08); border-radius: 999px; overflow: hidden;">
-              <div style="width: ${pct}%; height: 100%; background: #10b981; border-radius: 999px;"></div>
+            <div style="width: 100%; height: 7px; background: rgba(255, 255, 255, 0.08); border-radius: 999px; overflow: hidden;">
+              <div style="width: ${pct}%; height: 100%; background: linear-gradient(90deg, #10b981, #34d399); border-radius: 999px; transition: width 0.4s ease;"></div>
             </div>
           </div>
         `;
@@ -471,9 +520,9 @@ function renderRankedBarList(habits, container) {
 }
 
 // -----------------------------------------------------------------------------
-// 5. Section "Check ins by month": Monthly Bar Chart
+// 5. Section "Check ins by month": Monthly Bar Chart (All 12 Months)
 // -----------------------------------------------------------------------------
-function renderMonthlyChart(monthlyCounts) {
+function renderMonthlyChart(monthlyCounts, totalAnnualLogs) {
   const container = document.getElementById('monthlyChartContainer');
   const footerEl = document.getElementById('monthlyChartFooter');
   if (!container || !monthlyCounts || monthlyCounts.length === 0) return;
@@ -481,24 +530,35 @@ function renderMonthlyChart(monthlyCounts) {
   const maxCount = Math.max(...monthlyCounts.map(m => m.count), 1);
   const bestMonthItem = [...monthlyCounts].sort((a, b) => b.count - a.count)[0];
   const currentMonthIdx = monthlyCounts.length - 1;
+  const totalLogs = (typeof totalAnnualLogs === 'number') 
+    ? totalAnnualLogs 
+    : monthlyCounts.reduce((acc, m) => acc + (m.count || 0), 0);
 
   container.innerHTML = monthlyCounts.map((item, idx) => {
     const isCurrent = idx === currentMonthIdx;
-    const heightPercent = Math.max(14, Math.round((item.count / maxCount) * 100));
-    const barBg = isCurrent ? '#10b981' : '#064e3b'; // Current month in emerald, older in dark emerald
+    const hasData = item.count > 0;
+    const heightPercent = hasData ? Math.max(12, Math.round((item.count / maxCount) * 100)) : 4;
+    const barBg = isCurrent 
+      ? 'linear-gradient(180deg, #10b981 0%, #059669 100%)' 
+      : (hasData ? 'rgba(16, 185, 129, 0.45)' : 'rgba(255, 255, 255, 0.08)');
+
     return `
-      <div class="monthly-bar-item" style="flex: 1; display: flex; flex-direction: column; align-items: center; min-width: 0;">
-        <div class="monthly-bar-val" style="font-weight: 750; font-size: 11px; color: ${isCurrent ? '#10b981' : 'var(--text-muted)'}; margin-bottom: 0.25rem;">${item.count}</div>
-        <div style="height: 85px; width: 100%; display: flex; align-items: flex-end; justify-content: center;">
-          <div style="width: 55%; max-width: 26px; height: ${heightPercent}%; background: ${barBg}; border-radius: 4px 4px 2px 2px; transition: height 0.6s ease;" title="${item.month}: ${item.count} check-ins"></div>
+      <div class="monthly-bar-item ${isCurrent ? 'is-current' : ''}" title="${escapeHtml(item.month)} ${item.year || ''}: ${item.count} check-ins">
+        <div class="monthly-bar-val">${item.count}</div>
+        <div class="monthly-bar-track">
+          <div class="monthly-bar-fill" style="height: ${heightPercent}%; background: ${barBg};"></div>
         </div>
-        <span style="font-size: 11px; font-weight: 650; color: ${isCurrent ? 'var(--text-primary)' : 'var(--text-muted)'}; margin-top: 0.35rem;">${item.month}</span>
+        <span class="monthly-bar-label">${escapeHtml(item.month)}</span>
       </div>
     `;
   }).join('');
 
-  if (footerEl && bestMonthItem) {
-    footerEl.textContent = `${bestMonthItem.month} was your best month`;
+  if (footerEl) {
+    const bestText = (bestMonthItem && bestMonthItem.count > 0)
+      ? `<span><strong style="color: #10b981;">${escapeHtml(bestMonthItem.month)}</strong> was your best month (${bestMonthItem.count} check-ins)</span>`
+      : `<span>Log check-ins to track your monthly peak</span>`;
+    const totalText = `<span style="color: var(--text-secondary);">${totalLogs} total check-ins in past 12 months</span>`;
+    footerEl.innerHTML = `${bestText}${totalText}`;
   }
 }
 

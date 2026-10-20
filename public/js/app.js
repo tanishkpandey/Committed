@@ -60,12 +60,12 @@ function updateWidgetUI(data) {
 
 async function loadHabits() {
   const container = document.getElementById('habitsContainer');
-  const skeleton = document.getElementById('loadingSkeleton');
-  if (skeleton) skeleton.style.display = 'block';
+  if (container && window.UI && UI.renderSkeletonCards && !container.querySelector('.skeleton-habit-card')) {
+    container.innerHTML = UI.renderSkeletonCards(2);
+  }
 
   try {
     const res = await API.getHabits(currentCategory);
-    if (skeleton) skeleton.style.display = 'none';
 
     if (!res.success) {
       throw new Error(res.error || 'Failed to fetch habits from database');

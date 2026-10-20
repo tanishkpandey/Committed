@@ -8,11 +8,11 @@
   --border-subtle: rgba(255, 255, 255, 0.08);
   --border-active: rgba(255, 255, 255, 0.16);
   --border-focus: rgba(16, 185, 129, 0.5);
-  
+
   --text-primary: #f8fafc;
   --text-secondary: #94a3b8;
   --text-muted: #64748b;
-  
+
   /* Functional Colors */
   --accent-primary: #10b981;
   --accent-primary-hover: #059669;
@@ -21,24 +21,24 @@
   --accent-streak: #f59e0b;
   --accent-danger: #f43f5e;
   --accent-rose: #f43f5e;
-  
+
   --tile-empty: rgba(255, 255, 255, 0.11);
   --tile-empty-hover: rgba(255, 255, 255, 0.20);
   --tile-empty-border: rgba(255, 255, 255, 0.08);
-  
+
   --radius-xs: 6px;
   --radius-sm: 10px;
   --radius-md: 16px;
   --radius-lg: 22px;
   --radius-xl: 30px;
   --radius-full: 9999px;
-  
+
   --inner-highlight: inset 0 1px 0 0 rgba(255, 255, 255, 0.09);
   --shadow-card: 0 8px 30px -4px rgba(0, 0, 0, 0.55), 0 2px 6px rgba(0, 0, 0, 0.3);
   --shadow-float: 0 20px 48px -10px rgba(0, 0, 0, 0.8), 0 0 1px 1px rgba(255, 255, 255, 0.12);
   --bg-ambient-glow: radial-gradient(ellipse 70% 60% at 50% -20%, rgba(16, 185, 129, 0.18) 0%, rgba(16, 185, 129, 0.04) 50%, transparent 80%);
   --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, sans-serif;
-  
+
   --safe-top: env(safe-area-inset-top, 0px);
   --safe-bottom: env(safe-area-inset-bottom, 0px);
   --safe-left: env(safe-area-inset-left, 0px);
@@ -53,11 +53,11 @@
   --bg-input: #f1f5f9;
   --border-subtle: rgba(15, 23, 42, 0.07);
   --border-active: rgba(15, 23, 42, 0.15);
-  
+
   --text-primary: #0f172a;
   --text-secondary: #334155;
   --text-muted: #64748b;
-  
+
   --accent-primary: #10b981;
   --accent-primary-hover: #059669;
   --accent-primary-subtle: rgba(16, 185, 129, 0.12);
@@ -65,7 +65,7 @@
   --accent-streak: #f59e0b;
   --accent-danger: #f43f5e;
   --accent-rose: #f43f5e;
-  
+
   --tile-empty: rgba(15, 23, 42, 0.08);
   --tile-empty-hover: rgba(15, 23, 42, 0.18);
   --tile-empty-border: rgba(15, 23, 42, 0.08);
@@ -84,7 +84,9 @@ html {
   height: 100%;
 }
 
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: inherit;
   margin: 0;
   padding: 0;
@@ -96,12 +98,21 @@ img {
   height: auto;
 }
 
-input, textarea, select {
+input,
+textarea,
+select {
   user-select: auto;
 }
 
 /* Restrict user-select only to specific interactive controls, preserving touch scroll */
-button, .btn, .nav-item, .grid-tile, .toggle-switch, .streak-badge, .ref-section-tag, .filter-chip {
+button,
+.btn,
+.nav-item,
+.grid-tile,
+.toggle-switch,
+.streak-badge,
+.ref-section-tag,
+.filter-chip {
   user-select: none;
   -webkit-user-select: none;
 }
@@ -278,6 +289,7 @@ body::before {
 }
 
 @media (max-width: 600px) {
+
   #newHabitBtn .btn-text,
   .btn-hide-text-mobile .btn-text {
     display: none !important;
@@ -365,6 +377,7 @@ body::before {
 
 .filter-scroll {
   display: flex;
+  align-items: center;
   gap: 0.4rem;
   overflow-x: auto;
   overflow-y: hidden;
@@ -376,13 +389,14 @@ body::before {
   touch-action: pan-x pan-y;
   overscroll-behavior-x: contain;
 }
+
 .filter-scroll::-webkit-scrollbar {
   display: none;
 }
 
 .chip {
   padding: 0.45rem 1rem;
-  min-height: 44px;
+  min-height: 30px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -404,7 +418,6 @@ body::before {
   background-color: var(--bg-card-hover);
   color: var(--text-primary);
   border-color: var(--border-active);
-  transform: translateY(-1px);
 }
 
 .chip:active {
@@ -468,16 +481,16 @@ body::before {
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
 }
 
-.toggle-switch input:checked + .toggle-slider {
+.toggle-switch input:checked+.toggle-slider {
   background-color: var(--accent-primary);
   border-color: var(--accent-primary);
 }
 
-.toggle-switch input:checked + .toggle-slider:before {
+.toggle-switch input:checked+.toggle-slider:before {
   transform: translateX(20px);
 }
 
-.toggle-switch input:focus-visible + .toggle-slider {
+.toggle-switch input:focus-visible+.toggle-slider {
   outline: 2px solid var(--accent-primary);
   outline-offset: 2px;
 }
@@ -543,7 +556,6 @@ body::before {
 
 .nav-item.active {
   color: var(--accent-emerald);
-  background: rgba(16, 185, 129, 0.14);
 }
 
 .nav-item.active svg {
@@ -556,11 +568,13 @@ body::before {
     width: calc(100% - 1rem);
     padding: 0.25rem 0.35rem;
   }
+
   .nav-item {
     min-width: 42px;
     padding: 0.25rem 0.25rem;
     font-size: 0.60rem;
   }
+
   .nav-item svg {
     width: 16px;
     height: 16px;
@@ -569,12 +583,15 @@ body::before {
 
 /* Universal Clean Scrollbars (Invisible scrollbars with full touch & mouse wheel scroll) */
 * {
-  scrollbar-width: none !important; /* Firefox */
-  -ms-overflow-style: none !important; /* IE and Edge */
+  scrollbar-width: none !important;
+  /* Firefox */
+  -ms-overflow-style: none !important;
+  /* IE and Edge */
 }
 
 *::-webkit-scrollbar {
-  display: none !important; /* Chrome, Safari, Opera */
+  display: none !important;
+  /* Chrome, Safari, Opera */
   width: 0 !important;
   height: 0 !important;
 }

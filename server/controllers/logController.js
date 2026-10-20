@@ -3,6 +3,7 @@ const { formatHabitPayload } = require('./habitController');
 
 exports.toggleLog = async (req, res) => {
   if (!checkSupabase(res)) return;
+  const db = req.supabase || supabase;
 
   try {
     const { habit_id, date } = req.body;
@@ -12,7 +13,7 @@ exports.toggleLog = async (req, res) => {
       return res.status(400).json({ success: false, message: 'habit_id is required' });
     }
 
-    const { data: existing, error: fetchErr } = await supabase
+    const { data: existing, error: fetchErr } = await db
       .from('habit_logs')
       .select('*')
       .eq('habit_id', habit_id)
@@ -23,15 +24,19 @@ exports.toggleLog = async (req, res) => {
 
     let completed = false;
     if (existing) {
-      const { error: delErr } = await supabase.from('habit_logs').delete().eq('id', existing.id);
+      const { error: delErr } = await db.from('habit_logs').delete().eq('id', existing.id);
       if (delErr) throw delErr;
       completed = false;
     } else {
-      const { error: insErr } = await supabase.from('habit_logs').insert([{
+      const logPayload = {
         habit_id,
         completed_date: targetDate,
         count: 1
-      }]);
+      };
+      if (req.user) {
+        logPayload.user_id = req.user.id;
+      }
+      const { error: insErr } = await db.from('habit_logs').insert([logPayload]);
       if (insErr) throw insErr;
       completed = true;
     }
@@ -40,8 +45,8 @@ exports.toggleLog = async (req, res) => {
     let formattedHabit = null;
     try {
       const [hRes, lRes] = await Promise.all([
-        supabase.from('habits').select('*').eq('id', habit_id).maybeSingle(),
-        supabase.from('habit_logs').select('completed_date').eq('habit_id', habit_id)
+        db.from('habits').select('*').eq('id', habit_id).maybeSingle(),
+        db.from('habit_logs').select('completed_date').eq('habit_id', habit_id)
       ]);
       if (hRes.data) {
         const logsList = (lRes.data || []).map(l => l.completed_date);

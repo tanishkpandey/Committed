@@ -31,20 +31,42 @@
     <!-- Header Top Bar -->
     <header class="header-bar">
       <a href="/" class="logo-group">
-        <img src="img/logo.svg" alt="Committed Logo"
-          style="width: 36px; height: 36px; border-radius: var(--radius-sm);" />
         <span class="app-title">Committed</span>
       </a>
     </header>
 
-    <!-- Page Title -->
-    <h1 class="page-title">Settings</h1>
+    <!-- 0. Account Profile & Sign Out -->
+    <div class="settings-card" id="accountSettingsCard">
+      <div style="display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;">
+        <div style="display: flex; align-items: center; gap: 0.85rem;">
+          <div id="userAvatarContainer"
+            style="width: 44px; height: 44px; border-radius: 50%; overflow: hidden; background: rgba(255, 255, 255, 0.08); display: flex; align-items: center; justify-content: center; border: 1.5px solid var(--border-subtle); flex-shrink: 0;">
+            <i data-lucide="user" id="userAvatarFallback"
+              style="width: 22px; height: 22px; color: var(--text-muted);"></i>
+            <img id="userAvatarImg" src="" alt="Google Profile Avatar"
+              style="width: 100%; height: 100%; object-fit: cover; display: none;" />
+          </div>
+          <div>
+            <div id="userNameDisplay" style="line-height: 1.2;">
+              <span class="skeleton-shimmer" style="width: 125px; height: 16px; border-radius: var(--radius-xs); display: inline-block;"></span>
+            </div>
+            <div id="userEmailDisplay" style="margin-top: 0.25rem;">
+              <span class="skeleton-shimmer" style="width: 165px; height: 12px; border-radius: var(--radius-xs); display: inline-block;"></span>
+            </div>
+          </div>
+        </div>
+        <button type="button" class="btn btn-secondary" id="signOutBtn" onclick="handleSignOut()"
+          style="min-height: 40px; padding: 0.4rem 0.95rem; font-size: 0.82rem; border-color: rgba(244, 63, 94, 0.35); color: #f87171; display: inline-flex; align-items: center; gap: 0.45rem;">
+          <i data-lucide="log-out" style="width: 14px; height: 14px;"></i>
+          <span>Sign out</span>
+        </button>
+      </div>
+    </div>
 
     <!-- 1. Category Management -->
     <div class="settings-card">
       <div class="settings-card-header">
         <div class="settings-card-title">
-          <i data-lucide="tag" style="width: 16px; height: 16px; color: var(--accent-emerald);"></i>
           <span>Manage categories</span>
         </div>
         <button class="btn btn-primary" onclick="openAddCategoryModal()"
@@ -56,7 +78,36 @@
       </div>
 
       <div id="categoriesListContainer">
-        <!-- Rendered dynamically via settings.js -->
+        <div class="skeleton-category-row">
+          <div style="display: flex; align-items: center; gap: 0.65rem;">
+            <div class="skeleton-shimmer skeleton-circle" style="width: 14px; height: 14px;"></div>
+            <div class="skeleton-shimmer" style="width: 85px; height: 15px; border-radius: var(--radius-xs);"></div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 0.4rem;">
+            <div class="skeleton-shimmer skeleton-pill" style="width: 30px; height: 30px;"></div>
+            <div class="skeleton-shimmer skeleton-pill" style="width: 30px; height: 30px;"></div>
+          </div>
+        </div>
+        <div class="skeleton-category-row">
+          <div style="display: flex; align-items: center; gap: 0.65rem;">
+            <div class="skeleton-shimmer skeleton-circle" style="width: 14px; height: 14px;"></div>
+            <div class="skeleton-shimmer" style="width: 110px; height: 15px; border-radius: var(--radius-xs);"></div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 0.4rem;">
+            <div class="skeleton-shimmer skeleton-pill" style="width: 30px; height: 30px;"></div>
+            <div class="skeleton-shimmer skeleton-pill" style="width: 30px; height: 30px;"></div>
+          </div>
+        </div>
+        <div class="skeleton-category-row">
+          <div style="display: flex; align-items: center; gap: 0.65rem;">
+            <div class="skeleton-shimmer skeleton-circle" style="width: 14px; height: 14px;"></div>
+            <div class="skeleton-shimmer" style="width: 75px; height: 15px; border-radius: var(--radius-xs);"></div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 0.4rem;">
+            <div class="skeleton-shimmer skeleton-pill" style="width: 30px; height: 30px;"></div>
+            <div class="skeleton-shimmer skeleton-pill" style="width: 30px; height: 30px;"></div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -64,7 +115,6 @@
     <div class="settings-card">
       <div class="settings-card-header" style="margin-bottom: 0.85rem;">
         <div class="settings-card-title">
-          <i data-lucide="palette" style="width: 16px; height: 16px; color: var(--accent-emerald);"></i>
           <span>Appearance</span>
         </div>
       </div>
@@ -92,7 +142,6 @@
     <div class="settings-card">
       <div class="settings-card-header" style="margin-bottom: 0.85rem;">
         <div class="settings-card-title">
-          <i data-lucide="volume-2" style="width: 16px; height: 16px; color: var(--accent-emerald);"></i>
           <span>Feedback & sound</span>
         </div>
       </div>
@@ -139,7 +188,6 @@
       <summary class="settings-advanced-summary" style="padding: 0.2rem 0;">
         <div>
           <div class="settings-card-title">
-            <i data-lucide="database" style="width: 15px; height: 15px; color: var(--text-muted);"></i>
             <span>Advanced data controls</span>
           </div>
           <p style="font-size: 11.5px; color: var(--text-muted); margin-top: 0.2rem;">Export JSON backup or restore
@@ -168,24 +216,6 @@
         </div>
       </div>
     </details>
-
-    <!-- Cloud Connectivity Status Card -->
-    <div class="settings-card" style="margin-top: 1rem;">
-      <h3 class="settings-section-title">
-        <i data-lucide="cloud" style="width: 16px; height: 16px; color: var(--accent-primary);"></i>
-        <span>Cloud Connectivity</span>
-      </h3>
-      <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.4rem 0;">
-        <div>
-          <div style="font-size: 0.88rem; font-weight: 700; color: var(--text-primary);">Online-Only Mode</div>
-          <div style="font-size: 0.76rem; color: var(--text-muted);">Real-time Supabase cloud sync (offline mode disabled)</div>
-        </div>
-        <span style="display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.25rem 0.6rem; border-radius: var(--radius-full); background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.3); color: #10b981; font-size: 0.72rem; font-weight: 800; letter-spacing: 0.04em;">
-          <span style="width: 6px; height: 6px; border-radius: 50%; background: #10b981; box-shadow: 0 0 6px #10b981;"></span>
-          ONLINE
-        </span>
-      </div>
-    </div>
   </div>
 
   <!-- Add / Edit Category Modal -->

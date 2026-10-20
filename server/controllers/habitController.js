@@ -98,75 +98,84 @@ function calculateHabitStreaks(datesSet, frequencyDays = 7) {
     }
   }
 
-  return {
-    currentStreak: currentWeeklyStreak,
-    longestStreak: Math.max(longestWeeklyStreak, currentWeeklyStreak),
-    isWeekly: true,
-    unit: 'w'
-  };
+  return { currentStreak: currentWeeklyStreak, longestStreak: longestWeeklyStreak, isWeekly: true, unit: 'w' };
 }
 
 function getWeeklyQuotaProgress(datesSet, frequencyDays = 7) {
   const today = new Date();
-  const weekStart = new Date(today);
-  weekStart.setDate(today.getDate() - today.getDay());
+  const dayOfWeek = today.getDay(); // 0 is Sunday
+  const monday = new Date(today);
+  monday.setDate(today.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1));
 
-  let thisWeekCompleted = 0;
-  for (let i = 0; i <= today.getDay(); i++) {
-    const d = new Date(weekStart);
-    d.setDate(weekStart.getDate() + i);
-    if (datesSet.has(formatYMD(d))) thisWeekCompleted++;
+  let completedThisWeek = 0;
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(monday);
+    d.setDate(monday.getDate() + i);
+    if (datesSet.has(formatYMD(d))) {
+      completedThisWeek++;
+    }
   }
 
   return {
-    thisWeekCompleted,
-    thisWeekTarget: frequencyDays || 7,
-    isTargetMetThisWeek: thisWeekCompleted >= (frequencyDays || 7)
+    thisWeekCompleted: completedThisWeek,
+    targetFrequency: frequencyDays,
+    isTargetMetThisWeek: completedThisWeek >= frequencyDays
   };
 }
 
 function formatHabitPayload(habit, logs = []) {
+  const logsSet = new Set(logs.map(l => (typeof l === 'string' ? l : l.completed_date)));
+  const datesArray = Array.from(logsSet).sort();
   const freq = habit.frequency_days || 7;
-  const completedDates = logs.map(l => (typeof l === 'string' ? l : l.completed_date));
-  const datesSet = new Set(completedDates);
-  const { currentStreak, longestStreak, isWeekly, unit } = calculateHabitStreaks(datesSet, freq);
-  const weeklyQuota = getWeeklyQuotaProgress(datesSet, freq);
+  const streaks = calculateHabitStreaks(logsSet, freq);
+  const quota = getWeeklyQuotaProgress(logsSet, freq);
 
-  const today = new Date();
-  const currentYear = today.getFullYear();
-  const currentMonth = today.getMonth();
-  const totalDaysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-  const monthPrefix = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}`;
-
-  let currentMonthCompleted = 0;
-  for (let dayNum = 1; dayNum <= totalDaysInMonth; dayNum++) {
-    const dateStr = `${monthPrefix}-${String(dayNum).padStart(2, '0')}`;
-    if (datesSet.has(dateStr)) currentMonthCompleted++;
+  // 60-day completion rate
+  const now = new Date();
+  let past60Count = 0;
+  for (let i = 0; i < 60; i++) {
+    const d = new Date(now);
+    d.setDate(now.getDate() - i);
+    if (logsSet.has(formatYMD(d))) past60Count++;
   }
-  const completionRate = totalDaysInMonth > 0 ? Math.round((currentMonthCompleted / totalDaysInMonth) * 100) : 0;
+  const completionRate = Math.round((past60Count / 60) * 100);
 
   return {
-    ...habit,
+    id: habit.id,
+    user_id: habit.user_id,
+    title: habit.title,
+    description: habit.description || '',
+    category: habit.category || 'General',
+    color: habit.color || '#10B981',
+    icon: habit.icon || 'zap',
     frequency_days: freq,
-    logs: completedDates,
-    currentStreak,
-    longestStreak,
-    isWeeklyStreak: isWeekly,
-    streakUnit: unit,
-    completionRate,
-    totalCompletions: completedDates.length,
-    ...weeklyQuota
+    grid_days: habit.grid_days || 60,
+    tile_shape: habit.tile_shape || 'tile-rounded',
+    is_archived: Boolean(habit.is_archived),
+    order_index: habit.order_index || 0,
+    created_at: habit.created_at,
+    updated_at: habit.updated_at,
+    logs: datesArray,
+    totalCompletions: logsSet.size,
+    currentStreak: streaks.currentStreak,
+    longestStreak: streaks.longestStreak,
+    isWeekly: streaks.isWeekly,
+    streakUnit: streaks.unit,
+    thisWeekCompleted: quota.thisWeekCompleted,
+    isTargetMetThisWeek: quota.isTargetMetThisWeek,
+    completionRate
   };
 }
 
 exports.getHabits = async (req, res) => {
   if (!checkSupabase(res)) return;
+  const db = req.supabase || supabase;
 
   try {
     const { category, include_archived } = req.query;
 
     try {
-      let query = supabase.from('habits').select('*, habit_logs(*)').order('order_index', { ascending: true });
+      let query = db.from('habits').select('*, habit_logs(*)').order('order_index', { ascending: true });
       if (category && category !== 'All') query = query.eq('category', category);
       if (include_archived !== 'true') query = query.eq('is_archived', false);
 
@@ -177,13 +186,13 @@ exports.getHabits = async (req, res) => {
       return res.json({ success: true, habits: formatted });
     } catch (nestedErr) {
       console.warn('[getHabits] Query fallback triggered:', nestedErr.message);
-      let hQuery = supabase.from('habits').select('*').order('order_index', { ascending: true });
+      let hQuery = db.from('habits').select('*').order('order_index', { ascending: true });
       if (category && category !== 'All') hQuery = hQuery.eq('category', category);
       if (include_archived !== 'true') hQuery = hQuery.eq('is_archived', false);
 
       const [hRes, lRes] = await Promise.all([
         hQuery,
-        supabase.from('habit_logs').select('habit_id, completed_date')
+        db.from('habit_logs').select('habit_id, completed_date')
       ]);
       if (hRes.error) throw hRes.error;
 
@@ -204,12 +213,13 @@ exports.getHabits = async (req, res) => {
 
 exports.getHabitById = async (req, res) => {
   if (!checkSupabase(res)) return;
+  const db = req.supabase || supabase;
 
   try {
     const { id } = req.params;
 
     try {
-      const { data: habit, error } = await supabase
+      const { data: habit, error } = await db
         .from('habits')
         .select('*, habit_logs(*)')
         .eq('id', id)
@@ -220,8 +230,8 @@ exports.getHabitById = async (req, res) => {
       return res.json({ success: true, habit: formatHabitPayload(habit, habit.habit_logs || []) });
     } catch (nestedErr) {
       const [hRes, lRes] = await Promise.all([
-        supabase.from('habits').select('*').eq('id', id).single(),
-        supabase.from('habit_logs').select('completed_date').eq('habit_id', id)
+        db.from('habits').select('*').eq('id', id).single(),
+        db.from('habit_logs').select('completed_date').eq('habit_id', id)
       ]);
       if (hRes.error || !hRes.data) return res.status(404).json({ success: false, message: 'Habit not found' });
       const logsList = (lRes.data || []).map(l => l.completed_date);
@@ -235,6 +245,7 @@ exports.getHabitById = async (req, res) => {
 
 exports.createHabit = async (req, res) => {
   if (!checkSupabase(res)) return;
+  const db = req.supabase || supabase;
 
   try {
     const {
@@ -266,7 +277,11 @@ exports.createHabit = async (req, res) => {
       order_index: Date.now()
     };
 
-    const { data, error } = await supabase.from('habits').insert([newHabitData]).select().single();
+    if (req.user) {
+      newHabitData.user_id = req.user.id;
+    }
+
+    const { data, error } = await db.from('habits').insert([newHabitData]).select().single();
     if (error) throw error;
     return res.status(201).json({ success: true, habit: formatHabitPayload(data, []) });
   } catch (err) {
@@ -277,6 +292,7 @@ exports.createHabit = async (req, res) => {
 
 exports.updateHabit = async (req, res) => {
   if (!checkSupabase(res)) return;
+  const db = req.supabase || supabase;
 
   try {
     const { id } = req.params;
@@ -286,7 +302,7 @@ exports.updateHabit = async (req, res) => {
       updates.frequency_days = Math.max(1, Math.min(7, Number(updates.frequency_days) || 7));
     }
 
-    const { data, error } = await supabase
+    const { data, error } = await db
       .from('habits')
       .update({ ...updates, updated_at: new Date().toISOString() })
       .eq('id', id)
@@ -294,7 +310,7 @@ exports.updateHabit = async (req, res) => {
       .single();
     if (error) throw error;
 
-    const { data: logsData } = await supabase.from('habit_logs').select('completed_date').eq('habit_id', id);
+    const { data: logsData } = await db.from('habit_logs').select('completed_date').eq('habit_id', id);
     const logsList = (logsData || []).map(l => l.completed_date);
     return res.json({ success: true, habit: formatHabitPayload(data, logsList) });
   } catch (err) {
@@ -305,16 +321,17 @@ exports.updateHabit = async (req, res) => {
 
 exports.deleteHabit = async (req, res) => {
   if (!checkSupabase(res)) return;
+  const db = req.supabase || supabase;
 
   try {
     const { id } = req.params;
 
     // 1. Explicitly clean up child logs and XP transactions first
-    await supabase.from('habit_logs').delete().eq('habit_id', id);
-    await supabase.from('xp_transactions').delete().eq('habit_id', id);
+    await db.from('habit_logs').delete().eq('habit_id', id);
+    await db.from('xp_transactions').delete().eq('habit_id', id);
 
     // 2. Delete the habit from Supabase
-    const { error } = await supabase.from('habits').delete().eq('id', id);
+    const { error } = await db.from('habits').delete().eq('id', id);
     if (error) throw error;
     console.log(`[Habit DB] Deleted habit ${id} and associated logs from Supabase.`);
     return res.json({ success: true, message: 'Habit deleted' });

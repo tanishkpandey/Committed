@@ -1,10 +1,11 @@
 const { supabase, isSupabaseConfigured, checkSupabase } = require('../config/db');
 const { evaluateProgression } = require('../services/progressionEngine');
 
-async function getHabitsAndLogs() {
+async function getHabitsAndLogs(req) {
+  const db = (req && req.supabase) || supabase;
   const [hRes, lRes] = await Promise.all([
-    supabase.from('habits').select('*'),
-    supabase.from('habit_logs').select('*')
+    db.from('habits').select('*'),
+    db.from('habit_logs').select('*')
   ]);
   if (hRes.error) throw hRes.error;
   if (lRes.error) throw lRes.error;
@@ -15,7 +16,7 @@ exports.getProgression = async (req, res) => {
   if (!checkSupabase(res)) return;
 
   try {
-    const { habits, logs } = await getHabitsAndLogs();
+    const { habits, logs } = await getHabitsAndLogs(req);
     const progression = evaluateProgression(habits, logs);
     
     // Omit allTransactions from base payload for efficiency, keep recentTransactions
@@ -31,7 +32,7 @@ exports.getXPHistory = async (req, res) => {
   if (!checkSupabase(res)) return;
 
   try {
-    const { habits, logs } = await getHabitsAndLogs();
+    const { habits, logs } = await getHabitsAndLogs(req);
     const progression = evaluateProgression(habits, logs);
     res.json({ success: true, transactions: progression.allTransactions });
   } catch (err) {
@@ -44,7 +45,7 @@ exports.getAchievements = async (req, res) => {
   if (!checkSupabase(res)) return;
 
   try {
-    const { habits, logs } = await getHabitsAndLogs();
+    const { habits, logs } = await getHabitsAndLogs(req);
     const progression = evaluateProgression(habits, logs);
     res.json({ success: true, achievements: progression.achievements });
   } catch (err) {

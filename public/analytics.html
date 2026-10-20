@@ -29,43 +29,52 @@
     <!-- Header Top Bar -->
     <header class="header-bar">
       <a href="/" class="logo-group">
-        <img src="img/logo.svg" alt="Committed Logo"
-          style="width: 36px; height: 36px; border-radius: var(--radius-sm);" />
         <span class="app-title">Committed</span>
       </a>
     </header>
-
-    <!-- Title: Plain "Insights", no banner, no headline sentence -->
-    <h1 class="insights-page-title">Insights</h1>
 
     <!-- 1. STAT TILES (2x2 Grid, 88px tall each) -->
     <div class="stat-tiles-2x2">
       <!-- Consistency -->
       <div class="stat-tile">
         <div class="stat-tile-label">Consistency</div>
-        <div class="stat-tile-val" id="ovConsistency">0%</div>
-        <div class="stat-tile-sub" id="ovConsistencySub">30 day average 0%</div>
+        <div class="stat-tile-val" id="ovConsistency">
+          <span class="skeleton-shimmer" style="width: 48px; height: 26px; border-radius: var(--radius-xs); display: inline-block;"></span>
+        </div>
+        <div class="stat-tile-sub" id="ovConsistencySub">
+          <span class="skeleton-shimmer" style="width: 105px; height: 12px; border-radius: 4px; display: inline-block;"></span>
+        </div>
       </div>
 
       <!-- Active habits -->
       <div class="stat-tile">
         <div class="stat-tile-label">Active habits</div>
-        <div class="stat-tile-val" id="ovActiveHabits">0</div>
+        <div class="stat-tile-val" id="ovActiveHabits">
+          <span class="skeleton-shimmer" style="width: 28px; height: 26px; border-radius: var(--radius-xs); display: inline-block;"></span>
+        </div>
         <div class="stat-tile-sub">Tracked right now</div>
       </div>
 
       <!-- Vs last month -->
       <div class="stat-tile">
         <div class="stat-tile-label">Vs last month</div>
-        <div class="stat-tile-val" id="ovTrendDelta">0%</div>
-        <div class="stat-tile-sub" id="ovTrendLine">No change</div>
+        <div class="stat-tile-val" id="ovTrendDelta">
+          <span class="skeleton-shimmer" style="width: 44px; height: 26px; border-radius: var(--radius-xs); display: inline-block;"></span>
+        </div>
+        <div class="stat-tile-sub" id="ovTrendLine">
+          <span class="skeleton-shimmer" style="width: 75px; height: 12px; border-radius: 4px; display: inline-block;"></span>
+        </div>
       </div>
 
       <!-- Check ins this month -->
       <div class="stat-tile">
         <div class="stat-tile-label">Check ins this month</div>
-        <div class="stat-tile-val" id="ovMonthCheckIns">0</div>
-        <div class="stat-tile-sub" id="ovLastMonthSub">Last month had 0</div>
+        <div class="stat-tile-val" id="ovMonthCheckIns">
+          <span class="skeleton-shimmer" style="width: 32px; height: 26px; border-radius: var(--radius-xs); display: inline-block;"></span>
+        </div>
+        <div class="stat-tile-sub" id="ovLastMonthSub">
+          <span class="skeleton-shimmer" style="width: 95px; height: 12px; border-radius: 4px; display: inline-block;"></span>
+        </div>
       </div>
     </div>
 
@@ -73,7 +82,38 @@
     <section class="insights-section">
       <div class="insights-section-heading">What stands out</div>
       <div class="stands-out-grid" id="standsOutGrid">
-        <!-- Rendered dynamically via analytics.js -->
+        <div class="skeleton-stands-out-card">
+          <div style="display: flex; align-items: center; justify-content: space-between;">
+            <div class="skeleton-shimmer" style="width: 70px; height: 12px; border-radius: 3px;"></div>
+            <div class="skeleton-shimmer skeleton-circle" style="width: 22px; height: 22px;"></div>
+          </div>
+          <div class="skeleton-shimmer" style="width: 90px; height: 16px; border-radius: var(--radius-xs);"></div>
+          <div class="skeleton-shimmer" style="width: 130px; height: 11px; border-radius: 3px;"></div>
+        </div>
+        <div class="skeleton-stands-out-card">
+          <div style="display: flex; align-items: center; justify-content: space-between;">
+            <div class="skeleton-shimmer" style="width: 85px; height: 12px; border-radius: 3px;"></div>
+            <div class="skeleton-shimmer skeleton-circle" style="width: 22px; height: 22px;"></div>
+          </div>
+          <div class="skeleton-shimmer" style="width: 80px; height: 16px; border-radius: var(--radius-xs);"></div>
+          <div class="skeleton-shimmer" style="width: 120px; height: 11px; border-radius: 3px;"></div>
+        </div>
+        <div class="skeleton-stands-out-card">
+          <div style="display: flex; align-items: center; justify-content: space-between;">
+            <div class="skeleton-shimmer" style="width: 80px; height: 12px; border-radius: 3px;"></div>
+            <div class="skeleton-shimmer skeleton-circle" style="width: 22px; height: 22px;"></div>
+          </div>
+          <div class="skeleton-shimmer" style="width: 95px; height: 16px; border-radius: var(--radius-xs);"></div>
+          <div class="skeleton-shimmer" style="width: 125px; height: 11px; border-radius: 3px;"></div>
+        </div>
+        <div class="skeleton-stands-out-card">
+          <div style="display: flex; align-items: center; justify-content: space-between;">
+            <div class="skeleton-shimmer" style="width: 75px; height: 12px; border-radius: 3px;"></div>
+            <div class="skeleton-shimmer skeleton-circle" style="width: 22px; height: 22px;"></div>
+          </div>
+          <div class="skeleton-shimmer" style="width: 85px; height: 16px; border-radius: var(--radius-xs);"></div>
+          <div class="skeleton-shimmer" style="width: 135px; height: 11px; border-radius: 3px;"></div>
+        </div>
       </div>
     </section>
 
@@ -85,10 +125,12 @@
         <div class="curve-chart-card">
           <div class="curve-card-header">
             <span class="curve-card-title">Check-in velocity</span>
-            <span class="curve-card-chip" id="velocityTotalBadge" style="background: rgba(16, 185, 129, 0.15); color: #10b981;">+0 logs</span>
+            <span class="curve-card-chip" id="velocityTotalBadge"
+              style="background: rgba(16, 185, 129, 0.15); color: #10b981;">+0 logs</span>
           </div>
           <div class="curve-svg-wrap">
-            <svg id="velocityCurveSvg" viewBox="0 0 320 135" style="width: 100%; height: 100%; overflow: visible;"></svg>
+            <svg id="velocityCurveSvg" viewBox="0 0 320 135"
+              style="width: 100%; height: 100%; overflow: visible;"></svg>
           </div>
         </div>
 
@@ -96,37 +138,65 @@
         <div class="curve-chart-card">
           <div class="curve-card-header">
             <span class="curve-card-title">Weekly execution</span>
-            <span class="curve-card-chip" id="curvePeakBadge" style="background: rgba(139, 92, 246, 0.15); color: #8b5cf6;">0%</span>
+            <span class="curve-card-chip" id="curvePeakBadge"
+              style="background: rgba(139, 92, 246, 0.15); color: #8b5cf6;">0%</span>
           </div>
           <div class="curve-svg-wrap">
-            <svg id="completionCurveSvg" viewBox="0 0 320 135" style="width: 100%; height: 100%; overflow: visible;"></svg>
+            <svg id="completionCurveSvg" viewBox="0 0 320 135"
+              style="width: 100%; height: 100%; overflow: visible;"></svg>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- 4. HABIT DISTRIBUTION (Radar Chart Card, 300px tall) -->
+    <!-- 4. HABIT DISTRIBUTION (Radar Chart Card) -->
     <section class="insights-section">
-      <div class="insights-section-heading">Habit distribution</div>
+      <div class="insights-section-heading">Habit consistency</div>
       <div class="radar-chart-card">
-        <div>
-          <span class="curve-card-title" style="display: block;">Days done this month</span>
-          <span class="radar-header-sub">Days done this month. Outer ring is 60%</span>
+        <div class="radar-card-header">
+          <div>
+            <span class="curve-card-title" id="radarCardTitle">Habit Consistency</span>
+            <span class="radar-header-sub" id="radarHeaderSub">Current month • Outer ring is 100%</span>
+          </div>
+          <div class="timeframe-segmented-control" role="tablist" aria-label="Select Timeframe">
+            <button type="button" class="timeframe-pill active" id="btnTf1m" data-tf="1m"
+              onclick="handleTimeframeSwitch('1m')">1m</button>
+            <button type="button" class="timeframe-pill" id="btnTf2m" data-tf="2m"
+              onclick="handleTimeframeSwitch('2m')">2m</button>
+            <button type="button" class="timeframe-pill" id="btnTf3m" data-tf="3m"
+              onclick="handleTimeframeSwitch('3m')">3m</button>
+          </div>
         </div>
         <div class="radar-svg-wrap" id="habitDistributionContainer">
-          <!-- Rendered via analytics.js -->
+          <div style="display: flex; align-items: center; justify-content: center; height: 220px; width: 100%;">
+            <div class="skeleton-shimmer skeleton-circle" style="width: 170px; height: 170px; opacity: 0.25;"></div>
+          </div>
         </div>
       </div>
     </section>
 
-    <!-- 5. CHECK INS BY MONTH -->
+    <!-- 5. CHECK INS BY MONTH (All 12 Months) -->
     <section class="insights-section">
-      <div class="insights-section-heading">Check ins by month</div>
+      <div class="insights-section-heading">Check ins by month (Past 12 Months)</div>
       <div class="monthly-chart-card">
-        <div id="monthlyChartContainer"
-          style="display: flex; gap: 0.4rem; align-items: flex-end; padding-top: 0.75rem; min-height: 125px;"></div>
+        <div class="monthly-chart-scroll-wrap">
+          <div id="monthlyChartContainer" class="monthly-chart-bars-container">
+            <div class="skeleton-monthly-bar"><div class="skeleton-shimmer" style="width: 12px; height: 8px; margin-bottom: 4px;"></div><div class="monthly-bar-track"><div class="skeleton-shimmer" style="width: 18px; height: 25%; border-radius: 4px 4px 2px 2px;"></div></div><div class="skeleton-shimmer" style="width: 16px; height: 9px; margin-top: 5px;"></div></div>
+            <div class="skeleton-monthly-bar"><div class="skeleton-shimmer" style="width: 12px; height: 8px; margin-bottom: 4px;"></div><div class="monthly-bar-track"><div class="skeleton-shimmer" style="width: 18px; height: 40%; border-radius: 4px 4px 2px 2px;"></div></div><div class="skeleton-shimmer" style="width: 16px; height: 9px; margin-top: 5px;"></div></div>
+            <div class="skeleton-monthly-bar"><div class="skeleton-shimmer" style="width: 12px; height: 8px; margin-bottom: 4px;"></div><div class="monthly-bar-track"><div class="skeleton-shimmer" style="width: 18px; height: 35%; border-radius: 4px 4px 2px 2px;"></div></div><div class="skeleton-shimmer" style="width: 16px; height: 9px; margin-top: 5px;"></div></div>
+            <div class="skeleton-monthly-bar"><div class="skeleton-shimmer" style="width: 12px; height: 8px; margin-bottom: 4px;"></div><div class="monthly-bar-track"><div class="skeleton-shimmer" style="width: 18px; height: 50%; border-radius: 4px 4px 2px 2px;"></div></div><div class="skeleton-shimmer" style="width: 16px; height: 9px; margin-top: 5px;"></div></div>
+            <div class="skeleton-monthly-bar"><div class="skeleton-shimmer" style="width: 12px; height: 8px; margin-bottom: 4px;"></div><div class="monthly-bar-track"><div class="skeleton-shimmer" style="width: 18px; height: 60%; border-radius: 4px 4px 2px 2px;"></div></div><div class="skeleton-shimmer" style="width: 16px; height: 9px; margin-top: 5px;"></div></div>
+            <div class="skeleton-monthly-bar"><div class="skeleton-shimmer" style="width: 12px; height: 8px; margin-bottom: 4px;"></div><div class="monthly-bar-track"><div class="skeleton-shimmer" style="width: 18px; height: 45%; border-radius: 4px 4px 2px 2px;"></div></div><div class="skeleton-shimmer" style="width: 16px; height: 9px; margin-top: 5px;"></div></div>
+            <div class="skeleton-monthly-bar"><div class="skeleton-shimmer" style="width: 12px; height: 8px; margin-bottom: 4px;"></div><div class="monthly-bar-track"><div class="skeleton-shimmer" style="width: 18px; height: 75%; border-radius: 4px 4px 2px 2px;"></div></div><div class="skeleton-shimmer" style="width: 16px; height: 9px; margin-top: 5px;"></div></div>
+            <div class="skeleton-monthly-bar"><div class="skeleton-shimmer" style="width: 12px; height: 8px; margin-bottom: 4px;"></div><div class="monthly-bar-track"><div class="skeleton-shimmer" style="width: 18px; height: 55%; border-radius: 4px 4px 2px 2px;"></div></div><div class="skeleton-shimmer" style="width: 16px; height: 9px; margin-top: 5px;"></div></div>
+            <div class="skeleton-monthly-bar"><div class="skeleton-shimmer" style="width: 12px; height: 8px; margin-bottom: 4px;"></div><div class="monthly-bar-track"><div class="skeleton-shimmer" style="width: 18px; height: 70%; border-radius: 4px 4px 2px 2px;"></div></div><div class="skeleton-shimmer" style="width: 16px; height: 9px; margin-top: 5px;"></div></div>
+            <div class="skeleton-monthly-bar"><div class="skeleton-shimmer" style="width: 12px; height: 8px; margin-bottom: 4px;"></div><div class="monthly-bar-track"><div class="skeleton-shimmer" style="width: 18px; height: 85%; border-radius: 4px 4px 2px 2px;"></div></div><div class="skeleton-shimmer" style="width: 16px; height: 9px; margin-top: 5px;"></div></div>
+            <div class="skeleton-monthly-bar"><div class="skeleton-shimmer" style="width: 12px; height: 8px; margin-bottom: 4px;"></div><div class="monthly-bar-track"><div class="skeleton-shimmer" style="width: 18px; height: 65%; border-radius: 4px 4px 2px 2px;"></div></div><div class="skeleton-shimmer" style="width: 16px; height: 9px; margin-top: 5px;"></div></div>
+            <div class="skeleton-monthly-bar"><div class="skeleton-shimmer" style="width: 12px; height: 8px; margin-bottom: 4px;"></div><div class="monthly-bar-track"><div class="skeleton-shimmer" style="width: 18px; height: 90%; border-radius: 4px 4px 2px 2px;"></div></div><div class="skeleton-shimmer" style="width: 16px; height: 9px; margin-top: 5px;"></div></div>
+          </div>
+        </div>
         <div class="monthly-chart-footer" id="monthlyChartFooter">
-          <!-- Rendered via analytics.js: "[best month] was your best month" -->
+          <span class="skeleton-shimmer" style="width: 210px; height: 13px; border-radius: 4px; display: inline-block;"></span>
         </div>
       </div>
     </section>

@@ -18,6 +18,13 @@ const API = {
 
     try {
       const res = await fetch(url, options);
+
+      // If session expired or unauthorized, redirect immediately to landing page
+      if (res.status === 401) {
+        window.location.href = '/landingpage';
+        return { success: false, error: 'Unauthorized' };
+      }
+
       const data = await res.json().catch(() => null);
 
       if (!res.ok) {

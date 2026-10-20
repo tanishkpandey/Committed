@@ -12,6 +12,7 @@ let categoriesList = [];
 
 document.addEventListener('DOMContentLoaded', () => {
   initSettings();
+  loadUserProfile();
   loadCategories();
   renderCategoryPalette();
 });
@@ -41,6 +42,31 @@ function initSettings() {
 async function loadCategories() {
   const container = document.getElementById('categoriesListContainer');
   if (!container) return;
+
+  if (!container.querySelector('.skeleton-category-row')) {
+    container.innerHTML = `
+      <div class="skeleton-category-row">
+        <div style="display: flex; align-items: center; gap: 0.65rem;">
+          <div class="skeleton-shimmer skeleton-circle" style="width: 14px; height: 14px;"></div>
+          <div class="skeleton-shimmer" style="width: 85px; height: 15px; border-radius: var(--radius-xs);"></div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 0.4rem;">
+          <div class="skeleton-shimmer skeleton-pill" style="width: 30px; height: 30px;"></div>
+          <div class="skeleton-shimmer skeleton-pill" style="width: 30px; height: 30px;"></div>
+        </div>
+      </div>
+      <div class="skeleton-category-row">
+        <div style="display: flex; align-items: center; gap: 0.65rem;">
+          <div class="skeleton-shimmer skeleton-circle" style="width: 14px; height: 14px;"></div>
+          <div class="skeleton-shimmer" style="width: 110px; height: 15px; border-radius: var(--radius-xs);"></div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 0.4rem;">
+          <div class="skeleton-shimmer skeleton-pill" style="width: 30px; height: 30px;"></div>
+          <div class="skeleton-shimmer skeleton-pill" style="width: 30px; height: 30px;"></div>
+        </div>
+      </div>
+    `;
+  }
 
   try {
     const res = await API.getCategories();
@@ -329,3 +355,53 @@ function escapeHtml(str) {
     "'": '&#039;'
   })[m]);
 }
+
+/**
+ * Loads current authenticated Google user profile (name, email, avatar)
+ */
+async function loadUserProfile() {
+  const nameEl = document.getElementById('userNameDisplay');
+  const emailEl = document.getElementById('userEmailDisplay');
+  const avatarImg = document.getElementById('userAvatarImg');
+  const avatarFallback = document.getElementById('userAvatarFallback');
+
+  try {
+    const res = await fetch('/auth/status');
+    const data = await res.json().catch(() => null);
+
+    if (data && data.authenticated && data.user) {
+      if (nameEl) nameEl.textContent = data.user.name || 'Committed User';
+      if (emailEl) emailEl.textContent = data.user.email || '';
+      if (data.user.avatar_url && avatarImg && avatarFallback) {
+        avatarImg.src = data.user.avatar_url;
+        avatarImg.style.display = 'block';
+        avatarFallback.style.display = 'none';
+      }
+    } else {
+      if (nameEl) nameEl.textContent = 'Guest User';
+      if (emailEl) emailEl.textContent = 'Not signed in';
+    }
+  } catch (err) {
+    console.warn('[Settings] Failed to fetch user profile:', err);
+  }
+}
+
+/**
+ * Handles signing out via POST /auth/logout and redirects to /landingpage
+ */
+async function handleSignOut() {
+  const btn = document.getElementById('signOutBtn');
+  if (btn) {
+    btn.disabled = true;
+    btn.innerHTML = '<span>Signing out...</span>';
+  }
+
+  try {
+    await fetch('/auth/logout', { method: 'POST' });
+  } catch (err) {
+    console.warn('[Settings] Error during sign out:', err);
+  }
+
+  window.location.href = '/landingpage';
+}
+
